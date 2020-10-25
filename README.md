@@ -32,7 +32,7 @@ python setup.py install
 
 
 
-#### Install Flask
+### Install Flask
 
 Within the activated environment, use the following command to install Flask:
 
