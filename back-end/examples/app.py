@@ -6,7 +6,7 @@ from nameko.standalone.rpc import ClusterRpcProxy
  
 app = Flask(__name__)
  
-CONFIG = {'AMQP_URI': "amqp://guest:guest@192.168.1.158"}
+CONFIG = {'AMQP_URI': "amqp://guest:guest@localhost"}
  
 @app.route('/hello', methods=['GET'])
 def hello():
