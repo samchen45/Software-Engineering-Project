@@ -6,8 +6,8 @@ mysql = MySQL()
 app = Flask(__name__)
 
 # MySQL configurations
-app.config['MYSQL_DATABASE_USER'] = 'jay'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'jay'
+app.config['MYSQL_DATABASE_USER'] = 'root'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'password'
 app.config['MYSQL_DATABASE_DB'] = 'BucketList'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
@@ -33,12 +33,19 @@ def signUp():
         if _name and _email and _password:
             
             # All Good, let's call MySQL
-            
+            print('111111111')
             conn = mysql.connect()
+            print('1.5 1.5 1.5')
             cursor = conn.cursor()
+            print('222222222')
             _hashed_password = generate_password_hash(_password)
+            print('2.5 2.52.5')
+            print(_hashed_password)
             cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
+            print('3333333333')
             data = cursor.fetchall()
+            print('HERE!!')
+
 
             if len(data) is 0:
                 conn.commit()
