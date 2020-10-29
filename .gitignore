@@ -10,10 +10,11 @@
 /build
 
 /.idea
+__pycache__
 
 # virtual env
-/venv
-/env
+venv
+env
 
 # misc
 .DS_Store
