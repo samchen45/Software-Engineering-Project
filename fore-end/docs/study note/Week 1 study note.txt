@@ -1,0 +1,9 @@
+React用法学习：
+
+React16免费基础视频教程：
+https://www.bilibili.com/video/BV1g4411i7po?from=search&seid=6427161669662798934
+
+官方文档 Getting Started - React：
+https://reactjs.org/docs/getting-started.html
+
+其他人的react开发文档(见README.md)
