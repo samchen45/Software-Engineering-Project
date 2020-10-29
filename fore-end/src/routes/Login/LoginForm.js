@@ -4,14 +4,23 @@ import { withRouter } from 'react-router-dom'
 import { inject, observer } from 'mobx-react/index'
 import { Form, Input, Row, Col } from 'antd'
 import PromptBox from '../../components/PromptBox'
+import {message} from "antd/lib/index";
+import $ from 'jquery'
 
 
 @withRouter @inject('appStore') @observer @Form.create()
 class LoginForm extends React.Component {
-  state = {
-    focusItem: -1,   //保存当前聚焦的input
-    code: ''         //验证码
-  }
+  constructor(props) {
+    super(props);
+    
+    this.loginSubmit = this.loginSubmit.bind(this);
+
+
+}
+state = {
+  focusItem: -1,   //保存当前聚焦的input
+  code: ''         //验证码
+}
 
   componentDidMount () {
     this.createCode()
@@ -50,6 +59,7 @@ class LoginForm extends React.Component {
       code
     })
   }
+
   loginSubmit = (e) => {
     e.preventDefault()
     this.setState({
@@ -67,38 +77,63 @@ class LoginForm extends React.Component {
           })
           return
         }
-
-        const users = this.props.appStore.users
-        // 检测用户名是否存在
-        const result = users.find(item => item.username === values.username)
-        if (!result) {
-          this.props.form.setFields({
-            username: {
-              value: values.username,
-              errors: [new Error('用户名不存在')]
-            }
-          })
-          return
-        } else {
-          //检测密码是否错误
-          if (result.password !== values.password) {
-            this.props.form.setFields({
-              password: {
-                value: values.password,
-                errors: [new Error('密码错误')]
+        console.log('Received values of form: ', values);
+        console.log('姓名: ', values.username)
+        console.log('密码: ', values.password)
+        $.ajax({
+            type: 'GET',
+            url: "/UserLog",
+            data: {
+                username: values.username,
+                password: values.password,
+            },
+            success: function (data) {
+                if (data === 'USER') {
+                    message.info("登录成功！！！");
+                    console.log(values.username);
+                            //this.setCookie("username",values.username,15)
+                if (data === 'WRONGPWD' || data === 'NULL') {
+                    message.info("密码错误，请检查你的用户名和密码！！！");
+                }
               }
-            })
-            return
-          }
+              this.props.appStore.toggleLogin(true, {username: values.username})
+
+              const {from} = this.props.location.state || {from: {pathname: '/'}}
+              this.props.history.push(from)
+            }.bind(this)
+          });
         }
+      });
+    }
+                    
+        // const users = this.props.appStore.users
+        // // 检测用户名是否存在
+        // const result = users.find(item => item.username === values.username)
+        // if (!result) {
+        //   this.props.form.setFields({
+        //     username: {
+        //       value: values.username,
+        //       errors: [new Error('用户名不存在')]
+        //     }
+        //   })
+        //   return
+        // } else {
+        //   //检测密码是否错误
+        //   if (result.password !== values.password) {
+        //     this.props.form.setFields({
+        //       password: {
+        //         value: values.password,
+        //         errors: [new Error('密码错误')]
+        //       }
+        //     })
+        //     return
+        //   }
+        // }
 
-        this.props.appStore.toggleLogin(true, {username: values.username})
+        // this.props.appStore.toggleLogin(true, {username: values.username})
 
-        const {from} = this.props.location.state || {from: {pathname: '/'}}
-        this.props.history.push(from)
-      }
-    })
-  }
+        // const {from} = this.props.location.state || {from: {pathname: '/'}}
+    
   register = () => {
     this.props.switchShowBox('register')
     setTimeout(() => this.props.form.resetFields(), 500)
