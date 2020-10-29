@@ -10,9 +10,10 @@
 /build
 
 /.idea
+__pycache__
 
 # virtual env
-back-end/venv
+venv
 env
 
 # misc
