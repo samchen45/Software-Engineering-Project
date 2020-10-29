@@ -10,6 +10,7 @@ import 'animate.css'
 import LoginForm from './LoginForm'
 import RegisterForm from './RegisterForm'
 
+
 const url = 'https://github.com/zhangZhiHao1996/image-store/blob/master/react-admin-master/bg1.jpg?raw=true'
 const imgs = [
   'https://github.com/zhangZhiHao1996/image-store/blob/master/react-admin-master/slide1.jpg?raw=true',
@@ -24,6 +25,12 @@ const imgs = [
 
 @withRouter @inject('appStore') @observer
 class Login extends React.Component {
+  
+  
+  
+  
+  
+  
   state = {
     showBox: 'login',   //展示当前表单
     url: '',  //背景图片
