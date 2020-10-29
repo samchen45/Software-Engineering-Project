@@ -113,5 +113,6 @@ def logout():
     session.pop('user', None)
     return redirect('/')
 
+
 if __name__ == "__main__":
     app.run(port=5002)
