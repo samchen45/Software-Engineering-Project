@@ -38,19 +38,14 @@ class RegisterForm extends React.Component {
           },
           success: function (data) {
             console.log(data);
-            const ret = JSON.parse(data);
-            console.log(ret);
-            console.log(ret.info === 'S');
-            console.log(ret.info === 'T');
-            console.log(ret.info === 'A');
-            if (true) {
+            let ret = JSON.parse(data);
+            if (ret.info === 'S' || ret.info === 'T' || ret.info === 'A') {
               message.info("注册成功！！！");
               //console.log(ret.name);
               //this.setCookie("username",values.username,15)
               this.props.appStore.toggleLogin(true, { username: values.name })
-
-              const { from } = this.props.location.state || { from: { pathname: '/' } }
-              this.props.history.push(from)
+              //const { from } = this.props.location.state || { from: { pathname: '/' } }
+              //this.props.history.push(from)
             }
             // if (ret.info === 'WRONGPWD' || ret.info === 'NULL') {
             else {

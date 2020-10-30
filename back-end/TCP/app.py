@@ -60,9 +60,7 @@ def register():
             if len(data) == 0:
                 msg['info'] = 'error: id does not exist in school database!!'
                 return json.dumps(msg)
-            print(str(data[1]))
             if _name != str(data[1]):
-                print('tmd')
                 msg['info'] = 'error: id and name do not match in school database!!'
                 return json.dumps(msg)
             _type = str(data[2])
@@ -103,15 +101,12 @@ def showLogin():
 def validateLogin():
     _id = request.form.get('id', type=str)
     _password = request.form.get('password', type=str)
-    print(_id)
-    print
     # connect to mysql
     conn = mysql.connect()
     cursor = conn.cursor()
     # cursor.callproc('sp_validateLogin', (_username,))
     cursor.execute('SELECT * FROM users WHERE id=%s', (_id,))
     data = cursor.fetchall()
-    print(data[0])
 
     # return to frontend
     msg = {}
