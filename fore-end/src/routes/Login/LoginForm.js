@@ -82,12 +82,13 @@ class LoginForm extends React.Component {
         console.log('密码: ', values.password)
         $.ajax({
           type: 'POST',
-          url: "/validateLogin",
+          url: "/login",
           data: {
             username: values.username,
             password: values.password,
           },
           success: function (data) {
+            console.log(data)
             const ret = JSON.parse(data)
             console.log(ret.info)
             if (ret.info === 'USER') {
