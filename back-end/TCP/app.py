@@ -1,8 +1,5 @@
 """
-URLs include:
-/
-/login
-/register
+Main backend Python codes.
 """
 
 from flask import Flask, render_template, json, request, redirect, session
