@@ -2,7 +2,9 @@ Here is back-end part
 
 Required installation: Python3, MySQL
 
+```
 pip3 install cryptography flask flask-mysql
+```
 
 1. Start MySQL: 
 ```

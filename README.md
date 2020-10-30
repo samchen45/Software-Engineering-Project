@@ -2,6 +2,7 @@
 
 A **Teaching Cloud Platform** for Software Engineering.
 
+
 ## Installation
 
 ### Install Nameko
@@ -59,3 +60,15 @@ docker run -d --hostname my-rabbit --name rabbit -p 15672:15672 -p 5672:5672 rab
 ```
 
 Go to the browser and access [http://localhost:15672](http://localhost:15672/) using credentials **guest:guest** if you can login to RabbitMQ dashboard it means you have it running locally for development.
+
+## Connect frontend and backend
+
+1. Start backend server
+```
+python3 back-end/app.py
+```
+2. Start frontend server
+```
+cd fore-end
+npm start
+```
