@@ -78,13 +78,13 @@ class LoginForm extends React.Component {
           return
         }
         console.log('Received values of form: ', values);
-        console.log('id: ', values.uid)
+        console.log('id: ', values.id)
         console.log('密码: ', values.password)
         $.ajax({
           type: 'POST',
           url: "/login",
           data: {
-            username: values.username,
+            id: values.id,
             password: values.password,
           },
           success: function (data) {
@@ -153,9 +153,9 @@ class LoginForm extends React.Component {
       <div className={this.props.className}>
         <h3 className='title'>用户登录</h3>
         <Form onSubmit={this.loginSubmit}>
-          <Form.Item help={getFieldError('uid') &&
-            <PromptBox info={getFieldError('uid')} width={calculateWidth(getFieldError('uid'))} />}>
-            {getFieldDecorator('username', {
+          <Form.Item help={getFieldError('id') &&
+            <PromptBox info={getFieldError('id')} width={calculateWidth(getFieldError('id'))} />}>
+            {getFieldDecorator('id', {
               rules: [{ required: true, message: '请输入学工号' }]
             })(
               <Input
