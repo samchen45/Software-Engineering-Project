@@ -14,13 +14,8 @@ mysql -u root -p
 mysql>source SQLScripts/SQLReset.sql
 ```
 
-3. Create stored procedure(s): 
-```
-mysql>source SQLScripts/sp_createUser.sql
-mysql>source SQLScripts/sp_validateLogin.sql
-```
 
-4. Navigate to 
+3. Navigate to 
 ```
 localhost:5002
 ```
