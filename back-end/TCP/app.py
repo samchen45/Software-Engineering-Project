@@ -8,6 +8,7 @@ URLs include:
 from flask import Flask, render_template, json, request, redirect, session
 from flaskext.mysql import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
+import json
 
 mysql = MySQL()
 app = Flask(__name__)
@@ -67,31 +68,36 @@ def showLogin():
     return render_template('login.html')
 
 
-@app.route('/validateLogin', methods=['POST'])
+@app.route('/validateLogin', methods=['POST', 'GET'])
 def validateLogin():
     try:
-        _email = request.form['inputEmail']
-        _password = request.form['inputPassword']
+        # print(request.args.get('username', type=str))
+        _username = request.args.get('username', type=str)
+        _password = request.args.get('password', type=str)
 
         # connect to mysql
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.callproc('sp_validateLogin', (_email,))
+        cursor.callproc('sp_validateLogin', (_username,))
         data = cursor.fetchall()
 
+        ret = {}
+
         if len(data) > 0:
-            print(_email)
-            print(data)
-            print(type(data))
-            print(str(data[0][3]))
-            print(_password)
             if check_password_hash(str(data[0][4]), _password):
                 session['user'] = data[0][0]
-                return redirect('/userhome')
+                # return to frontend
+                ret['info'] = data[0][6]
+                # return redirect('/userhome')
+                return josn.dumps(ret)
             else:
-                return render_template('error.html', error='Wrong Email address or Password.')
+                ret['info'] = 'WRONGPWD'
+                return json.dumps(ret)
+                # return render_template('error.html', error='Wrong Email address or Password.')
         else:
-            return render_template('error.html', error='Wrong Email address or Password.')
+            ret['info'] = 'NULL'
+            return json.dumps(ret)
+            # return render_template('error.html', error='Wrong Email address or Password.')
 
     except Exception as e:
         return render_template('error.html', error=str(e))
