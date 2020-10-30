@@ -18,26 +18,58 @@ class RegisterForm extends React.Component {
     })
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        const users = this.props.appStore.users
-        // 检测用户名是否存在
-        const result = users.find(item => item.username === values.registerUsername)
-        if (result) {
-          this.props.form.setFields({
-            registerUsername: {
-              value: values.registerUsername,
-              errors: [new Error('用户名已存在')]
-            }
-          })
-          return
-        }
+        $.ajax({
+          type: 'POST',
+          url: "/register",
+          data: {
+            name: values.name,
+            id : values.id,
+            password: values.password,
+            email: values.email,
+            phonenum: values.phonenum
+          },
+          success: function (data) {
+            console.log(data)
+            const ret = JSON.parse(data)
+            console.log(ret.info)
+            if (ret.info === 'S' || ret.info === 'T' || ret.info === 'A') {
+              message.info("注册成功！！！");
+              console.log(ret.name);
+              //this.setCookie("username",values.username,15)
+              this.props.appStore.toggleLogin(true, { username: ret.name })
 
-        const obj = [...this.props.appStore.users, {
-          username: values.registerUsername,
-          password: values.registerPassword
-        }]
-        localStorage.setItem('users', JSON.stringify(obj))
-        this.props.appStore.initUsers()
-        message.success('注册成功')
+              const { from } = this.props.location.state || { from: { pathname: '/' } }
+              this.props.history.push(from)
+            }
+            if (ret.info === 'WRONGPWD' || ret.info === 'NULL') {
+              console.log('pwd error!! info is ')
+              console.log(ret.info)
+              message.info("密码错误，请检查你的用户名和密码！！！");
+            }
+
+
+          }.bind(this)
+        });
+        // const users = this.props.appStore.users
+        // // 检测用户名是否存在
+        // const result = users.find(item => item.username === values.registerUsername)
+        // if (result) {
+        //   this.props.form.setFields({
+        //     registerUsername: {
+        //       value: values.registerUsername,
+        //       errors: [new Error('用户名已存在')]
+        //     }
+        //   })
+        //   return
+        // }
+
+        // const obj = [...this.props.appStore.users, {
+        //   username: values.registerUsername,
+        //   password: values.registerPassword
+        // }]
+        // localStorage.setItem('users', JSON.stringify(obj))
+        // this.props.appStore.initUsers()
+        // message.success('注册成功')
       }
     })
   }
@@ -53,12 +85,12 @@ class RegisterForm extends React.Component {
       <div className={this.props.className}>
         <h3 className='title'>用户注册</h3>
         <Form onSubmit={this.registerSubmit}>
-          <Form.Item help={getFieldError('registerUsername') && <PromptBox info={getFieldError('registerUsername')}
-                                                                           width={calculateWidth(getFieldError('registerUsername'))}/>}>
-            {getFieldDecorator('registerUsername', {
+          <Form.Item help={getFieldError('name') && <PromptBox info={getFieldError('name')}
+                                                                           width={calculateWidth(getFieldError('name'))}/>}>
+            {getFieldDecorator('name', {
               validateFirst: true,
               rules: [
-                {required: true, message: '用户名不能为空'},
+                {required: true, message: '姓名不能为空'},
                 {pattern: '^[^ ]+$', message: '不能输入空格'},
               ]
             })(
@@ -66,13 +98,13 @@ class RegisterForm extends React.Component {
                 onFocus={() => this.setState({focusItem: 0})}
                 onBlur={() => this.setState({focusItem: -1})}
                 maxLength={16}
-                placeholder='用户名'
+                placeholder='姓名'
                 addonBefore={<span className='iconfont icon-User' style={focusItem === 0 ? styles.focus : {}}/>}/>
             )}
           </Form.Item>
-          <Form.Item help={getFieldError('registerUserID') && <PromptBox info={getFieldError('registerUserID')}
-                                                                           width={calculateWidth(getFieldError('registerUserID'))}/>}>
-            {getFieldDecorator('registerUserID', {
+          <Form.Item help={getFieldError('id') && <PromptBox info={getFieldError('id')}
+                                                                           width={calculateWidth(getFieldError('id'))}/>}>
+            {getFieldDecorator('id', {
               validateFirst: true,
               rules:[ 
                   {required: true, message: '学工号不能为空'},
@@ -92,9 +124,9 @@ class RegisterForm extends React.Component {
                 addonBefore={<span className='iconfont icon-User' style={focusItem === 1 ? styles.focus : {}}/>}/>
             )}
           </Form.Item>
-          <Form.Item help={getFieldError('registerPassword') && <PromptBox info={getFieldError('registerPassword')}
-                                                                           width={calculateWidth(getFieldError('registerPassword'))}/>}>
-            {getFieldDecorator('registerPassword', {
+          <Form.Item help={getFieldError('password') && <PromptBox info={getFieldError('password')}
+                                                                           width={calculateWidth(getFieldError('password'))}/>}>
+            {getFieldDecorator('password', {
               validateFirst: true,
               rules: [
                 {required: true, message: '密码不能为空'},
@@ -118,7 +150,7 @@ class RegisterForm extends React.Component {
                 {required: true, message: '请确认密码'},
                 {
                   validator: (rule, value, callback) => {
-                    if (value && value !== getFieldValue('registerPassword')) {
+                    if (value && value !== getFieldValue('password')) {
                       callback('两次输入不一致！')
                     }
                     callback()
@@ -135,9 +167,9 @@ class RegisterForm extends React.Component {
                 addonBefore={<span className='iconfont icon-suo1' style={focusItem === 3 ? styles.focus : {}}/>}/>
             )}
           </Form.Item>
-          <Form.Item help={getFieldError('email_address') && <PromptBox info={getFieldError('email_address')}
-                                                                          width={calculateWidth(getFieldError('email_address'))}/>}>
-            {getFieldDecorator('email_address', {
+          <Form.Item help={getFieldError('email') && <PromptBox info={getFieldError('email')}
+                                                                          width={calculateWidth(getFieldError('email'))}/>}>
+            {getFieldDecorator('email', {
               validateFirst: true,
               rules: [
                 {required: true, message: '请输入邮箱'},
@@ -154,15 +186,15 @@ class RegisterForm extends React.Component {
               <Input
                 onFocus={() => this.setState({focusItem: 4})}
                 onBlur={() => this.setState({focusItem: -1})}
-                type='email_address'
+                type='email'
                 maxLength={16}
                 placeholder='邮箱地址'
                 addonBefore={<span className='iconfont icon-suo1' style={focusItem === 4 ? styles.focus : {}}/>}/>
             )}
           </Form.Item>
-          <Form.Item help={getFieldError('phone_num') && <PromptBox info={getFieldError('phone_num')}
-                                                                          width={calculateWidth(getFieldError('phone_num'))}/>}>
-            {getFieldDecorator('phone_num', {
+          <Form.Item help={getFieldError('phonenum') && <PromptBox info={getFieldError('phonenum')}
+                                                                          width={calculateWidth(getFieldError('phonenum'))}/>}>
+            {getFieldDecorator('phonenum', {
               validateFirst: true,
               rules: [
                 {required: true, message: '请输入手机号'},
@@ -179,7 +211,7 @@ class RegisterForm extends React.Component {
               <Input
                 onFocus={() => this.setState({focusItem: 5})}
                 onBlur={() => this.setState({focusItem: -1})}
-                type='phone_num'
+                type='phonenum'
                 maxLength={16}
                 placeholder='手机号'
                 addonBefore={<span className='iconfont icon-suo1' style={focusItem === 5 ? styles.focus : {}}/>}/>

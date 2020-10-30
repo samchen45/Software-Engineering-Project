@@ -78,7 +78,7 @@ class LoginForm extends React.Component {
           return
         }
         console.log('Received values of form: ', values);
-        console.log('姓名: ', values.username)
+        console.log('id: ', values.uid)
         console.log('密码: ', values.password)
         $.ajax({
           type: 'POST',
@@ -91,11 +91,11 @@ class LoginForm extends React.Component {
             console.log(data)
             const ret = JSON.parse(data)
             console.log(ret.info)
-            if (ret.info === 'USER') {
+            if (ret.info === 'S' || ret.info === 'T' || ret.info === 'A') {
               message.info("登录成功！！！");
-              console.log(values.username);
+              console.log(ret.name);
               //this.setCookie("username",values.username,15)
-              this.props.appStore.toggleLogin(true, { username: values.username })
+              this.props.appStore.toggleLogin(true, { username: ret.name })
 
               const { from } = this.props.location.state || { from: { pathname: '/' } }
               this.props.history.push(from)
@@ -153,16 +153,16 @@ class LoginForm extends React.Component {
       <div className={this.props.className}>
         <h3 className='title'>用户登录</h3>
         <Form onSubmit={this.loginSubmit}>
-          <Form.Item help={getFieldError('username') &&
-            <PromptBox info={getFieldError('username')} width={calculateWidth(getFieldError('username'))} />}>
+          <Form.Item help={getFieldError('uid') &&
+            <PromptBox info={getFieldError('uid')} width={calculateWidth(getFieldError('uid'))} />}>
             {getFieldDecorator('username', {
-              rules: [{ required: true, message: '请输入用户名' }]
+              rules: [{ required: true, message: '请输入学工号' }]
             })(
               <Input
                 onFocus={() => this.setState({ focusItem: 0 })}
                 onBlur={() => this.setState({ focusItem: -1 })}
                 maxLength={16}
-                placeholder='用户名'
+                placeholder='学工号'
                 addonBefore={<span className='iconfont icon-User' style={focusItem === 0 ? styles.focus : {}} />} />
             )}
           </Form.Item>
