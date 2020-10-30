@@ -72,7 +72,7 @@ mysql>quit
 
 ### Start backend server
 ```
-python3 back-end/app.py
+python3 back-end/TCP/app.py
 ```
 ### Start frontend server
 ```
