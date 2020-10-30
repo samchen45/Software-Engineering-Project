@@ -9,7 +9,7 @@ class AppStore {
   @action toggleLogin(flag,info={}) {
     this.loginUser = info  //设置登录用户信息
     if (flag) {
-      authenticateSuccess(info.username)
+      authenticateSuccess(info.username,info.id)
       this.isLogin = true
     } else {
       logout()

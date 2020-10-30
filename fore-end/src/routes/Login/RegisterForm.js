@@ -43,7 +43,7 @@ class RegisterForm extends React.Component {
               message.info("注册成功！！！");
               //console.log(ret.name);
               //this.setCookie("username",values.username,15)
-              this.props.appStore.toggleLogin(true, { username: values.name })
+              //this.props.appStore.toggleLogin(true, { username: values.name })
               //const { from } = this.props.location.state || { from: { pathname: '/' } }
               //this.props.history.push(from)
             }

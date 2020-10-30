@@ -95,7 +95,10 @@ class LoginForm extends React.Component {
               message.info("登录成功！！！");
               console.log(ret.name);
               //this.setCookie("username",values.username,15)
-              this.props.appStore.toggleLogin(true, { username: ret.name })
+              this.props.appStore.toggleLogin(true, { 
+                username: ret.name,
+                id:values.id
+              })
 
               const { from } = this.props.location.state || { from: { pathname: '/' } }
               this.props.history.push(from)

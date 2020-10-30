@@ -1,7 +1,8 @@
 import React from 'react'
-import {Card, Cascader, Tooltip, Icon, Form, Checkbox, Select, Input, Button, Col, Row, message, BackTop} from 'antd'
+import {Card,Cascader, Tooltip, Icon, Form, Checkbox, Select, Input, Button, Col, Row, message, BackTop} from 'antd'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
+import { isAuthenticated,isAuthenticatedid } from '../../../utils/Session'
 
 const FormItem = Form.Item
 const Option = Select.Option
@@ -60,7 +61,7 @@ class FormDemo1 extends React.Component {
   state = {
     text: '获取验证码',
     disabled: false,
-
+    
   }
   timer = 0
   countdown = (e) => {
@@ -88,9 +89,24 @@ class FormDemo1 extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (err) {
         message.warning('请先填写正确的表单')
-      } else {
-        message.success('提交成功')
-        // console.log(values)
+      } 
+      else {
+        $.ajax({
+          type: 'POST',
+          url: "/updateinform",
+          data: {
+            name: isAuthenticated(),
+            id: isAuthenticatedid(),
+            password: values.password,
+            password_new: values.password_new,
+            email: values.email,
+            phonenum: values.phonenum
+          },
+          success:function(data){
+            console.log(data);
+            message.info("提交成功")
+          }
+        });
       }
     });
   }
@@ -138,6 +154,12 @@ class FormDemo1 extends React.Component {
         <TypingCard source={cardContent}/>
         <Card bordered={false} title='基础表单'>
           <Form layout='horizontal' style={{width: '70%', margin: '0 auto'}} onSubmit={this.handleSubmit}>
+            <FormItem label='姓名' {...formItemLayout} >
+              <Input disabled = 'true'  defaultValue = {isAuthenticated()}></Input>
+            </FormItem>
+            <FormItem label='学工号' {...formItemLayout} >
+              <Input disabled = 'true'  defaultValue = {isAuthenticatedid()}></Input>
+            </FormItem>
             <FormItem label='邮箱' {...formItemLayout}>
               {
                 getFieldDecorator('email', {
@@ -182,7 +204,33 @@ class FormDemo1 extends React.Component {
                 )
               }
             </FormItem>
-            <FormItem label='确认密码' {...formItemLayout} required>
+            <FormItem label='新密码' {...formItemLayout}>
+              {
+                getFieldDecorator('password_new', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '请输入密码'
+                    },
+                    {
+                      min: 6,
+                      message: '密码至少为6个字符'
+                    },
+                    {
+                      max: 16,
+                      message: '密码最多为16个字符'
+                    },
+                    {
+                      whitespace: true,
+                      message: '密码中不能有空格'
+                    }
+                  ]
+                })(
+                  <Input type='password'/>
+                )
+              }
+            </FormItem>
+            <FormItem label='确认新密码' {...formItemLayout} required>
               {
                 getFieldDecorator('confirm', {
                   rules: [
@@ -192,7 +240,7 @@ class FormDemo1 extends React.Component {
                         if (!getFieldValue('password')) {
                           callback('请先输入上面的密码！')
                         }
-                        if (value && value !== getFieldValue('password')) {
+                        if (value && value !== getFieldValue('password_new')) {
                           callback('两次输入不一致！')
                         }
                         callback()
@@ -204,40 +252,9 @@ class FormDemo1 extends React.Component {
                 )
               }
             </FormItem>
-            <FormItem {...formItemLayout} label={(
-              <span>
-                昵称&nbsp;
-                <Tooltip title='请输入您的昵称'>
-                  <Icon type='question-circle-o'/>
-                </Tooltip>
-              </span>
-            )}>
-              {
-                getFieldDecorator('nickname', {
-                  rules: []
-                })(
-                  <Input/>
-                )
-              }
-            </FormItem>
-            <FormItem label='居住地' {...formItemLayout} required>
-              {
-                getFieldDecorator('residence', {
-                  rules: [
-                    {
-                      type: 'array',
-                      required: true,
-                      message: '请选择居住地'
-                    }
-                  ]
-                })(
-                  <Cascader options={options} expandTrigger="hover" placeholder=''/>
-                )
-              }
-            </FormItem>
             <FormItem label='电话' {...formItemLayout}>
               {
-                getFieldDecorator('phone', {
+                getFieldDecorator('phonenum', {
                   rules: [
                     {
                       len: 11,
