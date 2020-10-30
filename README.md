@@ -63,11 +63,18 @@ Go to the browser and access [http://localhost:15672](http://localhost:15672/) u
 
 ## Connect frontend and backend
 
-1. Start backend server
+### Initialize MySQL
+```
+mysql -u root -p
+mysql>source back-end/SQLScripts/SQLReset.sql
+mysql>quit
+```
+
+### Start backend server
 ```
 python3 back-end/app.py
 ```
-2. Start frontend server
+### Start frontend server
 ```
 cd fore-end
 npm start

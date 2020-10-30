@@ -22,14 +22,14 @@ app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
 
-@app.route('/')
-def showIndex():
-    return render_template('index.html')
+# @app.route('/')
+# def showIndex():
+#     return render_template('index.html')
 
 
-@app.route('/register')
-def showRegister():
-    return render_template('register.html')
+# @app.route('/register')
+# def showRegister():
+#     return render_template('register.html')
 
 
 @app.route('/api/register', methods=['POST'])
@@ -92,13 +92,13 @@ def register():
         conn.close()
 
 
-@app.route('/login')
-def showLogin():
-    return render_template('login.html')
+# @app.route('/login')
+# def showLogin():
+#     return render_template('login.html')
 
 
 @app.route('/api/login', methods=['POST'])
-def validateLogin():
+def login():
     _id = request.form.get('id', type=str)
     _password = request.form.get('password', type=str)
     # connect to mysql
@@ -133,18 +133,55 @@ def validateLogin():
     return json.dumps(msg)
 
 
-@app.route('/userhome')
-def showUserHome():
-    if session.get('user'):
-        return render_template('userHome.html')
+# @app.route('/userhome')
+# def showUserHome():
+#     if session.get('user'):
+#         return render_template('userHome.html')
+#     else:
+#         return render_template('userhome.html')
+
+
+# @app.route('/logout')
+# def logout():
+#     session.pop('user', None)
+#     return redirect('/')
+
+
+@app.route('/api/updateinfo', methods=['POST'])
+def updateInfo():
+    # get parameters from request
+    _id = request.form.get('id', type=str)
+    _name = request.form.get('name', type=str)
+    _email = request.form.get('email', type=str)
+    _password = request.form.get('password', type=str)
+    _password_new = request.form.get('password_new', type=str)
+    _phonenum = request.form.get('phonenum', type=str)
+    # connect to mysql
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM users WHERE id=%s', (_id,))
+    data = cursor.fetchone()
+
+    msg = {}
+    # if user not found
+    if len(data) == 0:
+        msg['info'] = 'NULL'
+        cursor.close()
+        conn.close()
+        return json.dumps(msg)
+    if check_password_hash(str(data[4]), _password):
+        # update info
+        _hashed_password_new = generate_password_hash(_password_new)
+        cursor.execute('UPDATE users SET id=%s, name=%s, email=%s, password=%s, phonenum=%s WHERE id=%s',
+                       (_id, _name, _email, _hashed_password_new, _phonenum, _id))
+        msg['info'] = 'Success!!'
     else:
-        return render_template('userhome.html')
+        # wrong password
+        msg['info'] = 'WRONGPWD'
 
-
-@app.route('/logout')
-def logout():
-    session.pop('user', None)
-    return redirect('/')
+    cursor.close()
+    conn.close()
+    return json.dumps(msg)
 
 
 if __name__ == "__main__":
