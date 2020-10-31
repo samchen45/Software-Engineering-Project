@@ -3,6 +3,7 @@ import {Card,Cascader, Tooltip, Icon, Form, Checkbox, Select, Input, Button, Col
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
 import { isAuthenticated,isAuthenticatedid } from '../../../utils/Session'
+import $ from 'jquery'
 
 const FormItem = Form.Item
 const Option = Select.Option
@@ -155,10 +156,10 @@ class FormDemo1 extends React.Component {
         <Card bordered={false} title='基础表单'>
           <Form layout='horizontal' style={{width: '70%', margin: '0 auto'}} onSubmit={this.handleSubmit}>
             <FormItem label='姓名' {...formItemLayout} >
-              <Input disabled = 'true'  defaultValue = {isAuthenticated()}></Input>
+              <Input disabled = {true}  defaultValue = {isAuthenticated()}></Input>
             </FormItem>
             <FormItem label='学工号' {...formItemLayout} >
-              <Input disabled = 'true'  defaultValue = {isAuthenticatedid()}></Input>
+              <Input disabled = {true}  defaultValue = {isAuthenticatedid()}></Input>
             </FormItem>
             <FormItem label='邮箱' {...formItemLayout}>
               {
