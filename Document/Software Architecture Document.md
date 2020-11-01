@@ -53,7 +53,7 @@
 
 ## 6 进程视图
 
-  暂略
+  ![RUNOOB 进程](https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/%E8%BF%9B%E7%A8%8B%E8%A7%86%E5%9B%BE.png)
 
 ## 7 部署视图
 
