@@ -1,6 +1,6 @@
 # Software Requirements Document-软件需求文档
 
-version：0.1.2
+version：1.0
 
 ## 1. 简介
 
@@ -20,7 +20,8 @@ version：0.1.2
 
 ### 2.1用例建模
 
-如下图所示：
+ ![RUNOOB 用例](https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/%E7%94%A8%E4%BE%8B%E8%A7%86%E5%9B%BE.png)
+ 冲刺一主要完成注册登录，用户信息管理和课程相关功能
 
 ## 3.具体说明
 
