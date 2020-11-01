@@ -22,16 +22,16 @@ const menus = [
     icon: 'edit',
     key: '/home/entry',
     subs: [
-      {
-        key: '/home/entry/basic-form',
-        title: '个人信息修改',
-        icon: '',
-      },
       // {
       //   key: '/home/entry/step-form',
       //   title: '个人信息一览',
       //   icon: '',
       // },
+      {
+        key: '/home/entry/basic-form',
+        title: '个人信息修改',
+        icon: '',
+      },
       // {key: '/home/entry/upload', title: '上传', icon: ''},
     ]
   },
@@ -40,10 +40,10 @@ const menus = [
     icon: 'desktop',
     key: '/home/display',
     subs: [
-      {key: '/home/display/carousel', title: '轮播图', icon: ''},
+      {key: '/home/display/table', title: '课程管理', icon: ''},
       {key: '/home/display/collapse', title: '折叠面板', icon: ''},
       {key: '/home/display/list', title: '列表', icon: ''},
-      {key: '/home/display/table', title: '表格', icon: ''},
+      {key: '/home/display/carousel', title: '表格', icon: ''},
       {key: '/home/display/tabs', title: '标签页', icon: '',},
     ]
   },

@@ -258,7 +258,17 @@ class TableDemo extends React.Component {
       address: 'London, Park Lane no. 1',
     }],
     count: 2,
-    data8,
+    data8:[{
+      key: '0',
+      c_name: 'Chinese',
+      info: '上海交大语文课程，你值得拥有',
+      book: '美的探索-xxx著',
+    }, {
+      key: '1',
+      c_name: 'Math',
+      info: '上海交大数学课程，你值得拥有',
+      book: '高等数学',
+    }],
     editingKey: '',
   }
 
@@ -295,21 +305,21 @@ class TableDemo extends React.Component {
   ]
   columns8 = [
     {
-      title: 'name',
-      dataIndex: 'name',
+      title: '课程名',
+      dataIndex: 'c_name',
       width: '25%',
       editable: true,
     },
     {
-      title: 'age',
-      dataIndex: 'age',
-      width: '15%',
+      title: '课程介绍',
+      dataIndex: 'info',
+      width: '35%',
       editable: true,
     },
     {
-      title: 'address',
-      dataIndex: 'address',
-      width: '40%',
+      title: '参考文献',
+      dataIndex: 'book',
+      width: '25%',
       editable: true,
     },
     {
@@ -332,12 +342,18 @@ class TableDemo extends React.Component {
                       </a>
                     )}
                   </EditableContext.Consumer>
+                  {this.state.data7.length > 1 ?
+                  <Popconfirm title="Sure to delete?" onConfirm={() => this.onDelete(record.key)}>
+                  <a>Delete     </a>
+                  </Popconfirm> : null
+                  }
                   <Popconfirm
                     title="Sure to cancel?"
                     onConfirm={() => this.cancel(record.key)}
                   >
                     <a>Cancel</a>
                   </Popconfirm>
+                  
                 </span>
             ) : (
               <a onClick={() => this.edit(record.key)}>Edit</a>
@@ -408,21 +424,21 @@ class TableDemo extends React.Component {
     })
   }
   onDelete = (key) => {
-    const arr = this.state.data7.slice()
+    const arr = this.state.data8.slice()
     this.setState({
-      data7: arr.filter(item => item.key !== key)
+      data8: arr.filter(item => item.key !== key)
     })
   }
   handleAdd = () => {
-    const {data7, count} = this.state //本来想用data7的length来代替count，但是删除行后，length会-1
+    const {data8, count} = this.state //本来想用data7的length来代替count，但是删除行后，length会-1
     const newData = {
       key: count,
-      name: `Edward King ${count}`,
-      age: 32,
-      address: `London, Park Lane no. ${count}`,
+      c_name: 'new_course',
+      info: 'introction',
+      book: 'book',
     };
     this.setState({
-      data7: [...data7, newData],
+      data8: [...data8, newData],
       count: count + 1
     })
   }
@@ -520,14 +536,14 @@ class TableDemo extends React.Component {
       };
     });
     const cardContent = `<ul class="card-ul">
-            <li>当有大量结构化的数据需要展现时</li>
-            <li>标当需要对数据进行排序、搜索、分页、自定义操作等复杂行为时</li>
+            <li>教师课程功能界面</li>
+            <li>可以对课程内容进行增删改查</li>
           </ul>`
     return (
       <div>
-        <CustomBreadcrumb arr={['显示', '表格']}/>
+        <CustomBreadcrumb arr={['课程功能', '课程管理']}/>
         <TypingCard id='howUse' source={cardContent} height={178}/>
-        <Card bordered={false} title='基本用法' style={{marginBottom: 10}} id='basicUsage'>
+        {/* <Card bordered={false} title='基本用法' style={{marginBottom: 10}} id='basicUsage'>
           <Table dataSource={data} columns={columns} style={styles.tableStyle}/>
         </Card>
         <Card bordered={false} title='可选择' style={{marginBottom: 10, minHeight: 762}} id='select'>
@@ -557,17 +573,17 @@ class TableDemo extends React.Component {
         <Card bordered={false} title='固定头和列' style={{marginBottom: 10, minHeight: 440}} id='fixed'>
           <Table dataSource={data6} columns={columns6} style={styles.tableStyle}
                  scroll={{x: 1500, y: 500}}/>
-        </Card>
+        </Card> */}
         <Card bordered={false} title='可编辑的表格' style={{marginBottom: 10, minHeight: 440}} id='editTable'>
           <p>
-            <Button onClick={this.handleAdd}>添加行</Button>
+            <Button onClick={this.handleAdd}>添加课程</Button>
           </p>
-          <Table bordered dataSource={this.state.data7} columns={this.columns7} style={styles.tableStyle}/>
+          {/* <Table bordered dataSource={this.state.data7} columns={this.columns7} style={styles.tableStyle}/> */}
           <Table style={styles.tableStyle} components={components} bordered dataSource={this.state.data8}
                  columns={columns8}/>
         </Card>
         <BackTop visibilityHeight={200} style={{right: 50}}/>
-        <Affix style={styles.affixBox}>
+        {/* <Affix style={styles.affixBox}>
           <Anchor offsetTop={50} affix={false}>
             <Anchor.Link href='#howUse' title='何时使用'/>
             <Anchor.Link href='#basicUsage' title='基本用法'/>
@@ -578,7 +594,7 @@ class TableDemo extends React.Component {
             <Anchor.Link href='#fixed' title='固定头和列'/>
             <Anchor.Link href='#editTable' title='可编辑的表格'/>
           </Anchor>
-        </Affix>
+        </Affix> */}
       </div>
     )
   }
