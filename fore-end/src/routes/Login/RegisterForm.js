@@ -196,6 +196,7 @@ class RegisterForm extends React.Component {
                 onFocus={() => this.setState({ focusItem: 4 })}
                 onBlur={() => this.setState({ focusItem: -1 })}
                 type='email'
+                
                 placeholder='邮箱地址'
                 addonBefore={<span className='iconfont icon-suo1' style={focusItem === 4 ? styles.focus : {}} />} />
             )}
