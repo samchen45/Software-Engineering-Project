@@ -63,6 +63,6 @@
 
 ## 8 实施视图
 
-  ![RUNOOB 部署](https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/%E5%AE%9E%E6%96%BD%E8%A7%86%E5%9B%BE.png)
+  ![RUNOOB 实施](https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/%E5%AE%9E%E6%96%BD%E8%A7%86%E5%9B%BE.png)
 
 
