@@ -48,7 +48,8 @@
 
 ## 5 逻辑视图
 
-  暂略
+  采用B/S架构，整个系统逻辑图如下所示：
+  ![RUNOOB 逻辑](https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/%E9%80%BB%E8%BE%91%E8%A7%86%E5%9B%BE.png)
 
 ## 6 进程视图
 
