@@ -57,18 +57,12 @@
 
 ## 7 部署视图
 
-  暂略
+  ![RUNOOB 部署](https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/%E9%83%A8%E7%BD%B2%E8%A7%86%E5%9B%BE.png)
 
   本软件使用的设备主要有客户机和服务器。前端和后端功能分别在两者上实现。
 
 ## 8 实施视图
 
-  暂略
+  ![RUNOOB 部署](https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/%E5%AE%9E%E6%96%BD%E8%A7%86%E5%9B%BE.png)
 
-## 9 大小和性能
 
-  暂略
-
-## 10 质量
-
-  暂略
