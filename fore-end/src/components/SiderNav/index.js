@@ -27,12 +27,12 @@ const menus = [
         title: '个人信息修改',
         icon: '',
       },
-      {
-        key: '/home/entry/step-form',
-        title: '个人信息一览',
-        icon: '',
-      },
-      {key: '/home/entry/upload', title: '上传', icon: ''},
+      // {
+      //   key: '/home/entry/step-form',
+      //   title: '个人信息一览',
+      //   icon: '',
+      // },
+      // {key: '/home/entry/upload', title: '上传', icon: ''},
     ]
   },
   {
