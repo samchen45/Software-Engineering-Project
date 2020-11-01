@@ -24,5 +24,16 @@ version 1.0
 | 课程功能（老师） | 通过excel批量导入学生信息 | 前端与数据库识别成功，判断成功修改，UI重新显示 | 功能未完成 | 错误 | 进度原因未能完成 |
 | 课程功能（学生） | 查看搜索筛选课程（所有，进行中，未完成）| 前端与数据库识别成功，根据条件显示 | 前端与数据库识别成功，根据条件显示 | 成功 | 无 |
 
-### 2.2 非功能测试
+界面效果如下：
+登录界面：
+![RUNOOB 登录](https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/%E7%99%BB%E5%BD%95%E7%95%8C%E9%9D%A2%EF%BC%88%E5%86%B2%E5%88%BA1%EF%BC%89.PNG)
+注册界面：
+![RUNOOB 注册](https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/%E6%B3%A8%E5%86%8C%E7%95%8C%E9%9D%A2%EF%BC%88%E5%86%B2%E5%88%BA1%EF%BC%89.PNG)
+个人信息管理界面：
+![RUNOOB 个人信息](https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%81%AF%E7%95%8C%E9%9D%A2%EF%BC%88%E5%86%B2%E5%88%BA1%EF%BC%89.PNG)
+老师课程功能界面：
+![RUNOOB 老师课程](https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/%E8%AF%BE%E7%A8%8B_%E6%95%99%E5%B8%88%E5%8A%9F%E8%83%BD%EF%BC%88%E5%86%B2%E5%88%BA1%EF%BC%89.PNG)
+学生课程功能界面：
+![RUNOOB 学生课程](https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/%E8%AF%BE%E7%A8%8B_%E5%AD%A6%E7%94%9F%E5%8A%9F%E8%83%BD%EF%BC%88%E5%86%B2%E5%88%BA1%EF%BC%89.PNG)
+### 2.3 非功能测试
 进度原因未完成相关测试
