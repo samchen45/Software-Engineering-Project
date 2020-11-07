@@ -15,12 +15,6 @@ mysql = TCP.mysql
 app = TCP.app
 app.secret_key = 'secret'
 
-# # MySQL configurations
-# app.config['MYSQL_DATABASE_USER'] = 'TCPAdmin'
-# app.config['MYSQL_DATABASE_PASSWORD'] = 'password'
-# app.config['MYSQL_DATABASE_DB'] = 'TCPDB'
-# app.config['MYSQL_DATABASE_HOST'] = 'localhost'
-
 mysql.init_app(app)
 
 
@@ -70,7 +64,7 @@ def register():
             code = utils.send_email_captcha(_email)
             # verify email captcha
             #TODO
-            _code = request.form.get('code', type=int) 
+            _code = request.form.get('code', type=int)
             if code != _code:
                 msg['info'] = 'ERROR: wrong verification code!! Please check again.'
                 return json.dumps(msg)
@@ -194,14 +188,10 @@ def updateInfo():
     return json.dumps(msg)
 
 
-
-
-
-@app.route('/')
-def sendemail():
-    utils.send_email_captcha('psypengsiyuan@vip.qq.com')
-    return '<h1>邮件发送成功</h1>'
-    
+# @app.route('/')
+# def sendemail():
+#     utils.send_email_captcha('psypengsiyuan@vip.qq.com')
+#     return '<h1>邮件发送成功</h1>'
 
 
 if __name__ == "__main__":
