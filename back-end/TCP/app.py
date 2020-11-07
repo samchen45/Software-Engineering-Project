@@ -6,16 +6,21 @@ from flask import Flask, render_template, json, request, redirect, session
 from flaskext.mysql import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
+import TCP
+import utils
 
-mysql = MySQL()
-app = Flask(__name__)
+# mysql = MySQL()
+# app = Flask(__name__)
+mysql = TCP.mysql
+app = TCP.app
 app.secret_key = 'secret'
 
-# MySQL configurations
-app.config['MYSQL_DATABASE_USER'] = 'TCPAdmin'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'password'
-app.config['MYSQL_DATABASE_DB'] = 'TCPDB'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+# # MySQL configurations
+# app.config['MYSQL_DATABASE_USER'] = 'TCPAdmin'
+# app.config['MYSQL_DATABASE_PASSWORD'] = 'password'
+# app.config['MYSQL_DATABASE_DB'] = 'TCPDB'
+# app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+
 mysql.init_app(app)
 
 
@@ -45,7 +50,7 @@ def register():
         msg = {}
 
         # validate the received values
-        if _name and _email and _password and _email and _password and _phonenum:
+        if _id and _email and _password and _name and _phonenum:
             # check if user already exists
             cursor.execute('SELECT * FROM users WHERE id=%s', (_id,))
             if len(cursor.fetchall()) != 0:
@@ -61,6 +66,15 @@ def register():
                 msg['info'] = 'error: id and name do not match in school database!!'
                 return json.dumps(msg)
             _type = str(data[2])
+            # send email captcha
+            code = utils.send_email_captcha(_email)
+            # verify email captcha
+            #TODO
+            _code = request.form.get('code', type=int) 
+            if code != _code:
+                msg['info'] = 'ERROR: wrong verification code!! Please check again.'
+                return json.dumps(msg)
+
             # create new user and store in TCPDB
             _hashed_password = generate_password_hash(_password)
             # cursor.callproc('sp_createUser', (_name, _email, _hashed_password))
@@ -69,7 +83,6 @@ def register():
             conn.commit()
             msg['info'] = _type
             msg['name'] = _name
-            # msg['type'] = _type
             return json.dumps(msg)
 
             # data = cursor.fetchall()
@@ -179,6 +192,16 @@ def updateInfo():
     cursor.close()
     conn.close()
     return json.dumps(msg)
+
+
+
+
+
+@app.route('/')
+def sendemail():
+    utils.send_email_captcha('psypengsiyuan@vip.qq.com')
+    return '<h1>邮件发送成功</h1>'
+    
 
 
 if __name__ == "__main__":

@@ -72,7 +72,9 @@ mysql>quit
 
 ### Start backend server
 ```
-python3 back-end/TCP/app.py
+source env/bin/activate
+pip install .
+python TCP/app.py
 ```
 ### Start frontend server
 ```
