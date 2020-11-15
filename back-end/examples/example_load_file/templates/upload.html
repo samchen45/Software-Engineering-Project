@@ -8,9 +8,12 @@
     <h1>文件上传示例</h1>
     <form id="form1" method="post" action="/api/upload" enctype="multipart/form-data">
         <div>
-            <input id="File1" type="file" name="myfile"/>  <!--后台代码中获取文件是通过form的name来标识的-->
+            <input id="File1" type="file" name="myfile"/>  
             <input type="submit">提交</input>
         </div>
     </form>
+    <a href="/api/download/1.png">下载 已提交文件</a>
+
+    
 </body>
 </html>
