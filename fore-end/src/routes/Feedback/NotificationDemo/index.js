@@ -1,8 +1,10 @@
 import React from 'react'
-import {Card,Col,Row,Button,Tooltip,notification,Select} from 'antd'
+import {Card, Button, Form, Modal, Upload, Icon, Input, Tooltip, Col,Row,notification,Select} from 'antd'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
+import FormItem from 'antd/lib/form/FormItem'
 
+const {TextArea} = Input
 class NotificationDemo extends React.Component{
   state = {
     placement:''
@@ -31,12 +33,32 @@ class NotificationDemo extends React.Component{
   }
   render(){
     const placement = this.state.placement
+    /*
     const cardContent = ` 在系统四个角显示通知提醒信息。经常用于以下情况：
           <ul class="card-ul">
             <li>较为复杂的通知内容</li>
             <li>带有交互的通知，给出用户下一步的行动点</li>
             <li>系统主动推送</li>
           </ul>`
+    */
+   const cardContent = ` 这个页面用于布置作业。 `
+    return (
+      <div>
+        <CustomBreadcrumb arr={['作业','布置作业']}/>
+        <TypingCard source={cardContent}/>
+        <form>
+          <Form.Item label = '选择课程'><Select placeholder='选择课程'><Option>课程1</Option><Option>课程2</Option><Option>课程3</Option></Select></Form.Item>
+          <Form.Item label = '作业名称'><Input placeholder='作业名称'/></Form.Item>
+          <Form.Item label = '作业描述'><TextArea placeholder='作业描述' rows={4}/></Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              提交
+            </Button>
+          </Form.Item>
+        </form>
+      </div>
+    )
+    /*
     return (
       <div>
         <CustomBreadcrumb arr={['反馈','通知提醒框']}/>
@@ -92,6 +114,7 @@ class NotificationDemo extends React.Component{
         </Row>
       </div>
     )
+    */
   }
 }
 
