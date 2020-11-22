@@ -23,6 +23,12 @@ version 1.0
 | 课程功能（老师） | 增删改查课程学生 | 数据库识别成功，判断成功修改，UI重新显示 | 数据库识别成功，判断成功修改，UI重新显示 | 正确 | 无 |
 | 课程功能（老师） | 通过excel批量导入学生信息 | 前端与数据库识别成功，判断成功修改，UI重新显示 | 功能未完成 | 错误 | 进度原因未能完成 |
 | 课程功能（学生） | 查看搜索筛选课程（所有，进行中，未完成）| 前端与数据库识别成功，根据条件显示 | 前端与数据库识别成功，根据条件显示 | 成功 | 无 |
+| 作业功能（老师） | 发布作业 | 前端与数据库识别成功，发布成功 | 前端与数据库识别成功，发布成功 | 成功 | 无 |
+| 作业功能（学生） | 发布作业收到通知 | 前端与数据库识别成功，成功收到通知 | 功能未完成 | 错误 | 进度原因未能完成 |
+| 作业功能（学生） | 作业提交 | 前端发起请求，数据库成功存入url，作业存到服务器，更新提交状态 | 前端发起请求，数据库成功存入url，作业存到服务器 | 成功 | 进度原因烬模拟了图片，且前端ui还有bug |
+| 作业功能（老师） | 作业下载 | 前端与数据库识别成功，获取作业下载 | 后端能够下载，但前后端交互还有问题 | 错误 | 进度原因前后端交互的开发出现问题 |
+| 作业功能（老师） | 批改分数修改 | 前端与数据库识别成功，数据库更新分数 | 前端与数据库识别成功，数据库更新分数 | 正确 | 无 |
+| 作业功能（学生） | 批改分数查看 | 前端与数据库识别成功，UI更新分数 | 前端与数据库识别成功，UI更新分数 | 正确 | 无 |
 
 界面效果如下：
 登录界面：
@@ -35,5 +41,13 @@ version 1.0
 ![RUNOOB 老师课程](https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/%E8%AF%BE%E7%A8%8B_%E6%95%99%E5%B8%88%E5%8A%9F%E8%83%BD%EF%BC%88%E5%86%B2%E5%88%BA1%EF%BC%89.PNG)
 学生课程功能界面：
 ![RUNOOB 学生课程](https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/%E8%AF%BE%E7%A8%8B_%E5%AD%A6%E7%94%9F%E5%8A%9F%E8%83%BD%EF%BC%88%E5%86%B2%E5%88%BA1%EF%BC%89.PNG)
+老师作业布置功能界面：  
+![RUNOOB 布置作业](https://github.com/samchen45/Software-Engineering-Project/blob/sprint2/Document/pic/%E4%BD%9C%E4%B8%9A%E5%B8%83%E7%BD%AE%EF%BC%88%E5%86%B2%E5%88%BA2%EF%BC%89.PNG)
+学生作业查看界面：  
+![RUNOOB 学生作业查看](https://github.com/samchen45/Software-Engineering-Project/blob/sprint2/Document/pic/%E4%BD%9C%E4%B8%9A%E5%8A%9F%E8%83%BD1%EF%BC%88%E5%86%B2%E5%88%BA2%EF%BC%89.PNG)
+学生作业提交模态框：  
+![RUNOOB 学生作业提交](https://github.com/samchen45/Software-Engineering-Project/blob/sprint2/Document/pic/%E4%BD%9C%E4%B8%9A%E5%8A%9F%E8%83%BD2%EF%BC%88%E5%86%B2%E5%88%BA2%EF%BC%89.PNG)
+老师批改界面：  
+![RUNOOB 老师作业批改](https://github.com/samchen45/Software-Engineering-Project/blob/sprint2/Document/pic/%E4%BD%9C%E4%B8%9A%E6%89%B9%E6%94%B9%EF%BC%88%E5%86%B2%E5%88%BA2%EF%BC%89.PNG)
 ### 2.3 非功能测试
 进度原因未完成相关测试
