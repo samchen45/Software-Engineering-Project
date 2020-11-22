@@ -1,24 +1,79 @@
-import React from 'react'
-import {Card, Col, Row, Spin, Icon, Alert, Switch, Button} from 'antd'
+import React, { useState } from 'react'
+import { Card, Col, Row, Spin, Icon, Alert, Switch, Select, Button, Table, Input, Divider } from 'antd'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
 
+const { Option } = Select;
+
+
+const LectureId = ['课程1', '课程2'];
+const HomeworkId = {
+  课程1: ['课程1作业1', '课程1作业2', '课程1作业3'],
+  课程2: ['课程2作业1', '课程2作业2', '课程2作业3', '课程2作业4'],
+};
+
 class SpinDemo extends React.Component {
   state = {
-    loading: false,
-    loading2: false
+    //loading: false,
+    //loading2: false
+    lecture: HomeworkId[LectureId[0]],
+    homework: HomeworkId[LectureId[0]][0],
+    submissions: [
+      {id: '1', name: '张三'},
+      {id: '2', name: '李四'},
+    ]
   }
-  componentWillMount(){
+
+  columns7 = [
+    {
+      title: '学号',
+      dataIndex: 'id',
+      width: '20%',
+    },
+    {
+      title: '姓名',
+      dataIndex: 'name',
+      width: '15%',
+    },
+    {
+      title: '查看作业',
+      dataIndex: 'file',
+      width: '30%',
+      render: (text, record) => {
+        return <a href='#'>作业链接</a>
+      }
+    },
+    {
+      title: '评分',
+      dataIndex: 'score',
+      render: (text, record) => {
+        return (
+          <div>
+            <Input></Input>
+          </div>
+        )
+      }
+    },
+    {
+      title: '操作',
+      width: '10%',
+      render: ()=>{
+        return <Button>确认</Button>
+      }
+    }
+  ]
+
+  componentWillMount() {
     //页面路由加载的进度条，React有没有方法可以使路由加载自动调用这个方法，避免在每个页面都设置
     //vue有方法可以实现https://segmentfault.com/q/1010000006653683/a-1020000007724198
     NProgress.start()
   }
-  componentDidMount(){
+  componentDidMount() {
     NProgress.done()
   }
-  componentWillUnmount(){
+  componentWillUnmount() {
     //这里是防止下面调用NProgress.start()方法后离开组件后还未关闭
     NProgress.done()
   }
@@ -36,53 +91,106 @@ class SpinDemo extends React.Component {
   }
 
   render() {
-    const loading2 = this.state.loading2
+    //const loading2 = this.state.loading2
+    const lecture = this.state.lecture
+    const homework = this.state.homework
+
+    const setLectures = value => {
+      this.setState({ lecture: value })
+    }
+    const setHomework = value => {
+      this.setState({ homework: value })
+      //更新作业列表
+    }
+
+    const handleLectureChange = value => {
+      setLectures(HomeworkId[value]);
+      setHomework(HomeworkId[value][0]);
+    };
+
+    const onHomeworkChange = value => {
+      setHomework(value);
+    };
+
     return (
       <div>
-        <CustomBreadcrumb arr={['反馈','加载中']}/>
-        <TypingCard source='页面局部处于等待异步数据或正在渲染过程时，合适的加载动效会有效缓解用户的焦虑。'/>
-        <Row gutter={16}>
-          <Col span={12}>
-            <Card bordered={false} className='card-item'>
-              <Spin/>&emsp;
-              <Spin indicator={<Icon type='loading'/>}/>
-            </Card>
-            <Card bordered={false} className='card-item'>
-              <Spin tip="Loading...">
+        <CustomBreadcrumb arr={['作业', '批改作业']} />
+        <TypingCard source='该页面用于教师批改作业。' />
+        <Card bordered={false}>
+          <p>选择课程与作业</p>
+          <Select defaultValue={LectureId[0]} style={{ width: 240 }} onChange={handleLectureChange}>
+            {LectureId.map(province => (
+              <Option key={province}>{province}</Option>
+            ))}
+          </Select>
+          
+          <Select style={{ width: 480, margin: 20 }} value={homework} onChange={onHomeworkChange}>
+            {lecture.map(city => (
+              <Option key={city}>{city}</Option>
+            ))}
+          </Select>
+          <Divider/>
+          <p>批改作业</p>
+          <Table style={styles.tableStyle} bordered dataSource={this.state.submissions}
+            columns={this.columns7} />
+        </Card>
+      </div>
+      /*
+      <Row gutter={16}>
+        <Col span={12}>
+          <Card bordered={false} className='card-item'>
+            <Spin/>&emsp;
+            <Spin indicator={<Icon type='loading'/>}/>
+          </Card>
+          <Card bordered={false} className='card-item'>
+            <Spin tip="Loading...">
+              <Alert
+                message="Alert message title"
+                description="Further details about the context of this alert."
+                type="info"
+              />
+            </Spin>
+          </Card>
+          <Card bordered={false} className='card-item'>
+            <Button onClick={this.NProgressStart} loading={loading2}>页面顶部进度条加载</Button>&emsp;
+            <Button onClick={this.NProgressDone}>顶部进度条加载完成</Button>
+          </Card>
+        </Col>
+        <Col span={12}>
+          <Card bordered={false} className='card-item'>
+            <Spin size='small'/>&emsp;
+            <Spin/>&emsp;
+            <Spin size='large'/>
+          </Card>
+          <Card bordered={false} className='card-item'>
+            <div style={{marginBottom: '1em'}}>
+              <Spin tip="Loading..." spinning={this.state.loading}>
                 <Alert
                   message="Alert message title"
                   description="Further details about the context of this alert."
                   type="info"
                 />
               </Spin>
-            </Card>
-            <Card bordered={false} className='card-item'>
-              <Button onClick={this.NProgressStart} loading={loading2}>页面顶部进度条加载</Button>&emsp;
-              <Button onClick={this.NProgressDone}>顶部进度条加载完成</Button>
-            </Card>
-          </Col>
-          <Col span={12}>
-            <Card bordered={false} className='card-item'>
-              <Spin size='small'/>&emsp;
-              <Spin/>&emsp;
-              <Spin size='large'/>
-            </Card>
-            <Card bordered={false} className='card-item'>
-              <div style={{marginBottom: '1em'}}>
-                <Spin tip="Loading..." spinning={this.state.loading}>
-                  <Alert
-                    message="Alert message title"
-                    description="Further details about the context of this alert."
-                    type="info"
-                  />
-                </Spin>
-              </div>
-              Loading state：<Switch onChange={(checked) => this.setState({loading: checked})}/>
-            </Card>
-          </Col>
-        </Row>
-      </div>
+            </div>
+            Loading state：<Switch onChange={(checked) => this.setState({loading: checked})}/>
+          </Card>
+        </Col>
+      </Row>
+      */
+
     )
+  }
+}
+
+const styles = {
+  tableStyle: {
+    width: '80%'
+  },
+  affixBox: {
+    position: 'absolute',
+    top: 100,
+    right: 50,
+    with: 170
   }
 }
 

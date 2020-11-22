@@ -1,10 +1,11 @@
 import React from 'react'
-import {Card, Button, Form, Modal, Upload, Icon, Input, Tooltip, Col,Row,notification,Select} from 'antd'
+import {Card, Button, Form, Modal, Upload, Icon, Input, Tooltip, Col, Row, notification, Select} from 'antd'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
 import FormItem from 'antd/lib/form/FormItem'
 
 const {TextArea} = Input
+const {Option} = Select;
 class NotificationDemo extends React.Component{
   state = {
     placement:''
@@ -42,12 +43,20 @@ class NotificationDemo extends React.Component{
           </ul>`
     */
    const cardContent = ` 这个页面用于布置作业。 `
+   
     return (
       <div>
         <CustomBreadcrumb arr={['作业','布置作业']}/>
         <TypingCard source={cardContent}/>
-        <form>
-          <Form.Item label = '选择课程'><Select placeholder='选择课程'><Option>课程1</Option><Option>课程2</Option><Option>课程3</Option></Select></Form.Item>
+        <Card>
+        <Form>
+          <Form.Item label = '选择课程'>
+            <Select placeholder='选择课程'>
+              <Select.Option value = '1'>课程1</Select.Option>
+              <Select.Option value = '2'>课程2</Select.Option>
+              <Select.Option value = '3'>课程3</Select.Option>
+            </Select>
+          </Form.Item>
           <Form.Item label = '作业名称'><Input placeholder='作业名称'/></Form.Item>
           <Form.Item label = '作业描述'><TextArea placeholder='作业描述' rows={4}/></Form.Item>
           <Form.Item>
@@ -55,9 +64,11 @@ class NotificationDemo extends React.Component{
               提交
             </Button>
           </Form.Item>
-        </form>
+        </Form>
+        </Card>
       </div>
     )
+    
     /*
     return (
       <div>
@@ -115,6 +126,7 @@ class NotificationDemo extends React.Component{
       </div>
     )
     */
+    
   }
 }
 
