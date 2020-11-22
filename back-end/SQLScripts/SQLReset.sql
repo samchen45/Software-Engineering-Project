@@ -8,7 +8,8 @@ CREATE USER 'TCPAdmin'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL ON TCPDB.* TO 'TCPAdmin'@'localhost';
 
 use TCPDB;
-/* TABLES */
+
+/* USERS TABLES */
 DROP TABLE IF EXISTS `TCPDB`.`users`;
 CREATE TABLE `TCPDB`.`users` (
   `uid` INT AUTO_INCREMENT,
@@ -21,6 +22,7 @@ CREATE TABLE `TCPDB`.`users` (
   PRIMARY KEY (`uid`)
 );
 
+/* PEOPLE TABLE */
 DROP TABLE IF EXISTS `TCPDB`.`people`;
 CREATE TABLE `TCPDB`.`people` (
   `id` VARCHAR(20),
@@ -45,6 +47,27 @@ DROP TABLE IF EXISTS `TCPDB`.`choose`;
 CREATE TABLE `TCPDB`.`choose` (
   `id` VARCHAR(20) NOT NULL,
   `cid` VARCHAR(20) NOT NULL
+);
+
+/* HOMEWORK TABLE */
+DROP TABLE IF EXISTS `TCPDB`.`homeworks`;
+CREATE TABLE `TCPDB`.`homeworks` (
+  `cid` VARCHAR(20) NOT NULL,
+  `hid` VARCHAR(20) NOT NULL,
+  `hname` VARCHAR(20) NULL,
+  `hdes` VARCHAR(500) NULL,
+  PRIMARY KEY (`cid`, `hid`)
+);
+
+/* SUBMIT HOMEWORK TABLE */
+DROP TABLE IF EXISTS `TCPDB`.`submit`;
+CREATE TABLE `TCPDB`.`submit` (
+  `hid` VARCHAR(20) NOT NULL,
+  `uid` VARCHAR(20) NOT NULL,
+  `hurl` VARCHAR(100) NULL,
+  `hstatus` BOOLEAN DEFAULT FALSE,
+  `score` DOUBLE(5,2),
+  PRIMARY KEY (`hid`, `uid`)
 );
 
 /* GENERATE TEST STUDENT */
@@ -95,6 +118,40 @@ INSERT INTO courses (
   cid, cname, cteacher, cmessage, cref
 )
 VALUES (
-  rand_string(5), 'math', 'teacher', 
-  'course message', 'course reference'
+  'abc101', 'math', 'teacher', 
+  'math course message', 'math course reference'
+);
+
+INSERT INTO courses (
+  cid, cname, cteacher, cmessage, cref
+)
+VALUES (
+  'abc102', 'english', 'teacher', 
+  'english course message', 'english course reference'
+);
+
+/* GENERATE TEST HOMEWORK */
+INSERT INTO homeworks (
+  cid, hid, hname, hdes
+)
+VALUES (
+  'abc101', 'math1', 'calculation', 
+  'math homework1'
+);
+
+INSERT INTO homeworks (
+  cid, hid, hname, hdes
+)
+VALUES (
+  'abc102', 'english1', 'pronunciation', 
+  'english homework1'
+);
+
+/* GENERATE TEST SUBMIT */
+INSERT INTO submit (
+  hid, uid, hurl, hstatus, score
+)
+VALUES (
+  'math1', '10000', 'homework/abc101/math1/10000/', 
+  TRUE, 90.000001
 );
