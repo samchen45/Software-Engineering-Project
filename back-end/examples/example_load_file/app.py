@@ -37,7 +37,7 @@ def api_upload():
         unix_time = int(time.time())
         new_filename = str(unix_time)+'.'+ext  # 修改了上传的文件名
         
-        f.save(os.path.join(file_dir, new_filename  ))  # 保存文件到UPLOAD_FOLDER
+        f.save(os.path.join(file_dir, new_filename))  # 保存文件到UPLOAD_FOLDER
         # return render_template('upload.html', status='OK')
         return jsonify({"errno": 0, "errmsg": "上传成功"})
     else:

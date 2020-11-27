@@ -34,7 +34,7 @@ CREATE TABLE `TCPDB`.`people` (
 /* COURSE TABLE */
 DROP TABLE IF EXISTS `TCPDB`.`courses`;
 CREATE TABLE `TCPDB`.`courses` (
-  `cid` VARCHAR(20) NOT NULL,
+  `cid` INT AUTO_INCREMENT,
   `cname` VARCHAR(20) NULL,
   `cteacher` VARCHAR(20) NULL,
   `cmessage` VARCHAR(500) NULL,
@@ -46,13 +46,13 @@ CREATE TABLE `TCPDB`.`courses` (
 DROP TABLE IF EXISTS `TCPDB`.`choose`;
 CREATE TABLE `TCPDB`.`choose` (
   `id` VARCHAR(20) NOT NULL,
-  `cid` VARCHAR(20) NOT NULL
+  `cid` INT NOT NULL
 );
 
 /* HOMEWORK TABLE */
 DROP TABLE IF EXISTS `TCPDB`.`homeworks`;
 CREATE TABLE `TCPDB`.`homeworks` (
-  `cid` VARCHAR(20) NOT NULL,
+  `cid` INT NOT NULL,
   `hid` VARCHAR(20) NOT NULL,
   `hname` VARCHAR(20) NULL,
   `hdes` VARCHAR(500) NULL,
@@ -115,18 +115,18 @@ INSERT INTO people (id, uname, utype) VALUES (20003, 'teacher3', 'T');
 source ./f_createRandomCid.sql;
 
 INSERT INTO courses (
-  cid, cname, cteacher, cmessage, cref
+  cname, cteacher, cmessage, cref
 )
 VALUES (
-  'abc101', 'math', 'teacher', 
+  'math', 'teacher', 
   'math course message', 'math course reference'
 );
 
 INSERT INTO courses (
-  cid, cname, cteacher, cmessage, cref
+  cname, cteacher, cmessage, cref
 )
 VALUES (
-  'abc102', 'english', 'teacher', 
+  'english', 'teacher', 
   'english course message', 'english course reference'
 );
 
@@ -135,7 +135,7 @@ INSERT INTO homeworks (
   cid, hid, hname, hdes
 )
 VALUES (
-  'abc101', 'math1', 'calculation', 
+  1, 'math1', 'calculation', 
   'math homework1'
 );
 
@@ -143,7 +143,7 @@ INSERT INTO homeworks (
   cid, hid, hname, hdes
 )
 VALUES (
-  'abc102', 'english1', 'pronunciation', 
+  2, 'english1', 'pronunciation', 
   'english homework1'
 );
 
