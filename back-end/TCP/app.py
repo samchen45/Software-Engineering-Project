@@ -176,8 +176,8 @@ def updateInfo():
     if check_password_hash(str(data[4]), _password):
         # update info
         _hashed_password_new = generate_password_hash(_password_new)
-        cursor.execute('UPDATE users SET id=%s, name=%s, email=%s, password=%s, phonenum=%s WHERE id=%s',
-                       (_id, _name, _email, _hashed_password_new, _phonenum, _id))
+        cursor.execute('UPDATE users SET name=%s, email=%s, password=%s, phonenum=%s WHERE id=%s',
+                       (_name, _email, _hashed_password_new, _phonenum, _id))
         msg['info'] = 'Success!!'
     else:
         # wrong password
@@ -297,6 +297,160 @@ def download(filename):
         if os.path.isfile(os.path.join(file_dir, filename)):
             return send_from_directory(file_dir, filename, as_attachment=True)
         abort(404)
+
+
+
+## course stuff
+@app.route('/api/createcourse', methods=['POST'])
+def createCourse():
+    _cname = request.form.get('cname', type=str)
+    _id = request.form.get('id', type=str)
+    _cdes = request.form.get('cdes', type=str)
+    _ctid = _id
+    _ctextbook = request.form.get('ctextbook', type=str)
+    # connect to mysql
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    # check if course already exists (omitted)
+    
+    # create new course and store in TCPDB.courses
+    cursor.execute('INSERT INTO courses(cname, ctid, cdes, ctextbook) \
+        VALUES (%s, %s, %s, %s)' , (_cname, _ctid, _cdes, _ctextbook))
+    conn.commit()
+
+    # return to frontend
+    msg = {}
+    cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_ctid,))
+    all_courses = cursor.fetchall()
+    for course in all_courses:
+        cid = course[0]
+        msg[cid] = {}
+        msg[cid]['cname'] = course[1]
+        msg[cid]['ctid'] = course[2]
+        msg[cid]['cdes'] = course[3]
+        msg[cid]['ctextbook'] = course[4]
+
+    cursor.close()
+    conn.close()
+    return json.dumps(msg)
+    
+
+@app.route('/api/editcourse', methods=['POST'])
+def editCourse():
+    # get parameters from request
+    _cid = request.form.get('cid', type=str)
+    _cname = request.form.get('cname', type=str)
+    _id = request.form.get('id', type=str)
+    _cdes = request.form.get('cdes', type=str)
+    _ctextbook = request.form.get('ctextbook', type=str)
+    _ctid = _id
+    # connect to mysql
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM courses WHERE cid=%s', (_cid,))
+    data = cursor.fetchone()
+
+    ## if course not found (omitted)
+    # msg = {}
+    # if len(data) == 0:
+    #     msg['info'] = 'NULL'
+    #     cursor.close()
+    #     conn.close()
+    #     return json.dumps(msg)
+
+    # update info
+    cursor.execute('UPDATE courses SET cname=%s, ctid=%s, cdes=%s, ctextbook=%s WHERE cid=%s',
+                   (_cname, _ctid, _cdes, _ctextbook, _cid))
+    msg['info'] = 'Success!!'
+
+    # return to frontend
+    msg = {}
+    cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_ctid,))
+    all_courses = cursor.fetchall()
+    for course in all_courses:
+        cid = course[0]
+        msg[cid] = {}
+        msg[cid]['cname'] = course[1]
+        msg[cid]['ctid'] = course[2]
+        msg[cid]['cdes'] = course[3]
+        msg[cid]['ctextbook'] = course[4]
+
+    cursor.close()
+    conn.close()
+    return json.dumps(msg)
+
+
+@app.route('/api/deletecourse', methods=['POST'])
+def deleteCourse():
+    # get parameters from request
+    _cid = request.form.get('cid', type=str)
+    _id = request.form.get('id', type=str)
+    _ctid = _id
+    # connect to mysql
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # validate identity (omitted)
+
+    # delete course from TCPDB.courses
+    cursor.execute('DELETE FROM courses WHERE cid=%s', (_cid,))
+    # TCPDB.rosters will be deleted via FOREIGN KEY
+
+    # return to frontend
+    msg = {}
+    cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_ctid,))
+    all_courses = cursor.fetchall()
+    for course in all_courses:
+        cid = course[0]
+        msg[cid] = {}
+        msg[cid]['cname'] = course[1]
+        msg[cid]['ctid'] = course[2]
+        msg[cid]['cdes'] = course[3]
+        msg[cid]['ctextbook'] = course[4]
+
+    cursor.close()
+    conn.close()
+    return json.dumps(msg)
+
+
+@app.route('/api/getcourselist', methods=['POST'])
+def getCourseList():
+    # get parameters from request
+    _id = request.form.get('id', type=str)
+    # connect to mysql
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # get user type
+    cursor.execute('SELECT utype FROM users WHERE id=%s', (_id,))
+    user_type = cursor.fetchone()[0]
+
+    msg = {}
+    if user_type == 'T':
+        cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_id,))
+        all_courses = cursor.fetchall()
+        for course in all_courses:
+            cid = course[0]
+            msg[cid] = {}
+            msg[cid]['cname'] = course[1]
+            msg[cid]['ctid'] = course[2]
+            msg[cid]['cdes'] = course[3]
+            msg[cid]['ctextbook'] = course[4]
+    elif user_type == 'S':
+        cursor.execute('SELECT cid FROM rosters WHERE sid=%s', (_id,))
+        all_active_courses = cursor.fetchall()
+        pass
+        
+
+    cursor.close()
+    conn.close()
+    return json.dumps(msg)
+
+
+
+@app.route('/api/getstudents', methods=['POST'])
+def getStudents():
+    pass
 
 
 if __name__ == "__main__":
