@@ -12,7 +12,7 @@ use TCPDB;
 /* USERS TABLES */
 DROP TABLE IF EXISTS `TCPDB`.`users`;
 CREATE TABLE `TCPDB`.`users` (
-  `uid` INT AUTO_INCREMENT,
+  `uid` INT AUTO_INCREMENT, /* 好像真没什么用 --psy */
   `id` VARCHAR(20) NULL,
   `uname` VARCHAR(20) NULL,
   `email` VARCHAR(45) NULL,
@@ -79,7 +79,7 @@ CREATE TABLE `TCPDB`.`submit` (
   `hid` VARCHAR(20) NOT NULL,
   `uid` VARCHAR(20) NOT NULL,
   `hurl` VARCHAR(100) NULL,
-  `hstatus` enum('N', 'Y', 'E') DEFAULT 0,  -- 0: not submit yet; 1: submitted already; 2: submitted overtime;
+  `hstatus` enum('N', 'Y', 'E') DEFAULT 'N',  -- N: not submit yet; Y: submitted already; E: submitted overtime;
   `score` DOUBLE(5,2),
   PRIMARY KEY (`hid`, `uid`)
 );
@@ -189,4 +189,4 @@ VALUES (
 /* GENERATE TEST ROSTERS */
 INSERT INTO rosters (cid, sid) VALUES (1, '10000'), (1, '10001'), (1, '10002'), (2, '10000'), (2, '10001'), (2, '10002'), (3, '10000'), (4, '10001'), (5, '10002'), (6, '10000');
 /* GENERATE OLD ROSTER */
-INSERT INTO pastrosters (cid, sid) VALUES (2, '10000'), (2, '10001'), (1, '20000');
+INSERT INTO pastrosters (cid, sid) VALUES (7, '10000'), (7, '10001'), (7, '10002'), (4, '10002'), (5, '10001'), (4, '10000');

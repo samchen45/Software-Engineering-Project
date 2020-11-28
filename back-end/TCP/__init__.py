@@ -4,6 +4,7 @@ TCP Package Initializer.
 
 from flaskext.mysql import MySQL
 import flask
+import os
 
 app = flask.Flask(__name__)
 app.config.from_object('TCP.config')
