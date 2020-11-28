@@ -37,3 +37,15 @@ def courses2dict(courses: tuple):
         msg[cid]['cdes'] = course[3]
         msg[cid]['ctextbook'] = course[4]
     return msg
+
+# judge if submitting is overtime
+def isOvertime(year, month, day, set_date):
+    split_date = set_date.split('-')
+    set_year = split[0]
+    set_month = split[0]
+    set_day = split[0]
+
+    if year > set_year or (month > set_month or day > set_day):
+        return 'E'
+        
+    return 'Y'
