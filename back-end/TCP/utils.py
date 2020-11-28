@@ -20,3 +20,8 @@ def send_email_captcha(recv_addr):
     # send email
     mail.send(msg)
     return code
+
+
+# judge if file is allowed to upload
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS

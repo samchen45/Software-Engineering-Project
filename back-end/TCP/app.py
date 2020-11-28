@@ -194,29 +194,82 @@ def updateInfo():
 #     return '<h1>邮件发送成功</h1>'
 
 
-# post homework
-@app.route('/api/posthomework', methods=['POST'], strict_slashes=False)
-def api_upload():
+# view course(for teacher)
+@app.route('/api/viewcourse', methods=['POST'], strict_slashes=False)
+def view_course():
+
+    _id = request.form.get('id', type=str)
+
+    # connect to mysql
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute('SELECT utype FROM users WHERE id=%s', (_id,))
+    data = cursor.fetchall()
+
+    # judge if it's teacher
+    if data[0][0] != 'T':
+        return None
+    
     # get parameters from request
     _cid = request.form.get('cid', type=str)
-    _hid = request.form.get('hid', type=str)
     _hname = request.form.get('hname', type=str)
     _hdes = request.form.get('hdes', type=str)
+    _hdate = request.form.get('hdate', type=str) # date: YYYY-MM-DD
+    _hanswer = request.form.get('hanswer', type=str)
+
     # connect to mysql
     conn = mysql.connect()
     cursor = conn.cursor()
 
-    cursor.execute('REPLACE INTO homeworks(cid, hid, hname, hdes) VALUES(%s, %s, %s, %s)',
-                    (_cid, _hid, _hname, _hdes))
+    cursor.execute('INSERT INTO homwworks(id, hname, hdes, hdate, hanswer) \
+        VALUES (%s, %s, %s, %s, %s)', (_cid, _hname, _hdes, _hdate, _hanswer))
 
+    cursor.close()
+    conn.close()
+    return json.dumps(msg)
+
+# post homework
+@app.route('/api/posthomework', methods=['POST'], strict_slashes=False)
+def post_homework():
+
+    _id = request.form.get('id', type=str)
+
+    # connect to mysql
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute('SELECT utype FROM users WHERE id=%s', (_id,))
+    data = cursor.fetchall()
+
+    # judge if it's teacher
+    if data[0][0] != 'T':
+        return None
+    
+    # get parameters from request
+    _cid = request.form.get('cid', type=str)
+    _hname = request.form.get('hname', type=str)
+    _hdes = request.form.get('hdes', type=str)
+    _hdate = request.form.get('hdate', type=str) # date: YYYY-MM-DD
+    _hanswer = request.form.get('hanswer', type=str)
+
+    # connect to mysql
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    cursor.execute('INSERT INTO homwworks(id, hname, hdes, hdate, hanswer) \
+        VALUES (%s, %s, %s, %s, %s)', (_cid, _hname, _hdes, _hdate, _hanswer))
+
+    # return to frontend
+    msg = {}
+    msg['info'] = 'SUCCEED'
+    
     cursor.close()
     conn.close()
     return json.dumps(msg)
 
 
 # score homework
-@app.route('/api/posthomework', methods=['POST'], strict_slashes=False)
-def api_upload():
+@app.route('/api/scorehomework', methods=['POST'], strict_slashes=False)
+def score_homework():
     # get parameters from request
     _hid = request.form.get('hid', type=str)
     _uid = request.form.get('uid', type=str)
@@ -233,20 +286,12 @@ def api_upload():
     return json.dumps(msg)
 
 
-UPLOAD_FOLDER = 'homework'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER  # set upload folder
-basedir = os.path.abspath(os.path.dirname(__file__))  # get current absolute dir
-ALLOWED_EXTENSIONS = set(['zip', 'pdf', 'txt', 'png', 'jpg', 'xls', 'JPG', 'PNG', 'xlsx', 'gif', 'GIF', 'ppt', 'docx', 'mp4', 'flv'])  # 允许上传的文件后缀
 
-
-# judge if file is allowed to upload
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
 # upload file
 @app.route('/api/upload', methods=['POST'], strict_slashes=False)
-def api_upload():
+def upload_file():
     # get parameters from request
     _cid = request.form.get('cid', type=str)
     _hid = request.form.get('hid', type=str)

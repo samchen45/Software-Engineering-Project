@@ -56,6 +56,8 @@ CREATE TABLE `TCPDB`.`homeworks` (
   `hid` VARCHAR(20) NOT NULL,
   `hname` VARCHAR(20) NULL,
   `hdes` VARCHAR(500) NULL,
+  `hdate` DATE NULL,
+  `hanswer` VARCHAR(500) NULL,
   PRIMARY KEY (`cid`, `hid`)
 );
 
