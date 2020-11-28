@@ -2,6 +2,9 @@
 TCP configuration.
 """
 
+## debug mode
+DEBUG = True
+
 ## MySQL configurations
 MYSQL_DATABASE_USER = 'TCPAdmin'
 MYSQL_DATABASE_PASSWORD = 'password'

@@ -110,6 +110,14 @@ VALUES (
   20000, 'teacher', 'teacher@test.com', 
   'pbkdf2:sha256:150000$wdaqj561$6c0c7c628b7b6bd0bb4d9b13510ad7a557ee2dd4d44aa40153b82d173372a03c', 
   15022222222, 'T'
+), (
+  20001, 'teacher1', 'teacher1@test.com', 
+  'pbkdf2:sha256:150000$wdaqj561$6c0c7c628b7b6bd0bb4d9b13510ad7a557ee2dd4d44aa40153b82d173372a03c', 
+  15022222222, 'T'
+), (
+  20002, 'teacher2', 'teacher2@test.com', 
+  'pbkdf2:sha256:150000$wdaqj561$6c0c7c628b7b6bd0bb4d9b13510ad7a557ee2dd4d44aa40153b82d173372a03c', 
+  15022222222, 'T'
 );
 
 /* GENERATE TEST ADMINISTRATOR */
@@ -137,9 +145,19 @@ INSERT INTO people (id, uname, utype) VALUES (20003, 'teacher3', 'T');
 /* source ./f_createRandomCid.sql; */
 
 INSERT INTO courses (cname, ctid, cdes, ctextbook) VALUES (
-  'math', '20001', 'math course description', 'math course textbook'
+  'math', '20000', 'math course description', 'math course textbook'
 ), (
   'english', '20002', 'english course desciption', 'english course textbook'
+), (
+  'course1', '20001', 'course1 description', 'course1 textbook'
+), (
+  'course2', '20002', 'course2 description', 'course2 textbook'
+), (
+  'course3', '20000', 'course3 description', 'course3 textbook'
+), (
+  'course4', '20001', 'course4 description', 'course4 textbook'
+), (
+  'course5', '20002', 'course5 description', 'course5 textbook'
 );
 
 /* GENERATE TEST HOMEWORK */
@@ -169,6 +187,6 @@ VALUES (
 );
 
 /* GENERATE TEST ROSTERS */
-INSERT INTO rosters (cid, sid) VALUES (1, '10000'), (1, '10001'), (2, '20000');
+INSERT INTO rosters (cid, sid) VALUES (1, '10000'), (1, '10001'), (1, '10002'), (2, '10000'), (2, '10001'), (2, '10002'), (3, '10000'), (4, '10001'), (5, '10002'), (6, '10000');
 /* GENERATE OLD ROSTER */
 INSERT INTO pastrosters (cid, sid) VALUES (2, '10000'), (2, '10001'), (1, '20000');

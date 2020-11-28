@@ -364,16 +364,9 @@ def createCourse():
     conn.commit()
 
     # return to frontend
-    msg = {}
     cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_ctid,))
     all_courses = cursor.fetchall()
-    for course in all_courses:
-        cid = course[0]
-        msg[cid] = {}
-        msg[cid]['cname'] = course[1]
-        msg[cid]['ctid'] = course[2]
-        msg[cid]['cdes'] = course[3]
-        msg[cid]['ctextbook'] = course[4]
+    msg = utils.courses2dict(all_courses)
 
     cursor.close()
     conn.close()
@@ -406,19 +399,20 @@ def editCourse():
     # update info
     cursor.execute('UPDATE courses SET cname=%s, ctid=%s, cdes=%s, ctextbook=%s WHERE cid=%s',
                    (_cname, _ctid, _cdes, _ctextbook, _cid))
-    msg['info'] = 'Success!!'
+    # msg={}
+    # msg['info'] = 'Success!!'
 
     # return to frontend
-    msg = {}
     cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_ctid,))
     all_courses = cursor.fetchall()
-    for course in all_courses:
-        cid = course[0]
-        msg[cid] = {}
-        msg[cid]['cname'] = course[1]
-        msg[cid]['ctid'] = course[2]
-        msg[cid]['cdes'] = course[3]
-        msg[cid]['ctextbook'] = course[4]
+    # for course in all_courses:
+    #     cid = course[0]
+    #     msg[cid] = {}
+    #     msg[cid]['cname'] = course[1]
+    #     msg[cid]['ctid'] = course[2]
+    #     msg[cid]['cdes'] = course[3]
+    #     msg[cid]['ctextbook'] = course[4]
+    msg = utils.courses2dict(all_courses)
 
     cursor.close()
     conn.close()
@@ -439,19 +433,20 @@ def deleteCourse():
 
     # delete course from TCPDB.courses
     cursor.execute('DELETE FROM courses WHERE cid=%s', (_cid,))
+    conn.commit()
     # TCPDB.rosters will be deleted via FOREIGN KEY
 
     # return to frontend
-    msg = {}
     cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_ctid,))
     all_courses = cursor.fetchall()
-    for course in all_courses:
-        cid = course[0]
-        msg[cid] = {}
-        msg[cid]['cname'] = course[1]
-        msg[cid]['ctid'] = course[2]
-        msg[cid]['cdes'] = course[3]
-        msg[cid]['ctextbook'] = course[4]
+    # for course in all_courses:
+    #     cid = course[0]
+    #     msg[cid] = {}
+    #     msg[cid]['cname'] = course[1]
+    #     msg[cid]['ctid'] = course[2]
+    #     msg[cid]['cdes'] = course[3]
+    #     msg[cid]['ctextbook'] = course[4]
+    msg = utils.courses2dict(all_courses)
 
     cursor.close()
     conn.close()
@@ -466,24 +461,41 @@ def getCourseList():
     conn = mysql.connect()
     cursor = conn.cursor()
 
-    # get user type
+    # validate user id and get user type
     cursor.execute('SELECT utype FROM users WHERE id=%s', (_id,))
-    user_type = cursor.fetchone()[0]
+    data = cursor.fetchone()
+    if len(data) == 0:
+        cursor.close()
+        conn.close()
+        print('getCourseList <id> not found!!')
+        return json.dumps({})
+    user_type = data[0]
 
-    msg = {}
     if user_type == 'T':
         cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_id,))
         all_courses = cursor.fetchall()
-        for course in all_courses:
-            cid = course[0]
-            msg[cid] = {}
-            msg[cid]['cname'] = course[1]
-            msg[cid]['ctid'] = course[2]
-            msg[cid]['cdes'] = course[3]
-            msg[cid]['ctextbook'] = course[4]
+        # for course in all_courses:
+        #     cid = course[0]
+        #     msg[cid] = {}
+        #     msg[cid]['cname'] = course[1]
+        #     msg[cid]['ctid'] = course[2]
+        #     msg[cid]['cdes'] = course[3]
+        #     msg[cid]['ctextbook'] = course[4]
+        msg = utils.courses2dict(all_courses)
     elif user_type == 'S':
+        # all courses
+        cursor.execute('SELECT * FROM courses')
+        all_courses = cursor.fetchall()
+        msg = utils.courses2dict(all_courses)
+        for cid in msg:
+            msg[cid]['status'] = 'NULL'
+        # active courses
         cursor.execute('SELECT cid FROM rosters WHERE sid=%s', (_id,))
         all_active_courses = cursor.fetchall()
+        for active_course in all_active_courses:
+            msg[active_course[0]]['status'] = 'active'
+        # completed courses
+            
         pass
         
 

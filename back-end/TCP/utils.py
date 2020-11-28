@@ -25,3 +25,15 @@ def send_email_captcha(recv_addr):
 # judge if file is allowed to upload
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+# convert courses tuple (usually from database) to dictionary
+def courses2dict(courses: tuple):
+    msg = {}
+    for course in courses:
+        cid = course[0]
+        msg[cid] = {}
+        msg[cid]['cname'] = course[1]
+        msg[cid]['ctid'] = course[2]
+        msg[cid]['cdes'] = course[3]
+        msg[cid]['ctextbook'] = course[4]
+    return msg
