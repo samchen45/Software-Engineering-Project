@@ -79,7 +79,7 @@ CREATE TABLE `TCPDB`.`submit` (
   `hid` VARCHAR(20) NOT NULL,
   `uid` VARCHAR(20) NOT NULL,
   `hurl` VARCHAR(100) NULL,
-  `hstatus` BOOLEAN DEFAULT FALSE,
+  `hstatus` enum('N', 'Y', 'E') DEFAULT 0,  -- 0: not submit yet; 1: submitted already; 2: submitted overtime;
   `score` DOUBLE(5,2),
   PRIMARY KEY (`hid`, `uid`)
 );
@@ -165,7 +165,7 @@ INSERT INTO submit (
 )
 VALUES (
   'math1', '10000', 'homework/abc101/math1/10000/', 
-  TRUE, 90.000001
+  'Y', 90.000001
 );
 
 /* GENERATE TEST ROSTERS */
