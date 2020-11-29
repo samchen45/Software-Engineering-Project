@@ -8,19 +8,22 @@ CREATE USER 'TCPAdmin'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL ON TCPDB.* TO 'TCPAdmin'@'localhost';
 
 use TCPDB;
-/* TABLES */
+
+/* USERS TABLES */
 DROP TABLE IF EXISTS `TCPDB`.`users`;
 CREATE TABLE `TCPDB`.`users` (
-  `uid` INT AUTO_INCREMENT,
+  `uid` INT AUTO_INCREMENT, /* 好像真没什么用 --psy */
   `id` VARCHAR(20) NULL,
   `uname` VARCHAR(20) NULL,
   `email` VARCHAR(45) NULL,
   `upassword` VARCHAR(100) NULL,
   `phonenum` VARCHAR(11) NULL,
   `utype` VARCHAR(1) NULL,
-  PRIMARY KEY (`uid`)
+  PRIMARY KEY (`uid`),
+  UNIQUE (`id`)
 );
 
+/* PEOPLE TABLE */
 DROP TABLE IF EXISTS `TCPDB`.`people`;
 CREATE TABLE `TCPDB`.`people` (
   `id` VARCHAR(20),
@@ -32,19 +35,53 @@ CREATE TABLE `TCPDB`.`people` (
 /* COURSE TABLE */
 DROP TABLE IF EXISTS `TCPDB`.`courses`;
 CREATE TABLE `TCPDB`.`courses` (
-  `cid` VARCHAR(20) NOT NULL,
+  `cid` INT AUTO_INCREMENT,
   `cname` VARCHAR(20) NULL,
-  `cteacher` VARCHAR(20) NULL,
-  `cmessage` VARCHAR(500) NULL,
-  `cref` VARCHAR(100) NULL,
+  `ctid` VARCHAR(20) NULL,
+  `cdes` VARCHAR(500) NULL,
+  `ctextbook` VARCHAR(100) NULL,
   PRIMARY KEY (`cid`)
 );
 
-/* CHOOSE COURSE TABLE */
-DROP TABLE IF EXISTS `TCPDB`.`choose`;
-CREATE TABLE `TCPDB`.`choose` (
-  `id` VARCHAR(20) NOT NULL,
-  `cid` VARCHAR(20) NOT NULL
+/* ROSTER TABLE */
+DROP TABLE IF EXISTS `TCPDB`.`rosters`;
+CREATE TABLE `TCPDB`.`rosters` (
+  `cid` INT NOT NULL,
+  `sid` VARCHAR(20) NOT NULL,
+  FOREIGN KEY (`cid`) REFERENCES courses(`cid`) ON DELETE CASCADE,
+  FOREIGN KEY (`sid`) REFERENCES users(`id`) ON DELETE CASCADE
+);
+
+/* OLD ROSTER TABLE */
+DROP TABLE IF EXISTS `TCPDB`.`pastrosters`;
+CREATE TABLE `TCPDB`.`pastrosters` (
+  `cid` INT NOT NULL,
+  `sid` VARCHAR(20) NOT NULL,
+  FOREIGN KEY (`cid`) REFERENCES courses(`cid`) ON DELETE CASCADE,
+  FOREIGN KEY (`sid`) REFERENCES users(`id`) ON DELETE CASCADE
+);
+
+/* HOMEWORK TABLE */
+DROP TABLE IF EXISTS `TCPDB`.`homeworks`;
+CREATE TABLE `TCPDB`.`homeworks` (
+  `cid` INT NOT NULL,
+  `hid` VARCHAR(20) NOT NULL,
+  `hname` VARCHAR(20) NULL,
+  `hdes` VARCHAR(500) NULL,
+  `hdate` DATE NULL,
+  `hanswer` VARCHAR(500) NULL,
+  PRIMARY KEY (`cid`, `hid`)
+);
+
+/* SUBMIT HOMEWORK TABLE */
+DROP TABLE IF EXISTS `TCPDB`.`submit`;
+CREATE TABLE `TCPDB`.`submit` (
+  `hid` VARCHAR(20) NOT NULL,
+  `uid` VARCHAR(20) NOT NULL,
+  `hurl` VARCHAR(100) NULL,
+  `hstatus` enum('N', 'Y', 'E') DEFAULT 'N',  -- N: not submit yet; Y: submitted already; E: submitted overtime;
+  `score` DOUBLE(5,2),
+  PRIMARY KEY (`hid`, `uid`)
 );
 
 /* GENERATE TEST STUDENT */
@@ -55,6 +92,14 @@ VALUES (
   10000, 'student', 'student@test.com', 
   'pbkdf2:sha256:150000$wdaqj561$6c0c7c628b7b6bd0bb4d9b13510ad7a557ee2dd4d44aa40153b82d173372a03c', 
   15011111111, 'S'
+), (
+  10001, 'student1', 'student1@test.com', 
+  'pbkdf2:sha256:150000$wdaqj561$6c0c7c628b7b6bd0bb4d9b13510ad7a557ee2dd4d44aa40153b82d173372a03c', 
+  15011111111, 'S'
+), (
+  10002, 'student2', 'student2@test.com', 
+  'pbkdf2:sha256:150000$wdaqj561$6c0c7c628b7b6bd0bb4d9b13510ad7a557ee2dd4d44aa40153b82d173372a03c', 
+  15011111111, 'S'
 );
 
 /* GENERATE TEST TEACHER */
@@ -63,6 +108,14 @@ INSERT INTO users (
 )
 VALUES (
   20000, 'teacher', 'teacher@test.com', 
+  'pbkdf2:sha256:150000$wdaqj561$6c0c7c628b7b6bd0bb4d9b13510ad7a557ee2dd4d44aa40153b82d173372a03c', 
+  15022222222, 'T'
+), (
+  20001, 'teacher1', 'teacher1@test.com', 
+  'pbkdf2:sha256:150000$wdaqj561$6c0c7c628b7b6bd0bb4d9b13510ad7a557ee2dd4d44aa40153b82d173372a03c', 
+  15022222222, 'T'
+), (
+  20002, 'teacher2', 'teacher2@test.com', 
   'pbkdf2:sha256:150000$wdaqj561$6c0c7c628b7b6bd0bb4d9b13510ad7a557ee2dd4d44aa40153b82d173372a03c', 
   15022222222, 'T'
 );
@@ -89,12 +142,51 @@ INSERT INTO people (id, uname, utype) VALUES (20002, 'teacher2', 'T');
 INSERT INTO people (id, uname, utype) VALUES (20003, 'teacher3', 'T');
 
 /* GENERATE TEST COURSE */
-source ./f_createRandomCid.sql;
+/* source ./f_createRandomCid.sql; */
 
-INSERT INTO courses (
-  cid, cname, cteacher, cmessage, cref
+INSERT INTO courses (cname, ctid, cdes, ctextbook) VALUES (
+  'math', '20000', 'math course description', 'math course textbook'
+), (
+  'english', '20002', 'english course desciption', 'english course textbook'
+), (
+  'course1', '20001', 'course1 description', 'course1 textbook'
+), (
+  'course2', '20002', 'course2 description', 'course2 textbook'
+), (
+  'course3', '20000', 'course3 description', 'course3 textbook'
+), (
+  'course4', '20001', 'course4 description', 'course4 textbook'
+), (
+  'course5', '20002', 'course5 description', 'course5 textbook'
+);
+
+/* GENERATE TEST HOMEWORK */
+INSERT INTO homeworks (
+  cid, hid, hname, hdes
 )
 VALUES (
-  rand_string(5), 'math', 'teacher', 
-  'course message', 'course reference'
+  1, 'math1', 'calculation', 
+  'math homework1'
 );
+
+INSERT INTO homeworks (
+  cid, hid, hname, hdes
+)
+VALUES (
+  2, 'english1', 'pronunciation', 
+  'english homework1'
+);
+
+/* GENERATE TEST SUBMIT */
+INSERT INTO submit (
+  hid, uid, hurl, hstatus, score
+)
+VALUES (
+  'math1', '10000', 'homework/abc101/math1/10000/', 
+  'Y', 90.000001
+);
+
+/* GENERATE TEST ROSTERS */
+INSERT INTO rosters (cid, sid) VALUES (1, '10000'), (1, '10001'), (1, '10002'), (2, '10000'), (2, '10001'), (2, '10002'), (3, '10000'), (4, '10001'), (5, '10002'), (6, '10000');
+/* GENERATE OLD ROSTER */
+INSERT INTO pastrosters (cid, sid) VALUES (7, '10000'), (7, '10001'), (7, '10002'), (4, '10002'), (5, '10001'), (4, '10000');

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Upload</title>
+</head>
+<body>
+    <h1>文件上传示例</h1>
+    <form id="form1" method="post" action="/api/upload" enctype="multipart/form-data">
+        <div>
+            <input id="File1" type="file" name="myfile"/>  
+            <input type="submit">提交</input>
+        </div>
+    </form>
+    <a href="/api/download/1.png">下载 已提交文件</a>
+
+    
+</body>
+</html>

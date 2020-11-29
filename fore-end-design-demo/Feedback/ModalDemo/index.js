@@ -1,27 +1,22 @@
 import React from 'react'
-import { Card, Button, Form, Modal, Upload, Icon, Input, Tooltip, Table, Notification, message } from 'antd'
+import {Card, Button, Form, Modal, Upload, Icon, Input, Tooltip ,Table} from 'antd'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb'
 import TypingCard from '../../../components/TypingCard'
-import reqwest from 'reqwest';
-
-
-
 
 const FormItem = Form.Item
 const formItemLayout = {
   labelCol: {
-    xs: { span: 24 },
-    sm: { span: 8 },
+    xs: {span: 24},
+    sm: {span: 8},
   },
   wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 12 },
+    xs: {span: 24},
+    sm: {span: 12},
   },
 };
 
-
 const EditableContext = React.createContext();
-const EditableRow = ({ form, index, ...props }) => (
+const EditableRow = ({form, index, ...props}) => (
   <EditableContext.Provider value={form}>
     <tr {...props} />
   </EditableContext.Provider>
@@ -51,56 +46,16 @@ class ModalDemo extends React.Component {
     visible4: false,
     visible5: false,
     */
-    organCertUrl: "",
-    fileList: [],
-    uploading: false,
     ModalText: '显示对话框的内容',
     confirmLoading: false,
-    visible: false,
-    numbers: [
-      { key: 1 },
-      { key: 2 },
-      { key: 3 },
-      { key: 4 },
-      { key: 5 }
-    ],
-    num: 1,
+    numbers : [
+      {key:1}, 
+      {key:2}, 
+      {key:3}, 
+      {key:4}, 
+      {key:5}
+    ]
   }
-
-  handleUpload = () => {
-    const { fileList } = this.state;
-    const formData = new FormData();
-    fileList.forEach(file => {
-      formData.append('files[]', file);
-    });
-
-    this.setState({
-      uploading: true,
-    });
-
-    // You can use any AJAX library you like
-    reqwest({
-      url: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-      method: 'post',
-      processData: false,
-      data: formData,
-      success: () => {
-        this.setState({
-          fileList: [],
-          uploading: false,
-        });
-        message.success('upload successfully.');
-      },
-      error: () => {
-        this.setState({
-          uploading: false,
-        });
-        message.error('upload failed.');
-      },
-    });
-  }
-
-
   closeModal(a) {
     this.setState({
       [a]: false
@@ -172,111 +127,33 @@ class ModalDemo extends React.Component {
         break;
     }
   }
-
-  /*
-  showConfirm1 = (num, props, uploading, fileList) => {
-
+  
+  showConfirm1 = (num) => {
+    
     const modal = Modal.confirm()
-    const onUpdate = (value) => {
-      modal.update({
-        content: <div>
-
-        </div>
-      });
-    }
-    const onUploading = (value) => {
-      onUpdate(value);
-      this.handleUpload(value)
-    }
+    
     modal.update({
-      title: '作业',
-      okText: '确认',
-      cancelText: '取消',
-      destroyOnClose: true,
-      content: (
+      title:'作业',
+      okText:'确认',
+      cancelText:'取消',
+      destroyOnClose:true,
+      content:(
         <div>
-          <p>{'作业内容说明' + num}</p>
-          <p>{'作业内容说明' + num}</p>
-          <p>{'作业内容说明' + num}</p>
-          <FormItem label='上传文件' {...formItemLayout}>
-            <Upload {...props}>
-              <Button onClick={onUpdate}><Icon type='upload' />选择文件</Button>
-            </Upload>
-            <Button
-              type="primary"
-              onClick={this.handleUpload}
-              disabled={fileList.length === 0}
-              loading={uploading}
-              style={{ marginTop: 16 }}
-            >
-              {uploading ? 'Uploading' : 'Start Upload'}
-            </Button>
-          </FormItem>
-          <FormItem label='备注（可选）' {...formItemLayout}></FormItem>
-          {/*
-          <Form layout="vertical" onSubmit={this.handleSubmit}>
-            <Form.Item>
-              <div  key={Math.random()}>//点击关闭在次打开还会有上次上传文件的缓存
-                <Upload {...props}>
-                  <Button type="primary">
-                    <Icon type="upload" />选择文件
-                 </Button>
-                </Upload>
- 
-              </div>
-            </Form.Item>
-            <Form.Item label="文件名(可更改)">
-              {getFieldDecorator('filename', {
-                // initialValue:this.state.defEmail,
-                rules: [
-                  {
-                    message: '请输入正确的文件名',
-                    // pattern: /^[0-9]+$/,
-                  },
-                  {
-                    required: true,
-                    message: '请输入文件名',
-                  },
-                ],
-              })(<Input />)}
-            </Form.Item>
-            <Form.Item label="描述(选填)">
-              {getFieldDecorator('describe', {
- 
-                rules: [
-                  {
-                    message: '描述不能为空',
-                  },
-                  {
-                    required: false,
-                    message: '请输入描述',
-                  },
-                ],
-              })(<TextArea />)}
-            </Form.Item>
-            <Form.Item label="文件类型">
-              {getFieldDecorator('filetype', {
-                rules: [
-                  {
-                    message: '文件类型',
-                  },
-                  {
-                    required: true,
-                    message: '文件类型',
-                  },
-                ],
-              })(<Input disabled={true} />)}
-            </Form.Item>
-            </Form>}
+          <p>{'作业内容说明'+num}</p>
+          <p>{'作业内容说明'+num}</p>
+          <p>{'作业内容说明'+num}</p>
+          <form>
+           <FormItem label='上传文件' {...formItemLayout}><Upload><Button type='primary'><Icon type='upload'/>上传文件</Button></Upload></FormItem>
+           <FormItem label='备注（可选）' {...formItemLayout}>              
+            <Input/></FormItem>
+          </form>
         </div>
       ),
-      onOk() { },
-      onCancel() { }
+      onOk(){},
+      onCancel(){}
     })
   }
-  */
-  
-  /*
+
   columns7 = [
     {
       title: '课程编号',
@@ -313,99 +190,32 @@ class ModalDemo extends React.Component {
       }
     },
   ]
-  */
 
-  showModal = (e, n) => {
-    this.setState({
-      visible: true,
-      num: n,
+  showConfirm2 = () => {
+    const modal = Modal.confirm()
+    modal.update({
+      title:'作业',
+      okText:'确认',
+      cancelText:'取消',
+      destroyOnClose:true,
+      content:(
+        <div>
+          <p>{'作业内容'}</p>
+          <form></form>
+        </div>
+      ),
+      onOk(){},
+      onCancel(){}
     })
   }
 
-  handleOk = e => {
-    this.setState({
-      visible: false,
-    })
-  }
-
-  handleCancel = e => {
-    this.setState({
-      visible: false,
-    })
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (!nextProps.modal.modalUpdateDetail) {
-      this.props.form.resetFields();
-    }
-  }
   render() {
     /*
     const {visible,visible1,visible2,visible3,visible4,visible5, ModalText, confirmLoading} = this.state
     */
-
-    const { uploading, fileList, num } = this.state;
-    const props = {
-      onRemove: file => {
-        this.setState(state => {
-          const index = state.fileList.indexOf(file);
-          const newFileList = state.fileList.slice();
-          newFileList.splice(index, 1);
-          return {
-            fileList: newFileList,
-          };
-        });
-      },
-      beforeUpload: file => {
-        this.setState(state => ({
-          fileList: [...state.fileList, file],
-        }));
-        return false;
-      },
-      fileList,
-    };
-
     const cardContent = ` 该页面用于查看用户所有的作业。`
 
-    const columns7 = [
-      {
-        title: '课程编号',
-        dataIndex: 'key',
-        width: '10%',
-      },
-      {
-        title: '课程名',
-        dataIndex: 'name',
-        width: '30%',
-      },
-      {
-        title: '作业编号',
-        dataIndex: 'num',
-        width: '10%',
-      },
-      {
-        title: '操作',
-        dataIndex: 'operation',
-        render: (text, record) => {
-          return (
-            <div>
-              <Button onClick={e=>this.showModal(e, record.key)}>提交</Button>
-            </div>
-          )
-        }
-      },
-      {
-        title: '评分',
-        dataIndex: 'score',
-        render: () => {
-          return <p>0/0</p>
-        }
-      },
-    ]
-
-
-
-
+    
     /*
     const homeworks = numbers.map((number) => 
       <Card bordered={true} titie = {number.class_name}>
@@ -414,47 +224,18 @@ class ModalDemo extends React.Component {
       </Card>
     )
     */
-
+    
 
     return (
       <div>
-        <CustomBreadcrumb arr={['作业', '查看作业']} />
-        <TypingCard source={cardContent} />
-        <Card bordered={false} title='可编辑的表格' style={{ marginBottom: 10, minHeight: 440 }} id='editTable'>
+        <CustomBreadcrumb arr={['作业', '查看作业']}/>
+        <TypingCard source={cardContent}/>
+        <Card bordered={false} title='可编辑的表格' style={{marginBottom: 10, minHeight: 440}} id='editTable'>
+          
           {/* <Table bordered dataSource={this.state.data7} columns={this.columns7} style={styles.tableStyle}/> */}
-          <Table style={styles.tableStyle} bordered dataSource={this.state.numbers}
-            columns={columns7} />
+          <Table style={styles.tableStyle}  bordered dataSource={this.state.numbers}
+                 columns={this.columns7}/>
         </Card>
-        <Modal id='modal'
-          visible={this.state.visible}
-          title='作业'
-          okText='确认'
-          cancelText='取消'
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-          destroyOnClose={false}
-        >
-          <div>
-            <p>{'作业内容说明' + this.state.num}</p>
-            <p>{'作业内容说明' + this.state.num}</p>
-            <p>{'作业内容说明' + this.state.num}</p>
-            <FormItem label='上传文件' {...formItemLayout}>
-              <Upload {...props}>
-                <Button><Icon type='upload' />选择文件</Button>
-              </Upload>
-              <Button
-                type="primary"
-                onClick={this.handleUpload}
-                disabled={fileList.length === 0}
-                loading={uploading}
-                style={{ marginTop: 16 }}
-              >
-                {uploading ? 'Uploading' : 'Start Upload'}
-              </Button>
-            </FormItem>
-            <FormItem label='备注（可选）' {...formItemLayout}></FormItem>
-          </div>
-        </Modal>
       </div>
     )
     /*
