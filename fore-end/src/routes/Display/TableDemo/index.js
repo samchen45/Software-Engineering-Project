@@ -1,8 +1,10 @@
 import React from 'react'
 import {Card, Popconfirm, Button, Icon, Table, Divider, BackTop, Affix, Anchor, Form, InputNumber, Input} from 'antd'
 import axios from 'axios'
+import { isAuthenticatedid } from '../../../utils/Session'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
+import $ from 'jquery'
 
 const columns = [
   {
@@ -270,10 +272,36 @@ class TableDemo extends React.Component {
       book: '高等数学',
     }],
     editingKey: '',
+    data_course:[]
+      
   }
 
   componentDidMount() {
     this.getRemoteData()
+  }
+
+  componentWillMount() {
+    $.ajax({
+      type: 'GET',
+      url: "/UserLog",
+      data: {
+          userid: isAuthenticatedid(),
+      },
+      success: function (ret) {
+        console.log(ret)
+        if (ret === 'success'){
+          const course = ret.map(data => {
+            return{
+              key : data.cid,
+              c_name : data.cname,
+              info : data.info,
+              book : data.textbook
+            }
+          })
+          this.state.data_course = course
+        }
+      }
+    })
   }
 
   columns7 = [
@@ -423,14 +451,29 @@ class TableDemo extends React.Component {
       ...filters,
     })
   }
-  onDelete = (key) => {
-    const arr = this.state.data8.slice()
-    this.setState({
-      data8: arr.filter(item => item.key !== key)
+  onDelete = (key_val) => {
+    const arr = this.state.data_course.slice()
+    const item = arr.find(item => item.key === key_val )
+    $.ajax({
+      type: 'POST',
+      url: "/UserLog",
+      data: {
+          userid: isAuthenticatedid(),
+          c_id : item.key,
+      },
+      success: function (ret) {
+        console.log(ret)
+        if (ret != ''){
+          this.setState({
+            data_course: arr.filter(item => item.key !== key_val)
+          })
+        }
+      }
     })
+    
   }
   handleAdd = () => {
-    const {data8, count} = this.state //本来想用data7的length来代替count，但是删除行后，length会-1
+    const {data8,data_course, count} = this.state //本来想用data7的length来代替count，但是删除行后，length会-1
     const newData = {
       key: count,
       c_name: 'new_course',
@@ -439,6 +482,7 @@ class TableDemo extends React.Component {
     };
     this.setState({
       data8: [...data8, newData],
+      data_course : [...data_course, newData],
       count: count + 1
     })
   }
@@ -455,7 +499,7 @@ class TableDemo extends React.Component {
       if (error) {
         return;
       }
-      const newData = [...this.state.data8];
+      const newData = [...this.state.data_course];
       const index = newData.findIndex(item => key === item.key);
       if (index > -1) {
         const item = newData[index];
@@ -463,10 +507,26 @@ class TableDemo extends React.Component {
           ...item,
           ...row,
         });
-        this.setState({data8: newData, editingKey: ''});
+        $.ajax({
+          type: 'POST',
+          url: "/UserLog",
+          data: {
+              userid: isAuthenticatedid(),
+              c_id : item.key,
+              c_name : item.c_name,
+              info : item.info,
+              textbook : item.book
+          },
+          success: function (ret) {
+            console.log(ret)
+            if (ret != 'error'){
+              this.setState({data_course: newData, editingKey: ''});
+            }
+          }
+        })
       } else {
-        newData.push(data8);
-        this.setState({data8: newData, editingKey: ''});
+        newData.push(this.state.data_course);
+        this.setState({data_course: newData, editingKey: ''});
       }
     });
   }
@@ -579,7 +639,7 @@ class TableDemo extends React.Component {
             <Button onClick={this.handleAdd}>添加课程</Button>
           </p>
           {/* <Table bordered dataSource={this.state.data7} columns={this.columns7} style={styles.tableStyle}/> */}
-          <Table style={styles.tableStyle} components={components} bordered dataSource={this.state.data8}
+          <Table style={styles.tableStyle} components={components} bordered dataSource={this.state.data_course}
                  columns={columns8}/>
         </Card>
         <BackTop visibilityHeight={200} style={{right: 50}}/>
