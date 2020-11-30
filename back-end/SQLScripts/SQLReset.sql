@@ -65,12 +65,12 @@ CREATE TABLE `TCPDB`.`pastrosters` (
 DROP TABLE IF EXISTS `TCPDB`.`homeworks`;
 CREATE TABLE `TCPDB`.`homeworks` (
   `cid` INT NOT NULL,
-  `hid` VARCHAR(20) NOT NULL,
+  `hid` INT NOT NULL AUTO_INCREMENT,
   `hname` VARCHAR(20) NULL,
   `hdes` VARCHAR(500) NULL,
   `hdate` DATE NULL,
   `hanswer` VARCHAR(500) NULL,
-  PRIMARY KEY (`cid`, `hid`)
+  PRIMARY KEY (`hid`)
 );
 
 /* SUBMIT HOMEWORK TABLE */
@@ -153,7 +153,7 @@ INSERT INTO courses (cname, ctid, cdes, ctextbook) VALUES (
 ), (
   'course2', '20002', 'course2 description', 'course2 textbook'
 ), (
-  'course3', '20000', 'course3 description', 'course3 textbook'
+  'course3', '20001', 'course3 description', 'course3 textbook'
 ), (
   'course4', '20001', 'course4 description', 'course4 textbook'
 ), (
@@ -162,18 +162,18 @@ INSERT INTO courses (cname, ctid, cdes, ctextbook) VALUES (
 
 /* GENERATE TEST HOMEWORK */
 INSERT INTO homeworks (
-  cid, hid, hname, hdes
+  cid, hname, hdes
 )
 VALUES (
-  1, 'math1', 'calculation', 
+  1, 'calculation', 
   'math homework1'
 );
 
 INSERT INTO homeworks (
-  cid, hid, hname, hdes
+  cid, hname, hdes
 )
 VALUES (
-  2, 'english1', 'pronunciation', 
+  2, 'pronunciation', 
   'english homework1'
 );
 

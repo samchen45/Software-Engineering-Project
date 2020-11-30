@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Main backend Python codes.
 """
@@ -201,7 +202,7 @@ def updateInfo():
 @app.route('/api/tea_viewcourse', methods=['POST'], strict_slashes=False)
 def tea_view_course():
 
-    _id = request.form.get('id', type=str)
+    _id = request.form.get('userid', type=str)
 
     # connect to mysql
     conn = mysql.connect()
@@ -211,7 +212,7 @@ def tea_view_course():
 
     # judge if it's teacher
     if data[0][0] != 'T':
-        return None
+        msg['info'] = 'NULL'
 
     cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_id,))
     data = cursor.fetchall()
@@ -219,8 +220,15 @@ def tea_view_course():
     # return to frontend
     msg = {}
     if len(data) > 0:
-        msg['cid'] = data[0][0]
-        msg['cname'] = data[0][1]
+        arr = []
+
+        msg['arr'] = [
+            {
+                'cid': '1',
+                'cname': 'math'
+            }
+        ]
+        msg['info'] = 'SUCCEED'
     else:
         msg['info'] = 'NULL'
 
@@ -252,7 +260,11 @@ def tea_post_homework():
     _hdate = request.form.get('hdate', type=str)  # date: YYYY-MM-DD
     _hanswer = request.form.get('hanswer', type=str)
 
-    cursor.execute('INSERT INTO homwworks(id, hname, hdes, hdate, hanswer) \
+    _cid = "1"
+    _hdate = "2020-10-01"
+    _hanswer = "ANSWER"
+
+    cursor.execute('INSERT INTO homeworks(cid, hname, hdes, hdate, hanswer) \
         VALUES (%s, %s, %s, %s, %s)', (_cid, _hname, _hdes, _hdate, _hanswer))
     conn.commit()
 

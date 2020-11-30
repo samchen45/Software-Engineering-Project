@@ -15,37 +15,69 @@ class NotificationDemo extends React.Component{
   state = {
     placement:'',
     data_course: [
-      
+      {
+          key: "!",
+          c_name: "",
+      }
     ],
     data_homework: [],
-    lecture:''
+    lecture:'',
+    count: 0
   }
 
   componentWillMount() {
     $.ajax({
       type: 'POST',
-      url: "/UserLog",
+      url: "/tea_viewcourse",
       data: {
           userid: isAuthenticatedid(),
       },
-      success: function (ret) {
-        console.log(ret)
-        if (ret === 'success'){
-          const course = ret.map(data => {
-            return{
-              key: data.c_id,
-              c_name: data.c_name
-            }
-          })
-          this.state.data_course = course
+      success: function (data) {
+        const ret = JSON.parse(data)
+        if (ret.info === 'SUCCEED'){
+          console.log(2)
+
+          // var arr = [];
+          // Object.keys(ret).forEach(function(key) {
+          //   arr.push(ret[key]);
+          // });
+          // console.log(arr)
+          const course = ret.arr.map(item => ({
+            key: item.cid,
+            c_name: item.cname
+          }))
+          // const course = []
+
+          // console.log(ret.arr.length)
+          // for (var i = 0; i < ret.arr.length; i++) {
+            
+          //   const item = {
+          //     key : ret[i].cid,
+          //     c_name: ret[i].cname
+          //   }
+          //   console.log(item)
+          //   course.push(item)
+          // }
+          console.log(ret)
+          console.log(course)
+          // this.setCourse(course) 
+          this.setState((state) => {
+              return {data_course: course,
+              count: state.count + 1}
+          });
+          this.forceUpdate()
+          console.log(this.state.count)
+          console.log(this.state.data_course)
         }
-      }
+      }.bind(this)
     })
   }
   handleLectureChange = value => {
     this.setState({lecture: value});
   }
-
+  setCourse(course) {
+    this.setState({data_course: course})
+  }
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
@@ -55,11 +87,11 @@ class NotificationDemo extends React.Component{
       else {
         $.ajax({
           type: 'POST',
-          url: "/",
+          url: "/tea_posthomework",
           data: {
             id: isAuthenticatedid(),
-            h_name: values.homework_name,
-            h_des:values.homework_des
+            hname: values.homework_name,
+            hdes:values.homework_des
           },
           success:function(data){
             console.log(data);
@@ -94,7 +126,7 @@ class NotificationDemo extends React.Component{
   }
   render(){
     const placement = this.state.placement
-    const lectures = this.state.data_course
+    const data_course = this.state.data_course
     const handleLectureChange = this.handleLectureChange
     /*
     const cardContent = ` 在系统四个角显示通知提醒信息。经常用于以下情况：
@@ -124,9 +156,9 @@ class NotificationDemo extends React.Component{
         <Card>
         <Form>
           <Form.Item label = '选择课程'>
-          <Select defaultValue={lectures[0].c_id} style={{ width: 240 }} onChange={handleLectureChange}>
-            {lectures.map(lecture => (
-              <Option key={lecture.c_id}>{lecture.c_name}</Option>
+          <Select defaultValue={data_course[0].key} style={{ width: 240 }} onChange={handleLectureChange}>
+            {data_course.map(lecture => (
+              <Option key={lecture.key}>{lecture.c_name}</Option>
             ))}
           </Select>
           </Form.Item>
@@ -134,10 +166,10 @@ class NotificationDemo extends React.Component{
           {
             getFieldDecorator('homework_name', {
               rules: [
-                {
-                  type: 'homework_name',
-                  message: '请输入正确的邮箱地址'
-                },
+                // {
+                //   // type: 'homework_name',
+                //   message: '请输入正确的邮箱地址'
+                // },
                 {
                   required: true,
                   message: '请填写作业名称'
@@ -152,10 +184,10 @@ class NotificationDemo extends React.Component{
           {
             getFieldDecorator('homework_des', {
               rules: [
-                {
-                  type: 'homework_des',
-                  message: '请输入作业描述'
-                },
+                // {
+                //   type: 'homework_des',
+                //   message: '请输入作业描述'
+                // },
                 {
                   required: true,
                   message: '请输入作业描述'
