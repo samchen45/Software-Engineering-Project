@@ -176,7 +176,7 @@ class CollapseDemo extends React.Component {
               c_name: data.c_name
             }
           })
-          this.state.data_course = course
+          this.setState({data_course : course}]
         }
       }
     })
