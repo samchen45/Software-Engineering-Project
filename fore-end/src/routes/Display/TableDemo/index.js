@@ -298,7 +298,7 @@ class TableDemo extends React.Component {
               book : data.textbook
             }
           })
-          this.state.data_course = course
+          this.setState({data_course : course}]
         }
       }
     })
