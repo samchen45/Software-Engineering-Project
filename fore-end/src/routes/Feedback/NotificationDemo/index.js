@@ -1,15 +1,75 @@
 import React from 'react'
-import {Card, Button, Form, Modal, Upload, Icon, Input, Tooltip, Col, Row, notification, Select} from 'antd'
+import {Card, Button, Form, Modal, Upload, Icon, Input, Tooltip, Col, Row, message,notification, Select} from 'antd'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
 import FormItem from 'antd/lib/form/FormItem'
+import { isAuthenticatedid } from '../../../utils/Session'
+import $ from 'jquery'
+
 
 const {TextArea} = Input
 const {Option} = Select;
+
+@Form.create()
 class NotificationDemo extends React.Component{
   state = {
-    placement:''
+    placement:'',
+    data_course: [
+      
+    ],
+    data_homework: [],
+    lecture:''
   }
+
+  componentWillMount() {
+    $.ajax({
+      type: 'POST',
+      url: "/UserLog",
+      data: {
+          userid: isAuthenticatedid(),
+      },
+      success: function (ret) {
+        console.log(ret)
+        if (ret === 'success'){
+          const course = ret.map(data => {
+            return{
+              key: data.c_id,
+              c_name: data.c_name
+            }
+          })
+          this.state.data_course = course
+        }
+      }
+    })
+  }
+  handleLectureChange = value => {
+    this.setState({lecture: value});
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (err) {
+        message.warning('请先填写正确的表单')
+      } 
+      else {
+        $.ajax({
+          type: 'POST',
+          url: "/",
+          data: {
+            id: isAuthenticatedid(),
+            h_name: values.homework_name,
+            h_des:values.homework_des
+          },
+          success:function(data){
+            console.log(data);
+            message.info("提交成功")
+          }
+        });
+      }
+    });
+  }
+
   openNotification(obj){
     notification.open({
       message: 'Notification Title',
@@ -34,6 +94,8 @@ class NotificationDemo extends React.Component{
   }
   render(){
     const placement = this.state.placement
+    const lectures = this.state.data_course
+    const handleLectureChange = this.handleLectureChange
     /*
     const cardContent = ` 在系统四个角显示通知提醒信息。经常用于以下情况：
           <ul class="card-ul">
@@ -43,6 +105,17 @@ class NotificationDemo extends React.Component{
           </ul>`
     */
    const cardContent = ` 这个页面用于布置作业。 `
+   const {getFieldDecorator, getFieldValue} = this.props.form
+    const formItemLayout = {
+      labelCol: {
+        xs: {span: 24},
+        sm: {span: 4},
+      },
+      wrapperCol: {
+        xs: {span: 24},
+        sm: {span: 12},
+      },
+    };
    
     return (
       <div>
@@ -51,16 +124,50 @@ class NotificationDemo extends React.Component{
         <Card>
         <Form>
           <Form.Item label = '选择课程'>
-            <Select placeholder='选择课程'>
-              <Select.Option value = '1'>课程1</Select.Option>
-              <Select.Option value = '2'>课程2</Select.Option>
-              <Select.Option value = '3'>课程3</Select.Option>
-            </Select>
+          <Select defaultValue={lectures[0].c_id} style={{ width: 240 }} onChange={handleLectureChange}>
+            {lectures.map(lecture => (
+              <Option key={lecture.c_id}>{lecture.c_name}</Option>
+            ))}
+          </Select>
           </Form.Item>
-          <Form.Item label = '作业名称'><Input placeholder='作业名称'/></Form.Item>
-          <Form.Item label = '作业描述'><TextArea placeholder='作业描述' rows={4}/></Form.Item>
+          <Form.Item label = '作业名称'  {...formItemLayout}>
+          {
+            getFieldDecorator('homework_name', {
+              rules: [
+                {
+                  type: 'homework_name',
+                  message: '请输入正确的邮箱地址'
+                },
+                {
+                  required: true,
+                  message: '请填写作业名称'
+                }
+              ]
+            })(
+            <Input/>
+            )
+          }
+          </Form.Item>
+          <Form.Item label = '作业描述'>
+          {
+            getFieldDecorator('homework_des', {
+              rules: [
+                {
+                  type: 'homework_des',
+                  message: '请输入作业描述'
+                },
+                {
+                  required: true,
+                  message: '请输入作业描述'
+                }
+              ]
+            })(
+            <TextArea row = {4} />
+            )
+            }
+            </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" onClick={this.handleSubmit}>
               提交
             </Button>
           </Form.Item>

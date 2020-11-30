@@ -4,6 +4,8 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
+import { isAuthenticatedid } from '../../../utils/Session'
+import $ from 'jquery'
 
 const { Option } = Select;
 
@@ -20,6 +22,9 @@ class SpinDemo extends React.Component {
     //loading2: false
     lecture: HomeworkId[LectureId[0]],
     homework: HomeworkId[LectureId[0]][0],
+    data_course:[],
+    data_homework:[],
+    student:[],
     submissions: [
       {id: '1', name: '张三'},
       {id: '2', name: '李四'},
@@ -34,16 +39,22 @@ class SpinDemo extends React.Component {
     },
     {
       title: '姓名',
-      dataIndex: 'name',
+      dataIndex: 'u_name',
       width: '15%',
     },
     {
       title: '查看作业',
-      dataIndex: 'file',
+      dataIndex: 'hmk',
       width: '30%',
       render: (text, record) => {
         return <a href='#'>作业链接</a>
       }
+    },
+    {
+      title: '提交状态',
+      dataIndex: 'status',
+      width: '10%',
+      
     },
     {
       title: '评分',
@@ -65,10 +76,31 @@ class SpinDemo extends React.Component {
     }
   ]
 
+  //
   componentWillMount() {
-    //页面路由加载的进度条，React有没有方法可以使路由加载自动调用这个方法，避免在每个页面都设置
-    //vue有方法可以实现https://segmentfault.com/q/1010000006653683/a-1020000007724198
-    NProgress.start()
+    $.ajax({
+      type: 'POST',
+      url: "/UserLog",
+      data: {
+          userid: isAuthenticatedid(),
+      },
+      success: function (ret) {
+        console.log(ret)
+        if (ret === 'success'){
+          const course = ret.map(data => {
+            return{
+              key: data.c_id,
+              c_name: data.c_name,
+              homework: data.homework
+            }
+          })
+          this.setState({
+            data_course : course,
+            data_homework : course[0].homework
+          })
+        }
+      }
+    })
   }
   componentDidMount() {
     NProgress.done()
@@ -90,10 +122,39 @@ class SpinDemo extends React.Component {
     })
   }
 
+  getStudent = () =>{
+    $.ajax({
+      type: 'POST',
+      url: "/UserLog",
+      data: {
+          userid: isAuthenticatedid(),
+          h_id: this.state.homework
+      },
+      success: function (ret) {
+        console.log(ret)
+        if (ret === 'success'){
+          const stu = ret.map(data => {
+            return{
+              id: data.u_id,
+              u_name: data.u_name,
+              hmk: data.url,
+              status: data.status
+            }
+          })
+          this.setState({
+            student: stu
+          })
+        }
+      }
+    })
+  }
+
   render() {
     //const loading2 = this.state.loading2
     const lecture = this.state.lecture
     const homework = this.state.homework
+    const data_course = this.state.data_course
+    const data_homework = this.state.data_homework
 
     const setLectures = value => {
       this.setState({ lecture: value })
@@ -104,8 +165,9 @@ class SpinDemo extends React.Component {
     }
 
     const handleLectureChange = value => {
-      setLectures(HomeworkId[value]);
-      setHomework(HomeworkId[value][0]);
+      setLectures(value);
+      const id = this.state.data_course.findIndex(item=>item.c_id === value)
+      setHomework(this.state.data_course[id].homework[0].h_id);
     };
 
     const onHomeworkChange = value => {
@@ -118,18 +180,22 @@ class SpinDemo extends React.Component {
         <TypingCard source='该页面用于教师批改作业。' />
         <Card bordered={false}>
           <p>选择课程与作业</p>
-          <Select defaultValue={LectureId[0]} style={{ width: 240 }} onChange={handleLectureChange}>
-            {LectureId.map(province => (
-              <Option key={province}>{province}</Option>
+          <Select defaultValue={data_course[0].c_id} style={{ width: 240 }} onChange={handleLectureChange}>
+            {data_course.map(course => (
+              <Option key={course.c_id}>{course.c_name}</Option>
             ))}
           </Select>
           
-          <Select style={{ width: 480, margin: 20 }} value={homework} onChange={onHomeworkChange}>
-            {lecture.map(city => (
-              <Option key={city}>{city}</Option>
+          <Select style={{ width: 480, margin: 20 }} value={data_homework[0].h_id} onChange={onHomeworkChange}>
+            {data_homework.map(hmk => (
+              <Option key={hmk.h_id}>{hmk.h_name}</Option>
             ))}
           </Select>
+          <p>
+            <Button onClick= {this.getStudent}>确认</Button>
+          </p>
           <Divider/>
+          
           <p>批改作业</p>
           <Table style={styles.tableStyle} bordered dataSource={this.state.submissions}
             columns={this.columns7} />

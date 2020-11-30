@@ -3,6 +3,9 @@ import { Card, Button, Form, Modal, Upload, Icon, Input, Tooltip, Table, Notific
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb'
 import TypingCard from '../../../components/TypingCard'
 import reqwest from 'reqwest';
+import { isAuthenticatedid } from '../../../utils/Session'
+import $ from 'jquery'
+
 
 
 
@@ -57,6 +60,8 @@ class ModalDemo extends React.Component {
     ModalText: '显示对话框的内容',
     confirmLoading: false,
     visible: false,
+    name:'',
+    des:'',
     numbers: [
       { key: 1 },
       { key: 2 },
@@ -64,6 +69,7 @@ class ModalDemo extends React.Component {
       { key: 4 },
       { key: 5 }
     ],
+    homework_list:[],
     num: 1,
   }
 
@@ -315,10 +321,39 @@ class ModalDemo extends React.Component {
   ]
   */
 
+
+ componentWillMount() {
+  $.ajax({
+    type: 'POST',
+    url: "/UserLog",
+    data: {
+        userid: isAuthenticatedid(),
+    },
+    success: function (ret) {
+      console.log(ret)
+      if (ret === 'success'){
+        const course = ret.map(data => {
+          return{
+            c_id: data.c_id,
+            c_name: data.c_name,
+            key:data.h_id,
+            h_name:data.h_name,
+            h_des:data.h_des
+          }
+        })
+        this.state.data_course = course
+      }
+    }
+  })
+}
+
   showModal = (e, n) => {
+    const id = this.state.homework_list.findIndex(item => item.key === n)
     this.setState({
       visible: true,
       num: n,
+      des: this.state.homework_list[id].h_des,
+      name: this.state.homework_list[id].h_name
     })
   }
 
@@ -370,17 +405,22 @@ class ModalDemo extends React.Component {
     const columns7 = [
       {
         title: '课程编号',
-        dataIndex: 'key',
+        dataIndex: 'c_id',
         width: '10%',
       },
       {
         title: '课程名',
-        dataIndex: 'name',
-        width: '30%',
+        dataIndex: 'c_name',
+        width: '20%',
       },
       {
         title: '作业编号',
-        dataIndex: 'num',
+        dataIndex: 'key',
+        width: '10%',
+      },
+      {
+        title: '作业名',
+        dataIndex: 'h_name',
         width: '10%',
       },
       {
@@ -397,9 +437,7 @@ class ModalDemo extends React.Component {
       {
         title: '评分',
         dataIndex: 'score',
-        render: () => {
-          return <p>0/0</p>
-        }
+        width:'10%'
       },
     ]
 
@@ -435,9 +473,9 @@ class ModalDemo extends React.Component {
           destroyOnClose={false}
         >
           <div>
-            <p>{'作业内容说明' + this.state.num}</p>
-            <p>{'作业内容说明' + this.state.num}</p>
-            <p>{'作业内容说明' + this.state.num}</p>
+            <p>{'作业编号' + this.state.num}</p>
+            <p>{'作业名' + this.state.name}</p>
+            <p>{'作业内容说明' + this.state.des}</p>
             <FormItem label='上传文件' {...formItemLayout}>
               <Upload {...props}>
                 <Button><Icon type='upload' />选择文件</Button>
