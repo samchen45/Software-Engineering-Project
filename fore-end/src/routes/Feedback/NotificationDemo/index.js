@@ -9,6 +9,8 @@ import $ from 'jquery'
 
 const {TextArea} = Input
 const {Option} = Select;
+var ret = new Array()
+
 
 @Form.create()
 class NotificationDemo extends React.Component{
@@ -21,22 +23,27 @@ class NotificationDemo extends React.Component{
       data_homework: [],
       id:'',
       lecture:'',
-      count: 0
+      count: 0,
+      is_loading: false
     }
 
     this.loadlist = this.loadlist.bind(this)
   }
 
   componentWillMount() {
-    let uid = isAuthenticatedid()
-    console.log(uid);
-    this.setState({id : uid},() => {
-    console.log(this.state.id);
-    this.loadlist();
+    this.setState({
+      is_loading: true
     })
+    let uid = isAuthenticatedid()
+      console.log(0);
+      this.setState({id : uid},() => {
+        console.log(this.state.id);
+        this.loadlist();
+      })
   }
 
   loadlist(){
+    var that = this
     $.ajax({
       type: 'POST',
       url: "/tea_viewcourse",
@@ -45,48 +52,15 @@ class NotificationDemo extends React.Component{
       },
       success: function (data) {
         message.info("success");
-        const ret = JSON.parse(data)
-        console.log(ret)
+        ret = JSON.parse(data).arr
+        console.log("ret1 ", ret)
         this.setState({
-          dataSource:JSON.parse(data)
-      });
-        /* if (ret.info === 'SUCCEED'){
-          console.log(2)
-
-          // var arr = [];
-          // Object.keys(ret).forEach(function(key) {
-          //   arr.push(ret[key]);
-          // });
-          // console.log(arr)
-          const course = ret.arr.map(item => ({
-            key: item.cid,
-            c_name: item.cname
-          }))
-          // const course = []
-
-          // console.log(ret.arr.length)
-          // for (var i = 0; i < ret.arr.length; i++) {
-            
-          //   const item = {
-          //     key : ret[i].cid,
-          //     c_name: ret[i].cname
-          //   }
-          //   console.log(item)
-          //   course.push(item)
-          // }
-          console.log(ret)
-          console.log(course)
-          // this.setCourse(course) 
-          this.setState((state) => {
-              return {data_course: course,
-              count: state.count + 1}
-          });
-          this.forceUpdate()
-          console.log(this.state.count)
-          console.log(this.state.data_course)
-        } */
+          dataSource: ret,
+          is_loading: false
+        });
       }.bind(this)
     })
+    
   }
   handleLectureChange = value => {
     this.setState({lecture: value});
@@ -142,7 +116,7 @@ class NotificationDemo extends React.Component{
   }
   render(){
     const placement = this.state.placement
-    const dataSource = this.state.dataSource
+    // const dataSource = this.state.dataSource
     const handleLectureChange = this.handleLectureChange
     /*
     const cardContent = ` 在系统四个角显示通知提醒信息。经常用于以下情况：
@@ -152,6 +126,7 @@ class NotificationDemo extends React.Component{
             <li>系统主动推送</li>
           </ul>`
     */
+   const is_loading = this.state.is_loading
    const cardContent = ` 这个页面用于布置作业。 `
    const {getFieldDecorator, getFieldValue} = this.props.form
     const formItemLayout = {
@@ -164,65 +139,73 @@ class NotificationDemo extends React.Component{
         sm: {span: 12},
       },
     };
-   
-    return (
-      <div>
-        <CustomBreadcrumb arr={['作业','布置作业']}/>
-        <TypingCard source={cardContent}/>
-        <Card>
-        <Form>
-          <Form.Item label = '选择课程'>
-          <Select defaultValue={dataSource.arr[0].key} style={{ width: 240 }} onChange={handleLectureChange}>
-            {dataSource.arr.map(lecture => (
-              <Option key={lecture.key}>{lecture.c_name}</Option>
-            ))}
-          </Select>
-          </Form.Item>
-          <Form.Item label = '作业名称'  {...formItemLayout}>
-          {
-            getFieldDecorator('homework_name', {
-              rules: [
-                // {
-                //   // type: 'homework_name',
-                //   message: '请输入正确的邮箱地址'
-                // },
-                {
-                  required: true,
-                  message: '请填写作业名称'
-                }
-              ]
-            })(
-            <Input/>
-            )
-          }
-          </Form.Item>
-          <Form.Item label = '作业描述'>
-          {
-            getFieldDecorator('homework_des', {
-              rules: [
-                // {
-                //   type: 'homework_des',
-                //   message: '请输入作业描述'
-                // },
-                {
-                  required: true,
-                  message: '请输入作业描述'
-                }
-              ]
-            })(
-            <TextArea row = {4} />
-            )
+    console.log(this.state.is_loading)
+    console.log('render data source',this.state.dataSource)
+    if (!is_loading) {
+      return (
+        <div>
+          <CustomBreadcrumb arr={['作业','布置作业']}/>
+          <TypingCard source={cardContent}/>
+          <Card>
+          <Form>
+            <Form.Item label = '选择课程'>
+            <Select defaultValue={this.state.dataSource.cid} style={{ width: 240 }} onChange={handleLectureChange}>
+              {this.state.dataSource.map(lecture => (
+                <Option key={lecture.cid}>{lecture.cname}</Option>
+              ))}
+            </Select>
+            </Form.Item>
+            <Form.Item label = '作业名称'  {...formItemLayout}>
+            {
+              getFieldDecorator('homework_name', {
+                rules: [
+                  // {
+                  //   // type: 'homework_name',
+                  //   message: '请输入正确的邮箱地址'
+                  // },
+                  {
+                    required: true,
+                    message: '请填写作业名称'
+                  }
+                ]
+              })(
+              <Input/>
+              )
             }
             </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" onClick={this.handleSubmit}>
-              提交
-            </Button>
-          </Form.Item>
-        </Form>
-        </Card>
-      </div>
-    )
+            <Form.Item label = '作业描述'>
+            {
+              getFieldDecorator('homework_des', {
+                rules: [
+                  // {
+                  //   type: 'homework_des',
+                  //   message: '请输入作业描述'
+                  // },
+                  {
+                    required: true,
+                    message: '请输入作业描述'
+                  }
+                ]
+              })(
+              <TextArea row = {4} />
+              )
+              }
+              </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" onClick={this.handleSubmit}>
+                提交
+              </Button>
+            </Form.Item>
+          </Form>
+          </Card>
+        </div>
+      )
+    } else {
+      return (
+        <div></div>
+      ) 
+    }
+    
     
     /*
     return (
