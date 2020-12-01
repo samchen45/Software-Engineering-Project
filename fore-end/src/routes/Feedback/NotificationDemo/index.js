@@ -80,8 +80,11 @@ class NotificationDemo extends React.Component{
           url: "/tea_posthomework",
           data: {
             id: isAuthenticatedid(),
+            cid: this.state.lecture,
             hname: values.homework_name,
-            hdes:values.homework_des
+            hdes:values.homework_des,
+            date:2020-12-25,
+            answer:"无"
           },
           success:function(data){
             console.log(data);
