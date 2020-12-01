@@ -243,12 +243,14 @@ def submit_homework():
         ext = fname.rsplit('.', 1)[1]  # 获取文件后缀
         new_filename = fname + '.' + ext
         f.save(os.path.join(file_dir, new_filename))  # 保存文件到UPLOAD_FOLDER
+
+        file_url = "file://" + TCP.app.config['BASEDIR'] + new_filename
         # return render_template('upload.html', status='OK')
 
         now = datetime.datetime.now()
         submit_status = utils.isOvertime(now.year, now.month, now.day, str(_date))
         cursor.execute('REPLACE INTO submit(hid, uid, hurl, hstatus) VALUES(%s, %s, %s, %s)',
-                       (_hid, _uid, file_dir, submit_status))
+                       (_hid, _uid, file_url, submit_status))
         conn.commit()
 
         cursor.close()
