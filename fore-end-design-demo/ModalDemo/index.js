@@ -1,31 +1,105 @@
 import React from 'react'
-import {Card, Button, Form, Modal, Upload, Icon, Input, Tooltip} from 'antd'
+import { Card, Button, Form, Modal, Upload, Icon, Input, Tooltip, Table, Notification, message, Select } from 'antd'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb'
 import TypingCard from '../../../components/TypingCard'
+import reqwest from 'reqwest';
 
 const FormItem = Form.Item
 const formItemLayout = {
   labelCol: {
-    xs: {span: 24},
-    sm: {span: 8},
+    xs: { span: 24 },
+    sm: { span: 8 },
   },
   wrapperCol: {
-    xs: {span: 24},
-    sm: {span: 12},
+    xs: { span: 24 },
+    sm: { span: 12 },
   },
 };
 
+const LecturesRemote = ['课程1', '课程2']; // 更新这个当载入页面时从远程服务器
+const { Option } = Select;
+
+const EditableContext = React.createContext();
+const EditableRow = ({ form, index, ...props }) => (
+  <EditableContext.Provider value={form}>
+    <tr {...props} />
+  </EditableContext.Provider>
+);
+const EditableFormRow = Form.create()(EditableRow);
 class ModalDemo extends React.Component {
+  /*
+  constructor(){
+    super()
+    
+
+    this.state = {
+      visible: false,
+      visible2: false,
+      visible3: false,
+      visible4: false,
+      visible5: false,
+      ModalText: '显示对话框的内容',
+      confirmLoading: false
+  } 
+  */
   state = {
+    /*
     visible: false,
     visible2: false,
     visible3: false,
     visible4: false,
     visible5: false,
+    */
+    lecture: LecturesRemote[0],
+    organCertUrl: "",
+    fileList: [],
+    uploading: false,
     ModalText: '显示对话框的内容',
-    confirmLoading: false
-  }  
-  
+    confirmLoading: false,
+    visible: false,
+    homeworks: [
+      { key: 1 },
+      { key: 2 },
+      { key: 3 },
+      { key: 4 },
+      { key: 5 },
+    ],
+    homework: 1,
+  }
+
+  handleUpload = () => {
+    const { fileList } = this.state;
+    const formData = new FormData();
+    fileList.forEach(file => {
+      formData.append('files[]', file);
+    });
+
+    this.setState({
+      uploading: true,
+    });
+
+    // You can use any AJAX library you like
+    reqwest({
+      url: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+      method: 'post',
+      processData: false,
+      data: formData,
+      success: () => {
+        this.setState({
+          fileList: [],
+          uploading: false,
+        });
+        message.success('upload successfully.');
+      },
+      error: () => {
+        this.setState({
+          uploading: false,
+        });
+        message.error('upload failed.');
+      },
+    });
+  }
+
 
   closeModal(a) {
     this.setState({
@@ -98,64 +172,304 @@ class ModalDemo extends React.Component {
         break;
     }
   }
-  
-  showConfirm1 = (e) => {
+
+  /*
+  showConfirm1 = (num, props, uploading, fileList) => {
+
     const modal = Modal.confirm()
+    const onUpdate = (value) => {
+      modal.update({
+        content: <div>
+
+        </div>
+      });
+    }
+    const onUploading = (value) => {
+      onUpdate(value);
+      this.handleUpload(value)
+    }
     modal.update({
-      title:'作业',
-      okText:'确认',
-      cancelText:'取消',
-      destroyOnClose:true,
-      content:(
+      title: '作业',
+      okText: '确认',
+      cancelText: '取消',
+      destroyOnClose: true,
+      content: (
         <div>
-          <p>{'作业内容说明'+e}</p>
-          <p>{'作业内容说明'+e}</p>
-          <p>{'作业内容说明'+e}</p>
-          <form>
-           <FormItem label='上传文件' {...formItemLayout}><Upload><Button type='primary'><Icon type='upload'/>上传文件</Button></Upload></FormItem>
-           <FormItem label='备注（可选）' {...formItemLayout}>              
-            <Input/></FormItem>
-          </form>
+          <p>{'作业内容说明' + num}</p>
+          <p>{'作业内容说明' + num}</p>
+          <p>{'作业内容说明' + num}</p>
+          <FormItem label='上传文件' {...formItemLayout}>
+            <Upload {...props}>
+              <Button onClick={onUpdate}><Icon type='upload' />选择文件</Button>
+            </Upload>
+            <Button
+              type="primary"
+              onClick={this.handleUpload}
+              disabled={fileList.length === 0}
+              loading={uploading}
+              style={{ marginTop: 16 }}
+            >
+              {uploading ? 'Uploading' : 'Start Upload'}
+            </Button>
+          </FormItem>
+          <FormItem label='备注（可选）' {...formItemLayout}></FormItem>
+          {/*
+          <Form layout="vertical" onSubmit={this.handleSubmit}>
+            <Form.Item>
+              <div  key={Math.random()}>//点击关闭在次打开还会有上次上传文件的缓存
+                <Upload {...props}>
+                  <Button type="primary">
+                    <Icon type="upload" />选择文件
+                 </Button>
+                </Upload>
+ 
+              </div>
+            </Form.Item>
+            <Form.Item label="文件名(可更改)">
+              {getFieldDecorator('filename', {
+                // initialValue:this.state.defEmail,
+                rules: [
+                  {
+                    message: '请输入正确的文件名',
+                    // pattern: /^[0-9]+$/,
+                  },
+                  {
+                    required: true,
+                    message: '请输入文件名',
+                  },
+                ],
+              })(<Input />)}
+            </Form.Item>
+            <Form.Item label="描述(选填)">
+              {getFieldDecorator('describe', {
+ 
+                rules: [
+                  {
+                    message: '描述不能为空',
+                  },
+                  {
+                    required: false,
+                    message: '请输入描述',
+                  },
+                ],
+              })(<TextArea />)}
+            </Form.Item>
+            <Form.Item label="文件类型">
+              {getFieldDecorator('filetype', {
+                rules: [
+                  {
+                    message: '文件类型',
+                  },
+                  {
+                    required: true,
+                    message: '文件类型',
+                  },
+                ],
+              })(<Input disabled={true} />)}
+            </Form.Item>
+            </Form>}
         </div>
       ),
-      onOk(){},
-      onCancel(){}
+      onOk() { },
+      onCancel() { }
+    })
+  }
+  */
+  
+  /*
+  columns7 = [
+    {
+      title: '课程编号',
+      dataIndex: 'key',
+      width: '10%',
+    },
+    {
+      title: '课程名',
+      dataIndex: 'name',
+      width: '30%',
+    },
+    {
+      title: '作业编号',
+      dataIndex: 'num',
+      width: '10%',
+    },
+    {
+      title: '操作',
+      dataIndex: 'operation',
+      render: (text, record) => {
+        return (
+          <div>
+            <Button onClick = {()=>this.showConfirm1(record.key)}>提交</Button>
+          </div>
+           )
+           
+      }
+    },
+    {
+      title: '评分',
+      dataIndex: 'score',
+      render: () => {
+        return <p>0/0</p>
+      }
+    },
+  ]
+  */
+
+  showModal = (e, n) => {
+    this.setState({
+      visible: true,
+      num: n,
     })
   }
 
-  showConfirm2 = () => {
-    const modal = Modal.confirm()
-    modal.update({
-      title:'作业',
-      okText:'确认',
-      cancelText:'取消',
-      destroyOnClose:true,
-      content:(
-        <div>
-          <p>{'作业内容'}</p>
-          <form></form>
-        </div>
-      ),
-      onOk(){},
-      onCancel(){}
+  handleOk = e => {
+    this.setState({
+      visible: false,
     })
   }
+
+  handleCancel = e => {
+    this.setState({
+      visible: false,
+    })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.modal.modalUpdateDetail) {
+      this.props.form.resetFields();
+    }
+  }
+
+  handleLectureChange = () => {};
 
   render() {
-    const {visible, visible2, visible3, visible4, visible5, ModalText, confirmLoading} = this.state
+    /*
+    const {visible,visible1,visible2,visible3,visible4,visible5, ModalText, confirmLoading} = this.state
+    */
+
+    const { uploading, fileList, homework: num } = this.state;
+    const props = {
+      onRemove: file => {
+        this.setState(state => {
+          const index = state.fileList.indexOf(file);
+          const newFileList = state.fileList.slice();
+          newFileList.splice(index, 1);
+          return {
+            fileList: newFileList,
+          };
+        });
+      },
+      beforeUpload: file => {
+        this.setState(state => ({
+          fileList: [...state.fileList, file],
+        }));
+        return false;
+      },
+      fileList,
+    };
+
     const cardContent = ` 该页面用于查看用户所有的作业。`
 
-    const numbers = [1, 2, 3, 4, 5]
+    const columns7 = [
+      {
+        title: '作业编号',
+        dataIndex: 'key',
+        width: '10%',
+      },
+      {
+        title: '作业名',
+        dataIndex: 'name',
+        width: '10%',
+      },
+      {
+        title: '作业说明',
+        dataIndex: 'info',
+        width: '30%',
+      },
+      {
+        title: '操作',
+        dataIndex: 'operation',
+        width: '10%',
+        render: (text, record) => {
+          return (
+            <div>
+              <Button onClick={e=>this.showModal(e, record.key)}>提交</Button>
+            </div>
+          )
+        }
+      },
+      {
+        title: '评分',
+        dataIndex: 'score',
+        width: '10%',
+        render: () => {
+          return <p>0/0</p>
+        }
+      },
+    ]
+
+    const handleLectureChange = this.handleLectureChange;
+
+
+
+
+    /*
     const homeworks = numbers.map((number) => 
-      <Card bordered={true}><a href='#' onclick={this.showConfirm1(number)}> {'作业'+number} </a></Card>
+      <Card bordered={true} titie = {number.class_name}>
+        <a href={'#'+ number.class_name} onclick={this.showConfirm1(number.class_name)}> {'作业'+ number.class_name} 
+        </a>
+      </Card>
     )
-    
+    */
+
 
     return (
       <div>
-        <CustomBreadcrumb arr={['作业', '查看作业']}/>
-        <TypingCard source={cardContent}/>
-        {homeworks}
+        <CustomBreadcrumb arr={['作业功能', '查看作业']} />
+        <TypingCard source={cardContent} />
+        <Card bordered={false} title='作业列表' style={{ marginBottom: 10, minHeight: 440 }} id='editTable'>
+          {/* <Table bordered dataSource={this.state.data7} columns={this.columns7} style={styles.tableStyle}/> */}
+          <p>选择课程：
+            <Select defaultValue={LecturesRemote[0]} style={{ width: 240 }} onChange={handleLectureChange}>
+              {LecturesRemote.map(lecture => (
+                <Option key={lecture}>{lecture}</Option>
+                )
+              )}
+            </Select>
+          </p>
+          <Table style={styles.tableStyle} dataSource={this.state.homeworks}
+            columns={columns7} />
+        </Card>
+        <Modal id='modal'
+          visible={this.state.visible}
+          title='作业'
+          okText='确认'
+          cancelText='取消'
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+          destroyOnClose={false}
+        >
+          <div>
+            <p>{'作业内容说明' + this.state.homework}</p>
+            <p>{'作业内容说明' + this.state.homework}</p>
+            <p>{'作业内容说明' + this.state.homework}</p>
+            <FormItem label='上传文件' {...formItemLayout}>
+              <Upload {...props}>
+                <Button><Icon type='upload' />选择文件</Button>
+              </Upload>
+              <Button
+                type="primary"
+                onClick={this.handleUpload}
+                disabled={fileList.length === 0}
+                loading={uploading}
+                style={{ marginTop: 16 }}
+              >
+                {uploading ? 'Uploading' : 'Start Upload'}
+              </Button>
+            </FormItem>
+            <FormItem label='备注（可选）' {...formItemLayout}></FormItem>
+          </div>
+        </Modal>
       </div>
     )
     /*
@@ -261,5 +575,17 @@ class ModalDemo extends React.Component {
 //     transform: 'translate(-50%,-50%)'
 //   }
 // }
+
+const styles = {
+  tableStyle: {
+    width: '80%'
+  },
+  affixBox: {
+    position: 'absolute',
+    top: 100,
+    right: 50,
+    with: 170
+  }
+}
 
 export default ModalDemo
