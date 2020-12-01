@@ -19,4 +19,8 @@ mysql.init_app(app)
 # basedir = os.path.abspath(os.path.dirname(__file__))  # get current absolute dir
 # ALLOWED_EXTENSIONS = set(['zip', 'pdf', 'txt', 'png', 'jpg', 'xls', 'JPG', 'PNG', 'xlsx', 'gif', 'GIF', 'ppt', 'docx', 'mp4', 'flv'])  # 允许上传的文件后缀
 
-import TCP.api
+# Tell our app about views (and possibly model).  This is dangerously close to a
+# circular import, which is naughty, but Flask was designed that way.
+# (Reference http://flask.pocoo.org/docs/patterns/packages/)  We're
+# going to tell pylint and pycodestyle to ignore this coding style violation.
+import TCP.api  # noqa: E402  pylint: disable=wrong-import-position

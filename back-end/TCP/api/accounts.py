@@ -1,9 +1,8 @@
-### IGNORE THIS FILE FOR NOW.    --PSY
-
 from flask import json, request
 from werkzeug.security import generate_password_hash, check_password_hash
 import TCP
 import TCP.utils as utils
+
 
 @TCP.app.route('/api/register', methods=['POST'])
 def register():
