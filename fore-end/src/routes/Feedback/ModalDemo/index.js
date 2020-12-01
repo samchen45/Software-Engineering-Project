@@ -97,7 +97,7 @@ class ModalDemo extends React.Component {
     var that = this
     $.ajax({
       type: 'POST',
-      url: "/UserLog",
+      url: "/viewcourses",
       data: {
         userid: this.state.id,
       },
@@ -106,12 +106,12 @@ class ModalDemo extends React.Component {
         ret = JSON.parse(data)
         console.log("ret1 ", ret)
 
-        this.setState({
+        that.setState({
           dataSource: ret,
           is_loading: false
-        }).bind(this)
+        })
 
-      }
+      }.bind(this)
     })
   }
 

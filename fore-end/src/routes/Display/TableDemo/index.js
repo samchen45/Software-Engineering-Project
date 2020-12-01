@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Popconfirm, Button, Icon, Table, Divider, BackTop, Affix, Anchor, Form, InputNumber, Input } from 'antd'
+import { Card, Popconfirm, Button, Icon, Table, Divider, BackTop, Affix, Anchor, Form, InputNumber, Input, message } from 'antd'
 import axios from 'axios'
 import { isAuthenticatedid } from '../../../utils/Session'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
@@ -301,8 +301,8 @@ class TableDemo extends React.Component {
   }
   loadlist(){
     $.ajax({
-      type: 'GET',
-      url: "/UserLog",
+      type: 'POST',
+      url: "/viewcourses",
       data: {
         userid: this.state.id,
       },

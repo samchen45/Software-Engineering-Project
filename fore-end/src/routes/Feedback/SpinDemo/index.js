@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Card, Col, Row, Spin, Icon, Alert, Switch, Select, Button, Table, Input, Divider } from 'antd'
+import { Card, Col, Row, Spin, Icon, Alert, Switch, Select, Button, Table, Input, Divider, message } from 'antd'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
@@ -8,7 +8,7 @@ import { isAuthenticatedid } from '../../../utils/Session'
 import $ from 'jquery'
 
 const { Option } = Select;
-
+var ret = new Array()
 
 const LectureId = ['课程1', '课程2'];
 const HomeworkId = {
@@ -19,7 +19,7 @@ const HomeworkId = {
 class SpinDemo extends React.Component {
   constructor(props) {
     super(props)
-    state = {
+    this.state = {
       //loading: false,
       //loading2: false
       is_loading: false,
@@ -56,11 +56,11 @@ class SpinDemo extends React.Component {
   loadlist() {
     $.ajax({
       type: 'POST',
-      url: "/UserLog",
+      url: "/viewcourses",
       data: {
         userid: this.state.id,
       },
-      success: function (ret) {
+      success: function (data) {
         message.info("success");
         ret = JSON.parse(data)
         console.log("ret1 ", ret)

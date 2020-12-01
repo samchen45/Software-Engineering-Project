@@ -98,7 +98,7 @@ def deleteCourse():
 @TCP.app.route('/api/viewcourses', methods=['POST'])
 def viewCourses():
     # get parameters from request
-    _id = request.form.get('id', type=str)
+    _id = request.form.get('userid', type=str)
     # connect to mysql
     conn = TCP.mysql.connect()
     cursor = conn.cursor()

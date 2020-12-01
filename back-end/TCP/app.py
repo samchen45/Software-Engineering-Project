@@ -377,7 +377,7 @@ def score_homework():
 
 
 # view course(for student)
-@app.route('/api/stu_viewcourse', methods=['POST'], strict_slashes=False)
+@app.route('/api/stu_viewcourse', methods=['POST'])
 def stu_view_course():
 
     _id = request.form.get('id', type=str)
@@ -385,11 +385,14 @@ def stu_view_course():
     # connect to mysql
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute('SELECT utype FROM users WHERE id=%s', (_id,))
-    data = cursor.fetchall()
+    cursor.execute('SELECT * FROM users WHERE id=%s', (_id,))
+    data = cursor.fetchone()
+
+    print(_id)
+    print(data)
 
     # judge if it's student
-    if data[0][0] != 'S':
+    if data[0] != 'S':
         return None
 
     cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_id,))

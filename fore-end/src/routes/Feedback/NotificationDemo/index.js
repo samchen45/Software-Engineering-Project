@@ -46,7 +46,7 @@ class NotificationDemo extends React.Component{
     var that = this
     $.ajax({
       type: 'POST',
-      url: "/tea_viewcourse",
+      url: "/viewcourses",
       data: {
           userid: this.state.id,
       },

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Col, Row, Collapse, BackTop, Form, InputNumber, Input, Popconfirm, Button, Table, Select } from 'antd'
+import { Card, Col, Row, Collapse, BackTop, Form, InputNumber, Input, Popconfirm, Button, Table, Select, message } from 'antd'
 import axios from 'axios'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
@@ -180,8 +180,8 @@ class CollapseDemo extends React.Component {
   }
   loadlist() {
     $.ajax({
-      type: 'GET',
-      url: "/UserLog",
+      type: 'POST',
+      url: "/viewcourses",
       data: {
         userid: this.state.id,
       },

@@ -89,7 +89,7 @@ def tea_view_brief_homework():
     return json.dumps(msg)
 
 
-@app.route('/api/tea_viewdetailed_homework', methods=['POST'], strict_slashes=False)
+@TCP.app.route('/api/tea_viewdetailed_homework', methods=['POST'], strict_slashes=False)
 def tea_view_detailed_homework():
     """
     View detailed homework (for teacher).
