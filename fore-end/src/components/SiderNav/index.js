@@ -53,6 +53,7 @@ const menus = [
     key: '/home/feedback',
     subs: [
       {key: '/home/feedback/modal', title: '查看作业', icon: '',},
+      {key: '/home/feedback/modification', title: '修改作业', icon: ''},
       {key: '/home/feedback/notification', title: '布置作业', icon: ''},
       {key: '/home/feedback/spin', title: '批改作业', icon: '',}
     ] //老师有布置作业和批改作业，学生只有查看作业
