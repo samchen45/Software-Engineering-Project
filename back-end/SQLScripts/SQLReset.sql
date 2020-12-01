@@ -78,7 +78,7 @@ DROP TABLE IF EXISTS `TCPDB`.`submit`;
 CREATE TABLE `TCPDB`.`submit` (
   `hid` VARCHAR(20) NOT NULL,
   `uid` VARCHAR(20) NOT NULL,
-  `hurl` VARCHAR(100) NULL,
+  `hurl` VARCHAR(1000) NULL,
   `hstatus` enum('N', 'Y', 'E') DEFAULT 'N',  -- N: not submit yet; Y: submitted already; E: submitted overtime;
   `score` DOUBLE(5,2),
   PRIMARY KEY (`hid`, `uid`)
@@ -162,19 +162,19 @@ INSERT INTO courses (cname, ctid, cdes, ctextbook) VALUES (
 
 /* GENERATE TEST HOMEWORK */
 INSERT INTO homeworks (
-  cid, hname, hdes
+  cid, hname, hdes, hdate
 )
 VALUES (
   1, 'calculation', 
-  'math homework1'
+  'math homework1', '2020-10-01'
 );
 
 INSERT INTO homeworks (
-  cid, hname, hdes
+  cid, hname, hdes, hdate
 )
 VALUES (
   2, 'pronunciation', 
-  'english homework1'
+  'english homework1', '2021-01-01'
 );
 
 /* GENERATE TEST SUBMIT */

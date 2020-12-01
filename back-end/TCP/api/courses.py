@@ -191,8 +191,33 @@ def viewStudents():
     for student in data:
         sid = student[0]
         sname = utils.getName(cursor, sid)
-        msg.append([sid, sname])
+        msg.append({'sid':sid, 'sname': sname})
 
     cursor.close()
     conn.close()
     return json.dumps(msg)
+
+
+@TCP.app.route('/api/addstudents', methods=['POST'])
+def addStudents():
+    # get parameters from request
+    _uid = request.form.get('uid', type=str)
+    _cid = request.form.get('cid', type=str)
+    _sid = request.form.get('sid', type=str)
+    _sname = request.form.get('sname', type=str)
+    # connect to mysql
+    conn = TCP.mysql.connect()
+    cursor = conn.cursor()
+    # validate student id and name (omitted)
+
+    # check if student already enrolled
+
+    
+    cursor.execute('INSERT INTO rosters(cid, sid) \
+        VALUES (%s, %s)' , (_cid, _sid))
+    conn.commit()
+    
+
+    cursor.close()
+    conn.close()
+    return json.dumps('success')
