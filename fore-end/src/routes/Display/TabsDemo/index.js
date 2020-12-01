@@ -3,6 +3,8 @@ import { Card, Popconfirm, Button, Icon, Table, Divider, BackTop, Affix, Anchor,
 import axios from 'axios'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
+import { isAuthenticatedid } from '../../../utils/Session'
+import $ from 'jquery'
 
 var ret = new Array()
 const { SearchOutlined } = Icon;
