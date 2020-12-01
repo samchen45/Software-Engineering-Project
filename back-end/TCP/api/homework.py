@@ -10,18 +10,7 @@ def tea_post_homework():
     """
     Post homework (for teacher).
     """
-    _id = request.form.get('id', type=str)
-
-    # connect to mysql
-    conn = TCP.mysql.connect()
-    cursor = conn.cursor()
-    cursor.execute('SELECT utype FROM users WHERE id=%s', (_id,))
-    data = cursor.fetchall()
-
-    # judge if it's teacher
-    if data[0][0] != 'T':
-        return None
-
+    
     # get parameters from request
     _cid = request.form.get('cid', type=str)
     _hname = request.form.get('hname', type=str)
@@ -33,11 +22,15 @@ def tea_post_homework():
     # _hdate = "2020-10-01"
     # _hanswer = "ANSWER"
 
+    # connect to mysql
+    conn = TCP.mysql.connect()
+    cursor = conn.cursor()
+
     cursor.execute('INSERT INTO homeworks(cid, hname, hdes, hdate, hanswer) \
         VALUES (%s, %s, %s, %s, %s)', (_cid, _hname, _hdes, _hdate, _hanswer))
     conn.commit()
 
-    msg = {}
+    msg = []
     if len(data) == 0:
         msg['info'] = 'NULL'
     else:
@@ -48,45 +41,50 @@ def tea_post_homework():
     return json.dumps(msg)
 
 
-# @TCP.app.route('/api/tea_viewbrief_homework', methods=['POST'], strict_slashes=False)
-# def tea_view_brief_homework():
-#     """
-#     View brief homework (for teacher).
-#     """
-#     _id = request.form.get('id', type=str)
+@TCP.app.route('/api/tea_viewbrief_homework', methods=['POST'], strict_slashes=False)
+def tea_view_brief_homework():
+    """
+    View brief homework (for teacher).
+    """
 
-#     # connect to mysql
-#     conn = TCP.mysql.connect()
-#     cursor = conn.cursor()
-#     cursor.execute('SELECT utype FROM users WHERE id=%s', (_id,))
-#     data = cursor.fetchall()
+    # get parameters from request
+    _id = request.form.get('id', type=str)
 
-#     # judge if it's teacher
-#     if data[0][0] != 'T':
-#         return None
+    # connect to mysql
+    conn = TCP.mysql.connect()
+    cursor = conn.cursor()
 
-#     cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_id,))
-#     data = cursor.fetchall()
+    # get parameters from request
+    cursor.execute('SELECT courses.cid, courses.cname FROM courses WHERE ctid=%s', (_id,))
+    courseData = cursor.fetchall()
 
-#     # return to frontend
-#     msg = {}
-#     if len(data) > 0:
-#         msg['cid'] = data[0][0]
-#         msg['cname'] = data[0][1]
-#     else:
-#         msg['info'] = 'NULL'
+    # return to frontend
+    msg = []
+    if len(courseData) > 0:
+        for record in courseData:
+            tempDic = {}
+            tempDic['cid'] = record[0]
+            tempDic['cname'] = record[1]
+            tempDic['homework'] = []
 
-#     cursor.execute('SELECT hname FROM homeworks WHERE cid=%s', (_id,))
-#     data = cursor.fetchall()
+            cursor.execute('SELECT hid, hname, hdes, hdate FROM homeworks WHERE cid = %s', (record[0],))
+            homeworkData = cursor.fetchall()
+            for homework in homeworkData:
+                homeworkDic = {}
+                homeworkDic['hid'] = homework[0]
+                homeworkDic['hname'] = homework[1]
+                homeworkDic['hdes'] = homework[2]
+                homeworkDic['hdate'] = homework[3]
+                tempDic['homework'].append(homeworkDic)
+                
+            msg.append(tempDic)
+        msg['info'] = 'SUCCEED'
+    else:
+        msg['info'] = 'NULL'
 
-#     if len(data) > 0:
-#         msg['hname'] = data[0][0]
-#     else:
-#         msg['info'] = 'NULL'
-
-#     cursor.close()
-#     conn.close()
-#     return json.dumps(msg)
+    cursor.close()
+    conn.close()
+    return json.dumps(msg)
 
 
 @TCP.app.route('/api/tea_viewdetailed_homework', methods=['POST'], strict_slashes=False)
@@ -94,38 +92,31 @@ def tea_view_detailed_homework():
     """
     View detailed homework (for teacher).
     """
-    _id = request.form.get('id', type=str)
+
+    # get parameters from request
+    _hid = request.form.get('hid', type=str)
 
     # connect to mysql
     conn = TCP.mysql.connect()
-    cursor = conn.cursor()
-    cursor.execute('SELECT utype FROM users WHERE id=%s', (_id,))
-    data = cursor.fetchall()
+    cursor = conn.cursor() 
 
-    # judge if it's teacher
-    if data[0][0] != 'T':
-        return None
-
-    # get parameters from request
-    _cid = request.form.get('cid', type=str)
-    _hname = request.form.get('hname', type=str)
-
-    cursor.execute(
-        'SELECT * FROM submit WHERE cid=%s and hname=%s', (_cid, _hname,))
+    cursor.execute('SELECT submit.uid, submit.hurl, submit.hstatus, submit.score, users.uname FROM submit, users \
+        WHERE submit.hid=%s and submit.uid=users.id', (_hid,))
     data = cursor.fetchone()
 
-    msg = {}
-    if len(data) == 0:
-        msg['info'] = 'NULL'
+    msg = []
+    if len(data) > 0:
+        for record in data:
+            tempDic = {}
+            tempDic['uid'] = record[0]
+            tempDic['hurl'] = record[1]
+            tempDic['hstatus'] = record[2]
+            tempDic['score'] = record[3]
+            tempDic['uname'] = record[4]
+            msg.append(tempDic)
+        msg['info'] = 'SUCCEED'
     else:
-        msg['uid'] = data[1]
-        msg['hurl'] = data[2]
-        msg['hstatus'] = data[3]
-        msg['score'] = data[4]
-
-    cursor.execute('SELECT uname FROM users WHERE uid=%s', (msg['_id'],))
-    data = cursor.fetchall()
-    msg['uname'] = data[0][0]
+        msg['info'] = 'NULL'
 
     cursor.close()
     conn.close()
@@ -137,55 +128,57 @@ def score_homework():
     """
     Score homework.
     """
+    
     # get parameters from request
-    _hname = request.form.get('hname', type=str)
-    _uid = request.form.get('uid', type=str)
+    _uid = request.form.get('id', type=str)
+    _hid = request.form.get('hid', type=str)
     _score = request.form.get('score', type=str)
+
     # connect to mysql
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
 
-    cursor.execute('UPDATE homeworks SET score=%s WHERE hname=%s AND uid=%s',
-                   (_score, _hname, _uid))
+    cursor.execute('UPDATE submit SET score=%s WHERE hid=%s and uid=%s',
+                   (_score, _hid, _uid))
     conn.commit()
 
-    msg = {'SUCCEED'}
+    msg['info'] = 'SUCCEED'
     cursor.close()
     conn.close()
     return json.dumps(msg)
 
 
-@TCP.app.route('/api/stu_viewcourse', methods=['POST'], strict_slashes=False)
-def stu_view_course():
-    """
-    View course (for student).
-    """
-    _id = request.form.get('id', type=str)
+# @TCP.app.route('/api/stu_viewcourse', methods=['POST'], strict_slashes=False)
+# def stu_view_course():
+#     """
+#     View course (for student).
+#     """
+#     _id = request.form.get('id', type=str)
 
-    # connect to mysql
-    conn = TCP.mysql.connect()
-    cursor = conn.cursor()
-    cursor.execute('SELECT utype FROM users WHERE id=%s', (_id,))
-    data = cursor.fetchall()
+#     # connect to mysql
+#     conn = TCP.mysql.connect()
+#     cursor = conn.cursor()
+#     cursor.execute('SELECT utype FROM users WHERE id=%s', (_id,))
+#     data = cursor.fetchall()
 
-    # judge if it's student
-    if data[0][0] != 'S':
-        return None
+#     # judge if it's student
+#     if data[0][0] != 'S':
+#         return None
 
-    cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_id,))
-    data = cursor.fetchall()
+#     cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_id,))
+#     data = cursor.fetchall()
 
-    # return to frontend
-    msg = {}
-    if len(data) > 0:
-        msg['cid'] = data[0][0]
-        msg['cname'] = data[0][1]
-    else:
-        msg['info'] = 'NULL'
+#     # return to frontend
+#     msg = []
+#     if len(data) > 0:
+#         msg['cid'] = data[0][0]
+#         msg['cname'] = data[0][1]
+#     else:
+#         msg['info'] = 'NULL'
 
-    cursor.close()
-    conn.close()
-    return json.dumps(msg)
+#     cursor.close()
+#     conn.close()
+#     return json.dumps(msg)
 
 
 @TCP.app.route('/api/stu_viewhomework', methods=['POST'], strict_slashes=False)
@@ -193,32 +186,30 @@ def stu_view_homework():
     """
     View homework (for student).
     """
-    _id = request.form.get('id', type=str)
-
+    
+    # get parameters from request
+    _cid = request.form.get('cid', type=str)
+    
     # connect to mysql
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
-    cursor.execute('SELECT utype FROM users WHERE id=%s', (_id,))
+
+    cursor.execute('SELECT hid, hname, hdes, hdate, uname FROM homeworks WHERE cid=%s', (_cid,))
     data = cursor.fetchall()
 
-    # judge if it's student
-    if data[0][0] != 'S':
-        return None
-
-    # get parameters from request
-    _cid = request.form.get('cid', type=str)
-
-    cursor.execute('SELECT * FROM homeworks WHERE cid=%s', (_cid, _hnamel,))
-    data = cursor.fetchall()
-
-    msg = {}
-    if len(data) == 0:
-        msg['info'] = 'NULL'
+    msg = []
+    if len(data) > 0:
+        for record in data:
+            tempDic = {}
+            tempDic['hid'] = record[0]
+            tempDic['hname'] = record[1]
+            tempDic['hdes'] = record[2]
+            tempDic['hdate'] = record[3]
+            tempDic['uname'] = record[4]
+            msg.append(tempDic)
+        msg['info'] = 'SUCCEED'
     else:
-        msg['hid'] = data[0][1]
-        msg['hname'] = data[0][2]
-        msg['hdes'] = data[0][3]
-        msg['hdate'] = data[0][4]
+        msg['info'] = 'NULL'
 
     cursor.close()
     conn.close()
@@ -237,10 +228,11 @@ def submit_homework():
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
 
-    cursor.execute('SELECT cid,hdate FROM homeworks WHERE hid=%s', (_hid,))
-    data = cursor.fetchall()
-    _cid = data[0][0]
-    _date = data[0][1]
+    cursor.execute('SELECT cid, hdate FROM homeworks WHERE hid=%s', (_hid,))
+    data = cursor.fetchone()
+    _cid = data[0]
+    _date = data[1]
+    
     cursor.close()
     conn.close()
 

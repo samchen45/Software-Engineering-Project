@@ -182,7 +182,7 @@ INSERT INTO submit (
   hid, uid, hurl, hstatus, score
 )
 VALUES (
-  'math1', '10000', 'homework/abc101/math1/10000/', 
+  '1', '10000', 'homework/1/1/10000/',  -- filename: homework/cid/hid/id
   'Y', 90.000001
 );
 
