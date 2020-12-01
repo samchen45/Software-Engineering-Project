@@ -30,5 +30,11 @@ pip install .
 
 6. Start backend server
 ```
-python TCP/app.py
+./bin/TCPrun
 ```
+
+Try 
+```
+chmod +x ./bin/TCPrun
+```
+if needed.

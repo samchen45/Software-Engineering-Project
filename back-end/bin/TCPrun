@@ -1,0 +1,11 @@
+#!/bin/bash
+# insta485run
+
+# Call insta485db create if not database file exists
+# Set FLASK_DEBUG, FLASK_APP and INSTA485_SETTINGS environment variables
+# Run the development server on port 8000
+# bin/insta485db create
+export FLASK_DEBUG=True
+export FLASK_APP=TCP
+# export INSTA485_SETTINGS=config.py
+flask run --host 0.0.0.0 --port 5002
