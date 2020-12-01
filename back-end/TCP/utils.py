@@ -25,7 +25,7 @@ def send_email_captcha(recv_addr):
 
 # judge if file is allowed to upload
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1] in TCP.app.config['ALLOWED_EXTENSIONS']
 
 # convert courses tuple (usually from database) to dictionary
 def courses2list(courses: tuple):
@@ -43,9 +43,9 @@ def courses2list(courses: tuple):
 # judge if submitting is overtime
 def isOvertime(year, month, day, set_date):
     split_date = set_date.split('-')
-    set_year = split[0]
-    set_month = split[0]
-    set_day = split[0]
+    set_year = int(split_date[0])
+    set_month = int(split_date[1])
+    set_day = int(split_date[2])
 
     if year > set_year or (month > set_month or day > set_day):
         return 'E'

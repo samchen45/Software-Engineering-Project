@@ -28,22 +28,23 @@ def tea_post_homework():
     cursor = conn.cursor()
 
     cursor.execute('INSERT INTO homeworks(cid, hname, hdes, hdate, hanswer) \
-        VALUES (%s, %s, %s, %s, %s)', (_cid, _hname, _hdes, _hdate, _hanswer))
+        VALUES (%s, %s, %s, %s, %s)' , (_cid, _hname, _hdes, _hdate, _hanswer))
+        
     conn.commit()
 
     msg = []
-    if len(data) == 0:
-        msg['info'] = 'NULL'
-    else:
-        msg['info'] = 'SUCCEED'
+    # if len(data) == 0:
+    #     msg['info'] = 'NULL'
+    # else:
+    #     msg['info'] = 'SUCCEED'
 
     cursor.close()
     conn.close()
     return json.dumps(msg)
 
 
-@TCP.app.route('/api/tea_viewbrief_homework', methods=['POST'], strict_slashes=False)
-def tea_view_brief_homework():
+@TCP.app.route('/api/tea_viewall_homework', methods=['POST'], strict_slashes=False)
+def tea_view_all_homework():
     """
     View brief homework (for teacher).
     """
@@ -79,9 +80,6 @@ def tea_view_brief_homework():
                 tempDic['homework'].append(homeworkDic)
                 
             msg.append(tempDic)
-        msg['info'] = 'SUCCEED'
-    else:
-        msg['info'] = 'NULL'
 
     cursor.close()
     conn.close()
@@ -103,7 +101,7 @@ def tea_view_detailed_homework():
 
     cursor.execute('SELECT submit.uid, submit.hurl, submit.hstatus, submit.score, users.uname FROM submit, users \
         WHERE submit.hid=%s and submit.uid=users.id', (_hid,))
-    data = cursor.fetchone()
+    data = cursor.fetchall()
 
     msg = []
     if len(data) > 0:
@@ -115,9 +113,6 @@ def tea_view_detailed_homework():
             tempDic['score'] = record[3]
             tempDic['uname'] = record[4]
             msg.append(tempDic)
-        msg['info'] = 'SUCCEED'
-    else:
-        msg['info'] = 'NULL'
 
     cursor.close()
     conn.close()
@@ -143,7 +138,8 @@ def score_homework():
                    (_score, _hid, _uid))
     conn.commit()
 
-    msg['info'] = 'SUCCEED'
+    msg = []
+    msg.append({'info': 'SUCCEED'})
     cursor.close()
     conn.close()
     return json.dumps(msg)
@@ -195,7 +191,8 @@ def stu_view_homework():
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
 
-    cursor.execute('SELECT hid, hname, hdes, hdate, uname FROM homeworks WHERE cid=%s', (_cid,))
+    cursor.execute(
+        'SELECT homeworks.hid, homeworks.hname, homeworks.hdes, homeworks.hdate, submit.score FROM homeworks, submit WHERE cid=%s', (_cid,))
     data = cursor.fetchall()
 
     msg = []
@@ -206,11 +203,7 @@ def stu_view_homework():
             tempDic['hname'] = record[1]
             tempDic['hdes'] = record[2]
             tempDic['hdate'] = record[3]
-            tempDic['uname'] = record[4]
             msg.append(tempDic)
-        msg['info'] = 'SUCCEED'
-    else:
-        msg['info'] = 'NULL'
 
     cursor.close()
     conn.close()
@@ -234,15 +227,13 @@ def submit_homework():
     _cid = data[0]
     _date = data[1]
     
-    cursor.close()
-    conn.close()
 
     file_dir = os.path.join(
-        TCP.app.config['BASEDIR'], TCP.app.config['UPLOAD_FOLDER'], _cid, _hid, _uid)  # 拼接成合法文件夹地址
+        TCP.app.config['BASEDIR'], TCP.app.config['UPLOAD_FOLDER'], str(_cid), _hid, _uid)  # 拼接成合法文件夹地址
     if not os.path.exists(file_dir):
         os.makedirs(file_dir)  # 文件夹不存在就创建
     f = request.files['myfile']  # 从表单的file字段获取文件，myfile为该表单的name值
-    if f and allowed_file(f.filename):  # 判断是否是允许上传的文件类型
+    if f and utils.allowed_file(f.filename):  # 判断是否是允许上传的文件类型
         fname = f.filename
 
         # 根据系统时间重命名文件
@@ -255,11 +246,16 @@ def submit_homework():
         # return render_template('upload.html', status='OK')
 
         now = datetime.datetime.now()
-        submit_status = isOvertime(now_time.year, now.month, now.day, _date)
-        cursor.execute('REPLACE INTO submit(hid, uid, url, status) VALUES(%s, %s, %s, submit_status)',
+        submit_status = utils.isOvertime(now.year, now.month, now.day, str(_date))
+        cursor.execute('REPLACE INTO submit(hid, uid, hurl, hstatus) VALUES(%s, %s, %s, %s)',
                        (_hid, _uid, file_dir, submit_status))
         conn.commit()
 
+        cursor.close()
+        conn.close()
+
         return json.dumps('SUCCEED')
 
+    cursor.close()
+    conn.close()
     return json.dumps('FAILED')

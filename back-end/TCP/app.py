@@ -482,7 +482,7 @@ def submit_homework():
         # return render_template('upload.html', status='OK')
 
         now = datetime.datetime.now()
-        submit_status = isOvertime(now_time.year, now.month, now.day, _date)
+        submit_status = utils.isOvertime(now_time.year, now.month, now.day, _date)
         cursor.execute('REPLACE INTO submit(hid, uid, url, status) VALUES(%s, %s, %s, submit_status)',
                        (_hid, _uid, file_dir, submit_status))
         conn.commit()
