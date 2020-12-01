@@ -23,7 +23,7 @@ def createCourse():
     # return to frontend
     cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_ctid,))
     all_courses = cursor.fetchall()
-    msg = utils.courses2dict(all_courses)
+    msg = utils.courses2list(all_courses)
 
     cursor.close()
     conn.close()
@@ -61,7 +61,7 @@ def editCourse():
     # return to frontend
     cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_ctid,))
     all_courses = cursor.fetchall()
-    msg = utils.courses2dict(all_courses)
+    msg = utils.courses2list(all_courses)
 
     cursor.close()
     conn.close()
@@ -88,7 +88,7 @@ def deleteCourse():
     # return to frontend
     cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_ctid,))
     all_courses = cursor.fetchall()
-    msg = utils.courses2dict(all_courses)
+    msg = utils.courses2list(all_courses)
 
     cursor.close()
     conn.close()
@@ -117,33 +117,44 @@ def viewCourses():
     if user_type == 'T':
         cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_id,))
         all_courses = cursor.fetchall()
-        msg = utils.courses2dict(all_courses)
+        msg = utils.courses2list(all_courses)
     elif user_type == 'S':
         if _verbose:
             # all courses
             cursor.execute('SELECT * FROM courses')
             all_courses = cursor.fetchall()
-            msg = utils.courses2dict(all_courses)
-            for cid in msg:
-                msg[cid]['status'] = 'NULL'
-                msg[cid]['cteacher'] = utils.getName(cursor, msg[cid]['ctid'])
+            msg = utils.courses2list(all_courses)
             # active courses
             cursor.execute('SELECT cid FROM rosters WHERE sid=%s', (_id,))
-            all_active_courses = cursor.fetchall()
-            for active_course in all_active_courses:
-                msg[active_course[0]]['status'] = 'active'
+            data = cursor.fetchall()
+            all_active_courses = set(c[0] for c in data)
             # completed courses
             cursor.execute('SELECT cid FROM pastrosters WHERE sid=%s', (_id,))
-            all_completed_courses = cursor.fetchall()
-            for completed_course in all_completed_courses:
-                msg[completed_course[0]]['status'] = 'completed'
-        else:
-            # only active courses
-            cursor.execute('SELECT * FROM rosters WHERE sid=%s', (_id,))
+            data = cursor.fetchall()
+            all_completed_courses = set(c[0] for c in data)
+            # teacher name and status
+            for course in msg:
+                course['cteacher'] = utils.getName(cursor, course['ctid'])
+
+                if course['cid'] in all_active_courses:
+                    course['status'] = 'active'
+                elif course['cid'] in all_completed_courses:
+                    course['status'] = 'completed'
+                else:
+                    course['status'] = 'NULL'
+        else:  # only active courses
+            cursor.execute('SELECT cid FROM rosters WHERE sid=%s', (_id,))
             all_active_courses = cursor.fetchall()
+            msg = []
             for course in all_active_courses:
-                pass
-            msg = utils.courses2dict(all_active_courses)
+                courseid = course[0]
+                cursor.execute(
+                    'SELECT * FROM courses WHERE cid=%s', (courseid,))
+                data = cursor.fetchall()  # compatible with courses2list
+                msg += utils.courses2list(data)
+            # get teacher name
+            for course in msg:
+                course['cteacher'] = utils.getName(cursor, course['ctid'])
     cursor.close()
     conn.close()
     return json.dumps(msg)
