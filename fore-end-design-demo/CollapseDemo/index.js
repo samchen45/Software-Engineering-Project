@@ -307,7 +307,7 @@ class CollapseDemo extends React.Component {
 
     return (
       <div>
-        <CustomBreadcrumb arr={['课程', '学生管理']} />
+        <CustomBreadcrumb arr={['课程功能', '学生管理']} />
         <TypingCard source={cardContent} height={178} />
         <Card bordered={false} title='学生列表' style={{ marginBottom: 10, minHeight: 440 }} id='studentList'>
           <p>
@@ -322,7 +322,7 @@ class CollapseDemo extends React.Component {
             <Button onClick={this.handleAdd}>添加学生</Button>
           </p>
           {/* <Table bordered dataSource={this.state.data7} columns={this.columns7} style={styles.tableStyle}/> */}
-          <Table style={styles.tableStyle} components={components} bordered dataSource={this.state.data}
+          <Table style={styles.tableStyle} components={components} dataSource={this.state.data}
             columns={columns} />
         </Card>
       </div>

@@ -1,100 +1,46 @@
 import React from 'react'
-import {Card, Popconfirm, Button, Icon, Table, Divider, BackTop, Affix, Anchor, Form, InputNumber, Input} from 'antd'
+import { Card, Popconfirm, Button, Icon, Table, Divider, BackTop, Affix, Anchor, Form, InputNumber, Input } from 'antd'
 import axios from 'axios'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
 
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-    render: text => <a>{text}</a>,
-  }, {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age',
-  }, {
-    title: 'Address',
-    dataIndex: 'address',
-    key: 'address',
-  }, {
-    title: 'Action',
-    key: 'action',
-    render: (text, record) => (
-      <span>
-      <a>Action 一 {record.name}</a>
-      <Divider type="vertical"/>
-      <a>Delete</a>
-      <Divider type="vertical"/>
-      <a className="ant-dropdown-link">
-        More actions <Icon type="down"/>
-      </a>
-    </span>
-    ),
-  }]
-
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-  }, {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-  }, {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-  }]
-
-const columns2 = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-  }, {
-    title: 'Age',
-    dataIndex: 'age',
-  }, {
-    title: 'Address',
-    dataIndex: 'address',
-  }]
-
-const data2 = []
-for (let i = 0; i < 46; i++) {
-  data2.push({
-    key: i,
-    name: `Edward King ${i}`,
-    age: 32,
-    address: `London, Park Lane no. ${i}`,
-  })
-}
-
+const { SearchOutlined } = Icon;
 const data3 = [
   {
     key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-  }, {
+    c_id: 'CN001',
+    c_name: 'Chinese',
+    t_name: 'CYH',
+    book: '大学语文',
+    info: '上海交大语文课程，你值得拥有',
+    state: 'studied',
+  },
+  {
     key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-  }, {
+    c_id: 'MA001',
+    c_name: 'Maths',
+    t_name: 'WY',
+    book: '微积分',
+    info: '上海交大数学课程，你值得拥有',
+    state: 'studying',
+  },
+  {
     key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-  }, {
+    c_id: 'EN001',
+    c_name: 'English',
+    t_name: 'PSY',
+    book: '大学英语',
+    info: '上海交大英语课程，你值得拥有',
+    state: 'to be studied',
+  },
+  {
     key: '4',
-    name: 'Jim Red',
-    age: 32,
-    address: 'London No. 2 Lake Park',
+    c_id: 'SE001',
+    c_name: '高级软件开发与管理',
+    t_name: '沈备军',
+    book: '软件工程',
+    info: '上海交大软件课程，你特别值得拥有',
+    state: 'to be studied',
   }]
 
 const columns4 = [
@@ -246,49 +192,78 @@ class TableDemo extends React.Component {
     pagination: {
       pageSize: 8
     },
-    data7: [{
+    count: 2,
+    data8:[{
       key: '0',
-      name: 'Edward King 0',
-      age: '32',
-      address: 'London, Park Lane no. 0',
+      c_name: 'Chinese',
+      info: '上海交大语文课程，你值得拥有',
+      book: '美的探索-xxx著',
     }, {
       key: '1',
-      name: 'Edward King 1',
-      age: '32',
-      address: 'London, Park Lane no. 1',
+      c_name: 'Math',
+      info: '上海交大数学课程，你值得拥有',
+      book: '高等数学',
     }],
-    count: 2,
-
-    data8:[
-      {
-        key: '0',
-        c_id: 'CN001',
-        c_name: 'Chinese',
-        info: '上海交大语文课程，你值得拥有',
-        book: '美的探索-xxx著',
-      }, 
-      {
-        key: '1',
-        c_id: 'MA001',
-        c_name: 'Math',
-        info: '上海交大数学课程，你值得拥有',
-        book: '高等数学',
-      },
-      {
-        key: '2',
-        c_id: 'EN001',
-        c_name: 'English',
-        info: '上海交大数学课程，你值得拥有，而且这个介绍特别长以至于无法显示完全',
-        book: '大学英语',
-      }
-    ],
-
     editingKey: '',
   }
 
   componentDidMount() {
     this.getRemoteData()
   }
+
+  getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={node => {
+            this.searchInput = node;
+          }}
+          placeholder={`搜索课程名`}
+          value={selectedKeys[0]}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{ width: 188, marginBottom: 8, display: 'block' }}
+        />
+        <Button
+          type="primary"
+          onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          //icon={<div />}
+          size="small"
+          style={{ width: 90, marginRight: 8 }}
+        >
+          搜索
+        </Button>
+        <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+          重置
+        </Button>
+      </div>
+    ),
+    //filterIcon: filtered => <div style={{ color: filtered ? '#1890ff' : undefined }} />,
+    onFilter: (value, record) =>
+      record[dataIndex]
+        ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
+        : '',
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout(() => this.searchInput.select(), 100);
+      }
+    },
+    render: text =>
+      text
+  });
+
+  handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    this.setState({
+      searchText: selectedKeys[0],
+      searchedColumn: dataIndex,
+    });
+  };
+
+  handleReset = clearFilters => {
+    clearFilters();
+    this.setState({ searchText: '' });
+  };
 
   columns7 = [
     {
@@ -303,10 +278,6 @@ class TableDemo extends React.Component {
     {
       title: 'address',
       dataIndex: 'address',
-    },
-    {
-      title: 'state',
-      dataIndex: 'state',
     },
     {
       title: 'operation',
@@ -325,39 +296,61 @@ class TableDemo extends React.Component {
     {
       title: '课程编号',
       dataIndex: 'c_id',
-      width: '10%',
+      width: '8%',
       editable: true,
     },
     {
       title: '课程名',
       dataIndex: 'c_name',
-      width: '20%',
+      width: '18%',
+      editable: true,
+      ...this.getColumnSearchProps('c_name'),
+    },
+    {
+      title: '任课教师',
+      dataIndex: 't_name',
+      width: '10%',
       editable: true,
     },
     {
       title: '课程介绍',
       dataIndex: 'info',
-      width: '30%',
+      width: '26%',
       editable: true,
-      render: (value, record) => {
-        if (record.info.length >= 25) {
-          var sub = '';
-          for (var i = 0; i < 24; i++) {
-            sub += record.info[i];
-          }
-          sub += '...'
-          return <div title={record.info}>{sub}</div>;
-        }
-        else return record.info;
-      }
     },
     {
       title: '参考文献',
       dataIndex: 'book',
-      width: '20%',
+      width: '23%',
       editable: true,
     },
     {
+      title: '修读情况',
+      dataIndex: 'state',
+      width: '15%',
+      editable: true,
+      render: (value, record) => {
+        if (record.state === 'studied') return '已修读';
+        else if (record.state === 'studying') return '正在修读';
+        else if (record.state === 'to be studied') return '未修读';
+      },
+      filters: [
+        {
+          text: '已修读',
+          value: 'studied',
+        },
+        {
+          text: '正在修读',
+          value: 'studying',
+        },
+        {
+          text: '未修读',
+          value: 'to be studied',
+        },
+      ],
+      onFilter: (value, record) => record.state === value,
+    },
+    /*{
       title: '操作',
       dataIndex: 'operation',
       render: (text, record) => {
@@ -373,30 +366,30 @@ class TableDemo extends React.Component {
                         onClick={() => this.save(form, record.key)}
                         style={{marginRight: 8}}
                       >
-                        保存
+                        Save
                       </a>
                     )}
                   </EditableContext.Consumer>
                   {this.state.data7.length > 1 ?
                   <Popconfirm title="Sure to delete?" onConfirm={() => this.onDelete(record.key)}>
-                  <a>删除   </a>
+                  <a>Delete     </a>
                   </Popconfirm> : null
                   }
                   <Popconfirm
                     title="Sure to cancel?"
                     onConfirm={() => this.cancel(record.key)}
                   >
-                    <a>取消</a>
+                    <a>Cancel</a>
                   </Popconfirm>
                   
                 </span>
             ) : (
-              <a onClick={() => this.edit(record.key)}>编辑</a>
+              <a onClick={() => this.edit(record.key)}>Edit</a>
             )}
           </div>
         );
       },
-    },
+    },*/
   ]
 
   handleChange = (pagination, filters, sorter) => {
@@ -519,35 +512,37 @@ class TableDemo extends React.Component {
     filteredInfo = filteredInfo || {}
     const columns3 = [
       {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
+        title: '课程名',
+        dataIndex: 'c_name',
+        key: 'c_name',
         filters: [
           {text: 'Joe', value: 'Joe'},
           {text: 'Jim', value: 'Jim'},
         ],
-        filteredValue: filteredInfo.name || null,
-        onFilter: (value, record) => record.name.includes(value),
-        sorter: (a, b) => a.name.length - b.name.length,
-        sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
+        filteredValue: filteredInfo.c_name || null,
+        onFilter: (value, record) => record.c_name.includes(value),
+        sorter: (a, b) => a.c_name.length - b.c_name.length,
+        sortOrder: sortedInfo.columnKey === 'c_name' && sortedInfo.order,
       }, {
-        title: 'Age',
-        dataIndex: 'age',
-        key: 'age',
-        sorter: (a, b) => a.age - b.age,
-        sortOrder: sortedInfo.columnKey === 'age' && sortedInfo.order,
+        title: '教师名',
+        dataIndex: 't_name',
+        key: 't_name',
+        filteredValue: filteredInfo.t_name || null,
+        onFilter: (value, record) => record.t_name.includes(value),
+        sorter: (a, b) => a.t_name.length - b.t_name.length,
+        sortOrder: sortedInfo.columnKey === 't_name' && sortedInfo.order,
       }, {
-        title: 'Address',
-        dataIndex: 'address',
-        key: 'address',
+        title: '课程简介',
+        dataIndex: 'info',
+        key: 'info',
         filters: [
           {text: 'London', value: 'London'},
           {text: 'New York', value: 'New York'},
         ],
-        filteredValue: filteredInfo.address || null,
-        onFilter: (value, record) => record.address.includes(value),
-        sorter: (a, b) => a.address.length - b.address.length,
-        sortOrder: sortedInfo.columnKey === 'address' && sortedInfo.order,
+        filteredValue: filteredInfo.info || null,
+        onFilter: (value, record) => record.info.includes(value),
+        sorter: (a, b) => a.info.length - b.info.length,
+        sortOrder: sortedInfo.columnKey === 'info' && sortedInfo.order,
       }]
     const components = {
       body: {
@@ -571,19 +566,22 @@ class TableDemo extends React.Component {
       };
     });
     const cardContent = `<ul class="card-ul">
-            <li>教师课程功能界面</li>
-            <li>可以对课程内容进行增删改查</li>
+            <li>学生课程功能导览</li>
+            <li>可以对课程进行搜索查找排序筛选等</li>
           </ul>`
     return (
       <div>
         <CustomBreadcrumb arr={['课程功能', '课程管理']}/>
         <TypingCard id='howUse' source={cardContent} height={178}/>
-        <Card bordered={false} title='课程列表' style={{marginBottom: 10, minHeight: 440}} id='editTable'>
+        <Card bordered={false} title='课程列表' style={{marginBottom: 10, minHeight: 400}} id='filterOrSort'>
+          {/*
           <p>
-            <Button onClick={this.handleAdd}>添加课程</Button>
-          </p>
-          <Table style={styles.tableStyle} components={components} dataSource={this.state.data8}
-                 columns={columns8}/>
+            <Button onClick={() => this.setSort('c_name')}>课程名排序</Button>&emsp;
+            <Button onClick={() => this.setSort('t_name')}>教师排序</Button>&emsp;
+            <Button onClick={this.clearFilters}>清空过滤规则</Button>&emsp;
+            <Button onClick={this.clearAll}>重置</Button>
+          </p>*/}
+          <Table dataSource={data3} columns={columns8} style={styles.tableStyle}/>
         </Card>
         <BackTop visibilityHeight={200} style={{right: 50}}/>
       </div>
