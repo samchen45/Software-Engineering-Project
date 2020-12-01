@@ -28,15 +28,16 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 # convert courses tuple (usually from database) to dictionary
-def courses2dict(courses: tuple):
-    msg = {}
+def courses2list(courses: tuple):
+    msg = []
     for course in courses:
-        cid = course[0]
-        msg[cid] = {}
-        msg[cid]['cname'] = course[1]
-        msg[cid]['ctid'] = course[2]
-        msg[cid]['cdes'] = course[3]
-        msg[cid]['ctextbook'] = course[4]
+        cdict = {}
+        cdict['cid'] = course[0]
+        cdict['cname'] = course[1]
+        cdict['ctid'] = course[2]
+        cdict['cdes'] = course[3]
+        cdict['ctextbook'] = course[4]
+        msg.append(cdict)
     return msg
 
 # judge if submitting is overtime

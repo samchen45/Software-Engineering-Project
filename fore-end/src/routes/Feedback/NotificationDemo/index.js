@@ -52,7 +52,7 @@ class NotificationDemo extends React.Component{
       },
       success: function (data) {
         message.info("success");
-        ret = JSON.parse(data).arr
+        ret = JSON.parse(data)
         console.log("ret1 ", ret)
         this.setState({
           dataSource: ret,
@@ -75,6 +75,8 @@ class NotificationDemo extends React.Component{
         message.warning('请先填写正确的表单')
       } 
       else {
+        console.log('psy');
+        console.log(this.state.lecture);
         $.ajax({
           type: 'POST',
           url: "/tea_posthomework",
@@ -83,8 +85,8 @@ class NotificationDemo extends React.Component{
             cid: this.state.lecture,
             hname: values.homework_name,
             hdes:values.homework_des,
-            date:2020-12-25,
-            answer:"无"
+            hdate:"2020-12-25",
+            hanswer:"无"
           },
           success:function(data){
             console.log(data);
@@ -152,7 +154,7 @@ class NotificationDemo extends React.Component{
           <Card>
           <Form>
             <Form.Item label = '选择课程'>
-            <Select defaultValue={this.state.dataSource.cid} style={{ width: 240 }} onChange={handleLectureChange}>
+            <Select defaultValue={this.state.dataSource[0].cname} style={{ width: 240 }} onChange={handleLectureChange}>
               {this.state.dataSource.map(lecture => (
                 <Option key={lecture.cid}>{lecture.cname}</Option>
               ))}
