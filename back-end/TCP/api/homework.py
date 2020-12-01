@@ -192,7 +192,7 @@ def stu_view_homework():
     cursor = conn.cursor()
 
     cursor.execute(
-        'SELECT homeworks.hid, homeworks.hname, homeworks.hdes, homeworks.hdate, submit.score FROM homeworks, submit WHERE cid=%s', (_cid,))
+        'SELECT homeworks.hid, homeworks.hname, homeworks.hdes, homeworks.hdate, submit.score, submit.hstatus FROM homeworks, submit WHERE cid=%s', (_cid,))
     data = cursor.fetchall()
 
     msg = []
@@ -203,6 +203,8 @@ def stu_view_homework():
             tempDic['hname'] = record[1]
             tempDic['hdes'] = record[2]
             tempDic['hdate'] = record[3]
+            tempDic['score'] = record[4]
+            tempDic['hstatus'] = record[5]
             msg.append(tempDic)
 
     cursor.close()
