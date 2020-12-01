@@ -99,6 +99,7 @@ def deleteCourse():
 def viewCourses():
     # get parameters from request
     _id = request.form.get('userid', type=str)
+    _verbose = request.form.get('verbose',type=bool, default=False)
     # connect to mysql
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
@@ -118,24 +119,31 @@ def viewCourses():
         all_courses = cursor.fetchall()
         msg = utils.courses2dict(all_courses)
     elif user_type == 'S':
-        # all courses
-        cursor.execute('SELECT * FROM courses')
-        all_courses = cursor.fetchall()
-        msg = utils.courses2dict(all_courses)
-        for cid in msg:
-            msg[cid]['status'] = 'NULL'
-            msg[cid]['cteacher'] = utils.getName(cursor, msg[cid]['ctid'])
-        # active courses
-        cursor.execute('SELECT cid FROM rosters WHERE sid=%s', (_id,))
-        all_active_courses = cursor.fetchall()
-        for active_course in all_active_courses:
-            msg[active_course[0]]['status'] = 'active'
-        # completed courses
-        cursor.execute('SELECT cid FROM pastrosters WHERE sid=%s', (_id,))
-        all_completed_courses = cursor.fetchall()
-        for completed_course in all_completed_courses:
-            msg[completed_course[0]]['status'] = 'completed'
-
+        if _verbose:
+            # all courses
+            cursor.execute('SELECT * FROM courses')
+            all_courses = cursor.fetchall()
+            msg = utils.courses2dict(all_courses)
+            for cid in msg:
+                msg[cid]['status'] = 'NULL'
+                msg[cid]['cteacher'] = utils.getName(cursor, msg[cid]['ctid'])
+            # active courses
+            cursor.execute('SELECT cid FROM rosters WHERE sid=%s', (_id,))
+            all_active_courses = cursor.fetchall()
+            for active_course in all_active_courses:
+                msg[active_course[0]]['status'] = 'active'
+            # completed courses
+            cursor.execute('SELECT cid FROM pastrosters WHERE sid=%s', (_id,))
+            all_completed_courses = cursor.fetchall()
+            for completed_course in all_completed_courses:
+                msg[completed_course[0]]['status'] = 'completed'
+        else:
+            # only active courses
+            cursor.execute('SELECT * FROM rosters WHERE sid=%s', (_id,))
+            all_active_courses = cursor.fetchall()
+            for course in all_active_courses:
+                pass
+            msg = utils.courses2dict(all_active_courses)
     cursor.close()
     conn.close()
     return json.dumps(msg)
