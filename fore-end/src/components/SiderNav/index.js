@@ -41,21 +41,22 @@ const menus = [
     key: '/home/display',
     subs: [
       {key: '/home/display/table', title: '课程管理', icon: ''},
-      {key: '/home/display/collapse', title: '折叠面板', icon: ''},
-      {key: '/home/display/list', title: '列表', icon: ''},
-      {key: '/home/display/carousel', title: '表格', icon: ''},
-      {key: '/home/display/tabs', title: '标签页', icon: '',},
-    ]
+      {key: '/home/display/collapse', title: '学生管理', icon: ''},
+      //{key: '/home/display/list', title: '列表', icon: ''},
+      //{key: '/home/display/carousel', title: '表格', icon: ''},
+      {key: '/home/display/tabs', title: '课程管理', icon: '',},
+    ] //老师应当只显示上面那个课程管理，学生显示下面那个
   },
   {
     title: '作业功能',
     icon: 'message',
     key: '/home/feedback',
     subs: [
-      {key: '/home/feedback/modal', title: '对话框', icon: '',},
-      {key: '/home/feedback/notification', title: '通知提醒框', icon: ''},
-      {key: '/home/feedback/spin', title: '加载中', icon: '',}
-    ]
+      {key: '/home/feedback/modal', title: '查看作业', icon: '',},
+      //{key: '/home/feedback/modification', title: '修改作业', icon: ''},
+      {key: '/home/feedback/notification', title: '布置作业', icon: ''},
+      {key: '/home/feedback/spin', title: '批改作业', icon: '',}
+    ] //老师有布置作业和批改作业，学生只有查看作业
   }
   //, {
   //   title: '其它',
