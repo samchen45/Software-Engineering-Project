@@ -12,14 +12,19 @@ const {Option} = Select;
 
 @Form.create()
 class NotificationDemo extends React.Component{
-  
-  state = {
-    placement:'',
-    dataSource:[],
-    data_homework: [],
-    id,
-    lecture:'',
-    count: 0
+  constructor(props){
+    super(props);
+    
+    this.state = {
+      placement:'',
+      dataSource:[],
+      data_homework: [],
+      id:'',
+      lecture:'',
+      count: 0
+    }
+
+    this.loadlist = this.loadlist.bind(this)
   }
 
   componentWillMount() {
@@ -27,7 +32,7 @@ class NotificationDemo extends React.Component{
     console.log(uid);
     this.setState({id : uid},() => {
     console.log(this.state.id);
-    this.loadlist().bind(this);
+    this.loadlist();
     })
   }
 
@@ -137,7 +142,7 @@ class NotificationDemo extends React.Component{
   }
   render(){
     const placement = this.state.placement
-    const dataSourse = this.state.dataSourse
+    const dataSource = this.state.dataSource
     const handleLectureChange = this.handleLectureChange
     /*
     const cardContent = ` 在系统四个角显示通知提醒信息。经常用于以下情况：
@@ -168,7 +173,7 @@ class NotificationDemo extends React.Component{
         <Form>
           <Form.Item label = '选择课程'>
           <Select defaultValue={dataSource.arr[0].key} style={{ width: 240 }} onChange={handleLectureChange}>
-            {dataSourse.arr.map(lecture => (
+            {dataSource.arr.map(lecture => (
               <Option key={lecture.key}>{lecture.c_name}</Option>
             ))}
           </Select>
