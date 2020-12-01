@@ -1,9 +1,12 @@
 import React from 'react'
-import {Card, Popconfirm, Button, Icon, Table, Divider, BackTop, Affix, Anchor, Form, InputNumber, Input} from 'antd'
+import { Card, Popconfirm, Button, Icon, Table, Divider, BackTop, Affix, Anchor, Form, InputNumber, Input } from 'antd'
 import axios from 'axios'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
+import { isAuthenticatedid } from '../../../utils/Session'
+import $ from 'jquery'
 
+var ret = new Array()
 const columns = [
   {
     title: 'Name',
@@ -23,14 +26,14 @@ const columns = [
     key: 'action',
     render: (text, record) => (
       <span>
-      <a>Action 一 {record.name}</a>
-      <Divider type="vertical"/>
-      <a>Delete</a>
-      <Divider type="vertical"/>
-      <a className="ant-dropdown-link">
-        More actions <Icon type="down"/>
-      </a>
-    </span>
+        <a>Action 一 {record.name}</a>
+        <Divider type="vertical" />
+        <a>Delete</a>
+        <Divider type="vertical" />
+        <a className="ant-dropdown-link">
+          More actions <Icon type="down" />
+        </a>
+      </span>
     ),
   }]
 
@@ -108,8 +111,8 @@ const columns4 = [
     title: 'Gender',
     dataIndex: 'gender',
     filters: [
-      {text: 'Male', value: 'male'},
-      {text: 'Female', value: 'female'},
+      { text: 'Male', value: 'male' },
+      { text: 'Female', value: 'female' },
     ],
     width: '20%',
   }, {
@@ -118,10 +121,10 @@ const columns4 = [
   }]
 
 const columns5 = [
-  {title: 'Name', dataIndex: 'name', key: 'name'},
-  {title: 'Age', dataIndex: 'age', key: 'age'},
-  {title: 'Address', dataIndex: 'address', key: 'address'},
-  {title: 'Action', dataIndex: '', key: 'x', render: () => <a>Delete</a>},
+  { title: 'Name', dataIndex: 'name', key: 'name' },
+  { title: 'Age', dataIndex: 'age', key: 'age' },
+  { title: 'Address', dataIndex: 'address', key: 'address' },
+  { title: 'Action', dataIndex: '', key: 'x', render: () => <a>Delete</a> },
 ];
 
 const data5 = [
@@ -149,16 +152,16 @@ const data5 = [
 ];
 
 const columns6 = [
-  {title: 'Full Name', width: 100, dataIndex: 'name', key: 'name', fixed: 'left'},
-  {title: 'Age', width: 100, dataIndex: 'age', key: 'age', fixed: 'left'},
-  {title: 'Column 1', dataIndex: 'address', key: '1', width: 150},
-  {title: 'Column 2', dataIndex: 'address', key: '2', width: 150},
-  {title: 'Column 3', dataIndex: 'address', key: '3', width: 150},
-  {title: 'Column 4', dataIndex: 'address', key: '4', width: 150},
-  {title: 'Column 5', dataIndex: 'address', key: '5', width: 150},
-  {title: 'Column 6', dataIndex: 'address', key: '6', width: 150},
-  {title: 'Column 7', dataIndex: 'address', key: '7', width: 150},
-  {title: 'Column 8', dataIndex: 'address', key: '8'},
+  { title: 'Full Name', width: 100, dataIndex: 'name', key: 'name', fixed: 'left' },
+  { title: 'Age', width: 100, dataIndex: 'age', key: 'age', fixed: 'left' },
+  { title: 'Column 1', dataIndex: 'address', key: '1', width: 150 },
+  { title: 'Column 2', dataIndex: 'address', key: '2', width: 150 },
+  { title: 'Column 3', dataIndex: 'address', key: '3', width: 150 },
+  { title: 'Column 4', dataIndex: 'address', key: '4', width: 150 },
+  { title: 'Column 5', dataIndex: 'address', key: '5', width: 150 },
+  { title: 'Column 6', dataIndex: 'address', key: '6', width: 150 },
+  { title: 'Column 7', dataIndex: 'address', key: '7', width: 150 },
+  { title: 'Column 8', dataIndex: 'address', key: '8' },
   {
     title: 'Action',
     key: 'operation',
@@ -187,7 +190,7 @@ for (let i = 0; i < 100; i++) {
 }
 const FormItem = Form.Item;
 const EditableContext = React.createContext();
-const EditableRow = ({form, index, ...props}) => (
+const EditableRow = ({ form, index, ...props }) => (
   <EditableContext.Provider value={form}>
     <tr {...props} />
   </EditableContext.Provider>
@@ -197,9 +200,9 @@ const EditableFormRow = Form.create()(EditableRow);
 class EditableCell extends React.Component {
   getInput = () => {
     if (this.props.inputType === 'number') {
-      return <InputNumber/>;
+      return <InputNumber />;
     }
-    return <Input/>;
+    return <Input />;
   };
 
   render() {
@@ -215,11 +218,11 @@ class EditableCell extends React.Component {
     return (
       <EditableContext.Consumer>
         {(form) => {
-          const {getFieldDecorator} = form;
+          const { getFieldDecorator } = form;
           return (
             <td {...restProps}>
               {editing ? (
-                <FormItem style={{margin: 0}}>
+                <FormItem style={{ margin: 0 }}>
                   {getFieldDecorator(dataIndex, {
                     rules: [{
                       required: true,
@@ -238,42 +241,79 @@ class EditableCell extends React.Component {
 }
 
 class TableDemo extends React.Component {
-  state = {
-    filteredInfo: null,
-    sortedInfo: null,
-    loading: false,
-    data4: [],
-    pagination: {
-      pageSize: 8
-    },
-    data7: [{
-      key: '0',
-      name: 'Edward King 0',
-      age: '32',
-      address: 'London, Park Lane no. 0',
-    }, {
-      key: '1',
-      name: 'Edward King 1',
-      age: '32',
-      address: 'London, Park Lane no. 1',
-    }],
-    count: 2,
-    data8:[{
-      key: '0',
-      c_name: 'Chinese',
-      info: '上海交大语文课程，你值得拥有',
-      book: '美的探索-xxx著',
-    }, {
-      key: '1',
-      c_name: 'Math',
-      info: '上海交大数学课程，你值得拥有',
-      book: '高等数学',
-    }],
-    editingKey: '',
+  constructor(props) {
+    super(props)
+    this.state = {
+      is_loading: false,
+      id: '',
+      dataSource: [],
+      filteredInfo: null,
+      sortedInfo: null,
+      loading: false,
+      data4: [],
+      pagination: {
+        pageSize: 8
+      },
+      data7: [{
+        key: '0',
+        name: 'Edward King 0',
+        age: '32',
+        address: 'London, Park Lane no. 0',
+      }, {
+        key: '1',
+        name: 'Edward King 1',
+        age: '32',
+        address: 'London, Park Lane no. 1',
+      }],
+      count: 2,
+      data8: [{
+        key: '0',
+        c_name: 'Chinese',
+        info: '上海交大语文课程，你值得拥有',
+        book: '美的探索-xxx著',
+      }, {
+        key: '1',
+        c_name: 'Math',
+        info: '上海交大数学课程，你值得拥有',
+        book: '高等数学',
+      }],
+      editingKey: '',
+    }
   }
 
   componentDidMount() {
     this.getRemoteData()
+  }
+
+  componentWillMount() {
+    this.setState({
+      is_loading: true
+    })
+    let uid = isAuthenticatedid()
+    console.log(0);
+    this.setState({ id: uid }, () => {
+      console.log(this.state.id);
+      this.loadlist();
+    })
+  }
+  loadlist() {
+    $.ajax({
+      type: 'GET',
+      url: "/UserLog",
+      data: {
+        userid: this.state.id,
+      },
+      success: function (data) {
+        message.info("success");
+        ret = JSON.parse(data)
+        console.log("ret1 ", ret)
+        this.setState({
+          dataSource: ret,
+          is_loading: false
+        })
+
+      }.bind(this)
+    })
   }
 
   columns7 = [
@@ -331,33 +371,33 @@ class TableDemo extends React.Component {
           <div>
             {editable ? (
               <span>
-                  <EditableContext.Consumer>
-                    {form => (
-                      <a
+                <EditableContext.Consumer>
+                  {form => (
+                    <a
 
-                        onClick={() => this.save(form, record.key)}
-                        style={{marginRight: 8}}
-                      >
-                        Save
-                      </a>
-                    )}
-                  </EditableContext.Consumer>
-                  {this.state.data7.length > 1 ?
+                      onClick={() => this.save(form, record.key)}
+                      style={{ marginRight: 8 }}
+                    >
+                      Save
+                    </a>
+                  )}
+                </EditableContext.Consumer>
+                {this.state.data7.length > 1 ?
                   <Popconfirm title="Sure to delete?" onConfirm={() => this.onDelete(record.key)}>
-                  <a>Delete     </a>
+                    <a>Delete     </a>
                   </Popconfirm> : null
-                  }
-                  <Popconfirm
-                    title="Sure to cancel?"
-                    onConfirm={() => this.cancel(record.key)}
-                  >
-                    <a>Cancel</a>
-                  </Popconfirm>
-                  
-                </span>
+                }
+                <Popconfirm
+                  title="Sure to cancel?"
+                  onConfirm={() => this.cancel(record.key)}
+                >
+                  <a>Cancel</a>
+                </Popconfirm>
+
+              </span>
             ) : (
-              <a onClick={() => this.edit(record.key)}>Edit</a>
-            )}
+                <a onClick={() => this.edit(record.key)}>Edit</a>
+              )}
           </div>
         );
       },
@@ -371,7 +411,7 @@ class TableDemo extends React.Component {
     })
   }
   clearFilters = () => {
-    this.setState({filteredInfo: null})
+    this.setState({ filteredInfo: null })
   }
   clearAll = () => {
     this.setState({
@@ -399,7 +439,7 @@ class TableDemo extends React.Component {
         ...params
       }
     }).then(res => {
-      const pagination = {...this.state.pagination};
+      const pagination = { ...this.state.pagination };
       pagination.total = 200
       this.setState({
         loading: false,
@@ -410,7 +450,7 @@ class TableDemo extends React.Component {
   }
 
   handleTableChange = (pagination, filters, sorter) => {
-    const pager = {...this.state.pagination};
+    const pager = { ...this.state.pagination };
     pager.current = pagination.current;
     this.setState({
       pagination: pager,
@@ -430,7 +470,7 @@ class TableDemo extends React.Component {
     })
   }
   handleAdd = () => {
-    const {data8, count} = this.state //本来想用data7的length来代替count，但是删除行后，length会-1
+    const { data8, count } = this.state //本来想用data7的length来代替count，但是删除行后，length会-1
     const newData = {
       key: count,
       c_name: 'new_course',
@@ -447,7 +487,7 @@ class TableDemo extends React.Component {
   };
 
   edit(key) {
-    this.setState({editingKey: key});
+    this.setState({ editingKey: key });
   }
 
   save(form, key) {
@@ -463,23 +503,24 @@ class TableDemo extends React.Component {
           ...item,
           ...row,
         });
-        this.setState({data8: newData, editingKey: ''});
+        this.setState({ data8: newData, editingKey: '' });
       } else {
         newData.push(data8);
-        this.setState({data8: newData, editingKey: ''});
+        this.setState({ data8: newData, editingKey: '' });
       }
     });
   }
 
   cancel = () => {
-    this.setState({editingKey: ''});
+    this.setState({ editingKey: '' });
   };
 
   render() {
     const rowSelection = {
       selections: true
     }
-    let {sortedInfo, filteredInfo} = this.state
+    const is_loading = this.state.is_loading
+    let { sortedInfo, filteredInfo } = this.state
     sortedInfo = sortedInfo || {}
     filteredInfo = filteredInfo || {}
     const columns3 = [
@@ -488,8 +529,8 @@ class TableDemo extends React.Component {
         dataIndex: 'c_name',
         key: 'c_name',
         filters: [
-          {text: 'Joe', value: 'Joe'},
-          {text: 'Jim', value: 'Jim'},
+          { text: 'Joe', value: 'Joe' },
+          { text: 'Jim', value: 'Jim' },
         ],
         filteredValue: filteredInfo.c_name || null,
         onFilter: (value, record) => record.c_name.includes(value),
@@ -508,8 +549,8 @@ class TableDemo extends React.Component {
         dataIndex: 'info',
         key: 'info',
         filters: [
-          {text: 'London', value: 'London'},
-          {text: 'New York', value: 'New York'},
+          { text: 'London', value: 'London' },
+          { text: 'New York', value: 'New York' },
         ],
         filteredValue: filteredInfo.info || null,
         onFilter: (value, record) => record.info.includes(value),
@@ -541,26 +582,27 @@ class TableDemo extends React.Component {
             <li>学生课程功能导览</li>
             <li>可以对课程进行搜索查找排序筛选等</li>
           </ul>`
-    return (
-      <div>
-        <CustomBreadcrumb arr={['课程功能', '课程管理']}/>
-        <TypingCard id='howUse' source={cardContent} height={178}/>
-        {/* <Card bordered={false} title='基本用法' style={{marginBottom: 10}} id='basicUsage'>
+    if (!is_loading) {
+      return (
+        <div>
+          <CustomBreadcrumb arr={['课程功能', '课程管理']} />
+          <TypingCard id='howUse' source={cardContent} height={178} />
+          {/* <Card bordered={false} title='基本用法' style={{marginBottom: 10}} id='basicUsage'>
           <Table dataSource={data} columns={columns} style={styles.tableStyle}/>
         </Card>
         <Card bordered={false} title='可选择' style={{marginBottom: 10, minHeight: 762}} id='select'>
           <Table rowSelection={rowSelection} dataSource={data2} columns={columns2} style={styles.tableStyle}/>
         </Card> */}
-        <Card bordered={false} title='排序和筛选' style={{marginBottom: 10, minHeight: 400}} id='filterOrSort'>
-          <p>
-            <Button onClick={() => this.setSort('c_name')}>课程名排序</Button>&emsp;
+          <Card bordered={false} title='排序和筛选' style={{ marginBottom: 10, minHeight: 400 }} id='filterOrSort'>
+            <p>
+              <Button onClick={() => this.setSort('c_name')}>课程名排序</Button>&emsp;
             <Button onClick={() => this.setSort('t_name')}>教师排序</Button>&emsp;
             <Button onClick={this.clearFilters}>清空过滤规则</Button>&emsp;
             <Button onClick={this.clearAll}>重置</Button>
-          </p>
-          <Table dataSource={data3} columns={columns3} style={styles.tableStyle} onChange={this.handleChange}/>
-        </Card>
-        {/* <Card bordered={false} title='远程加载数据' style={{marginBottom: 10, minHeight: 762}} id='remoteLoading'>
+            </p>
+            <Table dataSource={data3} columns={columns3} style={styles.tableStyle} onChange={this.handleChange} />
+          </Card>
+          {/* <Card bordered={false} title='远程加载数据' style={{marginBottom: 10, minHeight: 762}} id='remoteLoading'>
           <Table rowKey={record => record.login.uuid}
                  loading={this.state.loading}
                  dataSource={this.state.data4}
@@ -568,7 +610,7 @@ class TableDemo extends React.Component {
                  onChange={this.handleTableChange}
                  columns={columns4} style={styles.tableStyle}/>u
         </Card> */}
-        {/* <Card bordered={false} title='可展开' style={{marginBottom: 10, minHeight: 440}} id='unfold'>
+          {/* <Card bordered={false} title='可展开' style={{marginBottom: 10, minHeight: 440}} id='unfold'>
           <Table dataSource={data5} columns={columns5} style={styles.tableStyle}
                  expandedRowRender={record => <p style={{margin: 0}}>{record.description}</p>}/>
         </Card>
@@ -576,7 +618,7 @@ class TableDemo extends React.Component {
           <Table dataSource={data6} columns={columns6} style={styles.tableStyle}
                  scroll={{x: 1500, y: 500}}/>
         </Card> */}
-        {/* <Card bordered={false} title='可编辑的表格' style={{marginBottom: 10, minHeight: 440}} id='editTable'>
+          {/* <Card bordered={false} title='可编辑的表格' style={{marginBottom: 10, minHeight: 440}} id='editTable'>
           <p>
             <Button onClick={this.handleAdd}>添加课程</Button>
           </p>
@@ -584,8 +626,8 @@ class TableDemo extends React.Component {
           <Table style={styles.tableStyle} components={components} bordered dataSource={this.state.data8}
                  columns={columns8}/>
         </Card> */}
-        <BackTop visibilityHeight={200} style={{right: 50}}/>
-        {/* <Affix style={styles.affixBox}>
+          <BackTop visibilityHeight={200} style={{ right: 50 }} />
+          {/* <Affix style={styles.affixBox}>
           <Anchor offsetTop={50} affix={false}>
             <Anchor.Link href='#howUse' title='何时使用'/>
             <Anchor.Link href='#basicUsage' title='基本用法'/>
@@ -597,8 +639,14 @@ class TableDemo extends React.Component {
             <Anchor.Link href='#editTable' title='可编辑的表格'/>
           </Anchor>
         </Affix> */}
-      </div>
-    )
+        </div>
+      )
+    }
+    else {
+      return (
+        <div></div>
+      )
+    }
   }
 }
 

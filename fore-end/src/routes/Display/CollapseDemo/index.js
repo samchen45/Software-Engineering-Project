@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Col, Row, Collapse, BackTop, Form, InputNumber, Input, Popconfirm, Button, Table, Select} from 'antd'
+import { Card, Col, Row, Collapse, BackTop, Form, InputNumber, Input, Popconfirm, Button, Table, Select } from 'antd'
 import axios from 'axios'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
@@ -8,8 +8,8 @@ import { isAuthenticatedid } from '../../../utils/Session'
 import $ from 'jquery'
 
 const Panel = Collapse.Panel;
-const {Option} = Select;
-
+const { Option } = Select;
+var ret = new Array();
 const text = `
   A dog is a type of domesticated animal.
   Known for its loyalty and faithfulness,
@@ -22,7 +22,7 @@ const text2 = (
     it can be found as a welcome guest in many households across the world.
   </p>
 );
-const data =[];
+const data = [];
 const FormItem = Form.Item;
 const EditableContext = React.createContext();
 const EditableRow = ({ form, index, ...props }) => (
@@ -78,35 +78,42 @@ class EditableCell extends React.Component {
 
 
 class CollapseDemo extends React.Component {
-  state = {
-    data: [
-      {
-        key: '0',
-        s_id: '120037910001',
-        s_name: '张三',
-      },
-      {
-        key: '1',
-        s_id: '120037910002',
-        s_name: '李四',
-      },
-      {
-        key: '2',
-        s_id: '120037910003',
-        s_name: '王五',
-      }
-    ],
-    data_student:[],
-    lectures: [{
+  constructor(props) {
+    super(props)
+    this.state = {
+      is_loading: false,
+      id: '',
+      dataSource: [],
+      data: [
+        {
+          key: '0',
+          s_id: '120037910001',
+          s_name: '张三',
+        },
+        {
+          key: '1',
+          s_id: '120037910002',
+          s_name: '李四',
+        },
+        {
+          key: '2',
+          s_id: '120037910003',
+          s_name: '王五',
+        }
+      ],
+      data_student: [],
+      lectures: [{
         key: 1,
-        c_name :  '课程1'
+        c_name: '课程1'
       }, {
         key: 2,
-        c_name :  '课程2'
-      }, 
-    ],
-    lecture: '课程1',
-    data_course: []
+        c_name: '课程2'
+      },
+      ],
+      lecture: '课程1',
+      data_course: []
+    }
+    this.loadlist = this.loadlist.bind(this)
   }
 
   columns = [
@@ -153,7 +160,7 @@ class CollapseDemo extends React.Component {
                 <a>删除   </a>
               </Popconfirm>
             }
-            
+
           </div>
         );
       },
@@ -161,29 +168,37 @@ class CollapseDemo extends React.Component {
   ]
 
   componentWillMount() {
+    this.setState({
+      is_loading: true
+    })
+    let uid = isAuthenticatedid()
+    console.log(0);
+    this.setState({ id: uid }, () => {
+      console.log(this.state.id);
+      this.loadlist();
+    })
+  }
+  loadlist() {
     $.ajax({
       type: 'GET',
       url: "/UserLog",
       data: {
-          userid: isAuthenticatedid(),
+        userid: this.state.id,
       },
-      success: function (ret) {
-        console.log(ret)
-        if (ret === 'success'){
-          const course = ret.map(data => {
-            return{
-              key: data.c_id,
-              c_name: data.c_name
-            }
-          })
-          this.setState({data_course : course})
-        }
-      }
+      success: function (data) {
+        message.info("success");
+        ret = JSON.parse(data)
+        console.log("ret1 ", ret)
+        this.setState({
+          dataSource: ret,
+          is_loading: false
+        })
+      }.bind(this)
     })
   }
 
   handleLectureChange = value => {
-    this.setState({lecture: value});
+    this.setState({ lecture: value });
   }
 
   handleChange = (pagination, filters, sorter) => {
@@ -247,17 +262,17 @@ class CollapseDemo extends React.Component {
   }
   onDelete = (key_val) => {
     const arr = this.state.data_course.slice()
-    const item = arr.find(item => item.key === key_val )
+    const item = arr.find(item => item.key === key_val)
     $.ajax({
       type: 'POST',
       url: "/UserLog",
       data: {
-          userid: isAuthenticatedid(),
-          stu_id : item.s_id,
+        userid: isAuthenticatedid(),
+        stu_id: item.s_id,
       },
       success: function (ret) {
         console.log(ret)
-        if (ret === 'success'){
+        if (ret === 'success') {
           this.setState({
             data_course: arr.filter(item => item.key !== key_val)
           })
@@ -267,10 +282,10 @@ class CollapseDemo extends React.Component {
   }
 
   handleAdd = () => {
-    const { data,data_student, count } = this.state //本来想用data7的length来代替count，但是删除行后，length会-1
+    const { data, data_student, count } = this.state //本来想用data7的length来代替count，但是删除行后，length会-1
     const newData = {
       key: count,
-      s_id : '0',
+      s_id: '0',
       s_name: '0',
     };
     this.setState({
@@ -303,14 +318,14 @@ class CollapseDemo extends React.Component {
           type: 'POST',
           url: "/UserLog",
           data: {
-              userid: isAuthenticatedid(),
-              s_id: item.s_id,
-              s_name:item.s_name
+            userid: isAuthenticatedid(),
+            s_id: item.s_id,
+            s_name: item.s_name
           },
           success: function (ret) {
             console.log(ret)
-            if (ret != 'error'){
-              this.setState({data_student: newData, editingKey: ''});
+            if (ret != 'error') {
+              this.setState({ data_student: newData, editingKey: '' });
             }
           }
         })
@@ -332,6 +347,7 @@ class CollapseDemo extends React.Component {
             <li>手风琴 是一种特殊的折叠面板，只允许单个内容区域展开</li>
           </ul>`
           */
+    const is_loading = this.state.is_loading
     const cardContent = `<ul class="card-ul">
             <li>本页面用于对学生名单进行增加和删除</li>
           </ul>`
@@ -362,72 +378,80 @@ class CollapseDemo extends React.Component {
       };
     });
 
-    return (
-      <div>
-        <CustomBreadcrumb arr={['课程', '学生管理']} />
-        <TypingCard source={cardContent} height={178} />
-        <Card bordered={false} title='学生列表' style={{ marginBottom: 10, minHeight: 440 }} id='studentList'>
-          <p>
-          <p>选择课程</p>
-          <Select defaultValue={lectures[0]} style={{ width: 240 }} onChange={handleLectureChange}>
-            {lectures.map(lecture => (
-              <Option key={lecture}>{lecture}</Option>
-            ))}
-          </Select>
-          </p>
-          <p>
-            <Button>确认</Button>
-          </p>
-          <p>
-            <Button onClick={this.handleAdd}>添加学生</Button>
-          </p>
-          {/* <Table bordered dataSource={this.state.data7} columns={this.columns7} style={styles.tableStyle}/> */}
-          <Table style={styles.tableStyle} components={components} bordered dataSource={this.state.data}
-            columns={columns} />
-        </Card>
-      </div>
-      /*
-      <div>
-        <CustomBreadcrumb arr={['显示','折叠面板']}/>
-        <TypingCard source={cardContent} height={178}/>
-        <Row gutter={16}>
-          <Col span={12}>
-            <Card bordered={false} className='card-item' title='基本用法'>
-              <Collapse defaultActiveKey={['1']}>
-                <Panel header="This is panel header 1" key="1"><p>{text}</p></Panel>
-                <Panel header="This is panel header 2" key="2"><p>{text}</p></Panel>
-                <Panel header="This is panel header 3" key="3"><p>{text}</p></Panel>
-              </Collapse>
-            </Card>
-            <Card bordered={false} className='card-item' title='简洁风格-无边框'>
-              <Collapse defaultActiveKey={['1']} bordered={false}>
-                <Panel header="This is panel header 1" key="1">{text2}</Panel>
-                <Panel header="This is panel header 2" key="2">{text2}</Panel>
-                <Panel header="This is panel header 3" key="3">{text2}</Panel>
-              </Collapse>
-            </Card>
-          </Col>
-          <Col span={12}>
-            <Card bordered={false} className='card-item' title='手风琴-每次只打开一个tab'>
-              <Collapse defaultActiveKey={['2']} accordion>
-                <Panel header="This is panel header 1" key="1"><p>{text}</p></Panel>
-                <Panel header="This is panel header 2" key="2"><p>{text}</p></Panel>
-                <Panel header="This is panel header 3" key="3"><p>{text}</p></Panel>
-              </Collapse>
-            </Card>
-            <Card bordered={false} className='card-item' title='自定义面板'>
-              <Collapse defaultActiveKey={['1']} bordered={false}>
-                <Panel header="This is panel header 1" key="1" style={styles.customPanelStyle}><p>{text}</p></Panel>
-                <Panel header="This is panel header 2" key="2" style={styles.customPanelStyle}><p>{text}</p></Panel>
-                <Panel header="This is panel header 3" key="3" style={styles.customPanelStyle}><p>{text}</p></Panel>
-              </Collapse>
-            </Card>
-          </Col>
-        </Row>
-        <BackTop visibilityHeight={200} style={{right: 50}}/>
-      </div>
-      */
-    )
+    if (!is_loading) {
+      return (
+        <div>
+          <CustomBreadcrumb arr={['课程', '学生管理']} />
+          <TypingCard source={cardContent} height={178} />
+          <Card bordered={false} title='学生列表' style={{ marginBottom: 10, minHeight: 440 }} id='studentList'>
+            <p>
+              <p>选择课程</p>
+              <Select defaultValue={lectures[0]} style={{ width: 240 }} onChange={handleLectureChange}>
+                {lectures.map(lecture => (
+                  <Option key={lecture}>{lecture}</Option>
+                ))}
+              </Select>
+            </p>
+            <p>
+              <Button>确认</Button>
+            </p>
+            <p>
+              <Button onClick={this.handleAdd}>添加学生</Button>
+            </p>
+            {/* <Table bordered dataSource={this.state.data7} columns={this.columns7} style={styles.tableStyle}/> */}
+            <Table style={styles.tableStyle} components={components} bordered dataSource={this.state.data}
+              columns={columns} />
+          </Card>
+        </div>
+      )
+    }
+    else {
+      return (
+        <div></div>
+      )
+    }
+    /*
+    <div>
+      <CustomBreadcrumb arr={['显示','折叠面板']}/>
+      <TypingCard source={cardContent} height={178}/>
+      <Row gutter={16}>
+        <Col span={12}>
+          <Card bordered={false} className='card-item' title='基本用法'>
+            <Collapse defaultActiveKey={['1']}>
+              <Panel header="This is panel header 1" key="1"><p>{text}</p></Panel>
+              <Panel header="This is panel header 2" key="2"><p>{text}</p></Panel>
+              <Panel header="This is panel header 3" key="3"><p>{text}</p></Panel>
+            </Collapse>
+          </Card>
+          <Card bordered={false} className='card-item' title='简洁风格-无边框'>
+            <Collapse defaultActiveKey={['1']} bordered={false}>
+              <Panel header="This is panel header 1" key="1">{text2}</Panel>
+              <Panel header="This is panel header 2" key="2">{text2}</Panel>
+              <Panel header="This is panel header 3" key="3">{text2}</Panel>
+            </Collapse>
+          </Card>
+        </Col>
+        <Col span={12}>
+          <Card bordered={false} className='card-item' title='手风琴-每次只打开一个tab'>
+            <Collapse defaultActiveKey={['2']} accordion>
+              <Panel header="This is panel header 1" key="1"><p>{text}</p></Panel>
+              <Panel header="This is panel header 2" key="2"><p>{text}</p></Panel>
+              <Panel header="This is panel header 3" key="3"><p>{text}</p></Panel>
+            </Collapse>
+          </Card>
+          <Card bordered={false} className='card-item' title='自定义面板'>
+            <Collapse defaultActiveKey={['1']} bordered={false}>
+              <Panel header="This is panel header 1" key="1" style={styles.customPanelStyle}><p>{text}</p></Panel>
+              <Panel header="This is panel header 2" key="2" style={styles.customPanelStyle}><p>{text}</p></Panel>
+              <Panel header="This is panel header 3" key="3" style={styles.customPanelStyle}><p>{text}</p></Panel>
+            </Collapse>
+          </Card>
+        </Col>
+      </Row>
+      <BackTop visibilityHeight={200} style={{right: 50}}/>
+    </div>
+    */
+
   }
 }
 
