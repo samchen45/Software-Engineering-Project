@@ -12,29 +12,40 @@ const {Option} = Select;
 
 @Form.create()
 class NotificationDemo extends React.Component{
+  
   state = {
     placement:'',
-    data_course: [
-      {
-          key: "!",
-          c_name: "",
-      }
-    ],
+    dataSource:[],
     data_homework: [],
+    id,
     lecture:'',
     count: 0
   }
 
   componentWillMount() {
+    let uid = isAuthenticatedid()
+    console.log(uid);
+    this.setState({id : uid},() => {
+    console.log(this.state.id);
+    this.loadlist().bind(this);
+    })
+  }
+
+  loadlist(){
     $.ajax({
       type: 'POST',
       url: "/tea_viewcourse",
       data: {
-          userid: isAuthenticatedid(),
+          userid: this.state.id,
       },
       success: function (data) {
+        message.info("success");
         const ret = JSON.parse(data)
-        if (ret.info === 'SUCCEED'){
+        console.log(ret)
+        this.setState({
+          dataSource:JSON.parse(data)
+      });
+        /* if (ret.info === 'SUCCEED'){
           console.log(2)
 
           // var arr = [];
@@ -68,7 +79,7 @@ class NotificationDemo extends React.Component{
           this.forceUpdate()
           console.log(this.state.count)
           console.log(this.state.data_course)
-        }
+        } */
       }.bind(this)
     })
   }
@@ -126,7 +137,7 @@ class NotificationDemo extends React.Component{
   }
   render(){
     const placement = this.state.placement
-    const data_course = this.state.data_course
+    const dataSourse = this.state.dataSourse
     const handleLectureChange = this.handleLectureChange
     /*
     const cardContent = ` 在系统四个角显示通知提醒信息。经常用于以下情况：
@@ -156,8 +167,8 @@ class NotificationDemo extends React.Component{
         <Card>
         <Form>
           <Form.Item label = '选择课程'>
-          <Select defaultValue={data_course[0].key} style={{ width: 240 }} onChange={handleLectureChange}>
-            {data_course.map(lecture => (
+          <Select defaultValue={dataSource.arr[0].key} style={{ width: 240 }} onChange={handleLectureChange}>
+            {dataSourse.arr.map(lecture => (
               <Option key={lecture.key}>{lecture.c_name}</Option>
             ))}
           </Select>
