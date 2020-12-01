@@ -30,3 +30,5 @@ yarn-error.log*
 
 package-lock.json
 yarn.lock
+
+back-end/TCP/homework/*

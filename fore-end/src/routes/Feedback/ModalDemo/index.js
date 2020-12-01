@@ -3,7 +3,10 @@ import { Card, Button, Form, Modal, Upload, Icon, Input, Tooltip, Table, Notific
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb'
 import TypingCard from '../../../components/TypingCard'
 import reqwest from 'reqwest';
+import { isAuthenticatedid } from '../../../utils/Session'
+import $ from 'jquery'
 
+var ret = new Array();
 const FormItem = Form.Item
 const formItemLayout = {
   labelCol: {
@@ -112,9 +115,10 @@ class ModalDemo extends React.Component {
   }
 
   get_hmk_list = () => {
+    console.log('11',this.state.lecture)
     $.ajax({
       type: 'POST',
-      url: "/viewcourses",
+      url: "/stu_viewhomework",
       data: {
         userid: this.state.id,
         cid: this.state.lecture
@@ -131,36 +135,53 @@ class ModalDemo extends React.Component {
   }
   handleUpload = () => {
     const { fileList } = this.state;
-    const formData = new FormData();
-    fileList.forEach(file => {
-      formData.append('files[]', file);
-    });
+    var formData = new FormData();
+    const file = fileList[0]
+    formData.append('myfile', file)
+    formData.append('hid', this.state.h_id)
+    formData.append('uid', this.state.id)
+    // fileList.forEach(file => {
+    //   formData.append('files[]', file);
+    // });
 
     this.setState({
       uploading: true,
     });
 
+    console.log('33', formData.get('myfile'))
+    console.log('44', formData.get('hid'))
+    console.log('22',this.state.h_id)
     // You can use any AJAX library you like
-    reqwest({
-      url: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-      method: 'post',
+    //reqwest({
+    $.ajax({
+      // url: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+      type: 'POST',
+      url: '/submithomework',
       processData: false,
-      data: {
-        file: formData
-      },
-      success: () => {
+      contentData: false,
+      cache: false,
+      // data: {
+      //   hid: this.state.h_id,
+      //   uid: this.state.id,
+      //   myfile: file
+      // },
+      // data: formData,
+      data: encodeURI(formData.serialize(), "UTF-8"),
+      // dataType: 'json',
+      success:function(data){
         this.setState({
           fileList: [],
           uploading: false,
         });
         message.success('upload successfully.');
-      },
-      error: () => {
+      }.bind(this),
+      error: function(data){
         this.setState({
           uploading: false,
         });
+        console.log(formData.get('myfile'));
         message.error('upload failed.');
-      },
+      }.bind(this)
     });
   }
 
@@ -469,7 +490,7 @@ class ModalDemo extends React.Component {
       },
       {
         title: '评分',
-        dataIndex: 'hscore',
+        dataIndex: 'score',
         width: '10%',
       },
       {
@@ -515,10 +536,8 @@ class ModalDemo extends React.Component {
                 )}
               </Select>
             </p>
-            <p>
-              <Button onclick = {this.get_hmk_list}>确认</Button>
-            </p>
-            <Table style={styles.tableStyle} dataSource={this.state.hoemwork_list}
+            <Button onClick = {this.get_hmk_list}>确认</Button>
+            <Table style={styles.tableStyle} dataSource={this.state.homework_list}
               columns={columns7} />
           </Card>
           <Modal id='modal'

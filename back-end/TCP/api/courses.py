@@ -3,37 +3,38 @@ import TCP
 import TCP.utils as utils
 
 
-@TCP.app.route('/api/createcourse', methods=['POST'])
-def createCourse():
-    _cname = request.form.get('cname', type=str)
-    _id = request.form.get('id', type=str)
-    _cdes = request.form.get('cdes', type=str)
-    _ctid = _id
-    _ctextbook = request.form.get('ctextbook', type=str)
-    # connect to mysql
-    conn = TCP.mysql.connect()
-    cursor = conn.cursor()
-    # check if course already exists (omitted)
+# @TCP.app.route('/api/createcourse', methods=['POST'])
+# def createCourse():
+#     _cname = request.form.get('cname', type=str)
+#     _id = request.form.get('id', type=str)
+#     _cdes = request.form.get('cdes', type=str)
+#     _ctid = _id
+#     _ctextbook = request.form.get('ctextbook', type=str)
+#     # connect to mysql
+#     conn = TCP.mysql.connect()
+#     cursor = conn.cursor()
+#     # check if course already exists (omitted)
 
-    # create new course and store in TCPDB.courses
-    cursor.execute('INSERT INTO courses(cname, ctid, cdes, ctextbook) \
-        VALUES (%s, %s, %s, %s)', (_cname, _ctid, _cdes, _ctextbook))
-    conn.commit()
+#     # create new course and store in TCPDB.courses
+#     cursor.execute('INSERT INTO courses(cname, ctid, cdes, ctextbook) \
+#         VALUES (%s, %s, %s, %s)', (_cname, _ctid, _cdes, _ctextbook))
+#     conn.commit()
 
-    # return to frontend
-    cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_ctid,))
-    all_courses = cursor.fetchall()
-    msg = utils.courses2list(all_courses)
+#     # return to frontend
+#     cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_ctid,))
+#     all_courses = cursor.fetchall()
+#     msg = utils.courses2list(all_courses)
 
-    cursor.close()
-    conn.close()
-    return json.dumps(msg)
+#     cursor.close()
+#     conn.close()
+#     return json.dumps(msg)
 
 
 @TCP.app.route('/api/editcourse', methods=['POST'])
 def editCourse():
     # get parameters from request
     _cid = request.form.get('cid', type=str)
+    print(_cid)
     _cname = request.form.get('cname', type=str)
     _id = request.form.get('id', type=str)
     _cdes = request.form.get('cdes', type=str)
@@ -42,21 +43,31 @@ def editCourse():
     # connect to mysql
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM courses WHERE cid=%s', (_cid,))
-    data = cursor.fetchone()
 
-    ## if course not found (omitted)
-    # msg = {}
-    # if len(data) == 0:
-    #     msg['info'] = 'NULL'
-    #     cursor.close()
-    #     conn.close()
-    #     return json.dumps(msg)
+    if _cid == 'null':
+        # create course
+        # check if course already exists (omitted)
 
-    # update info
-    cursor.execute('UPDATE courses SET cname=%s, ctid=%s, cdes=%s, ctextbook=%s WHERE cid=%s',
-                   (_cname, _ctid, _cdes, _ctextbook, _cid))
-    conn.commit()
+        # create new course and store in TCPDB.courses
+        cursor.execute('INSERT INTO courses(cname, ctid, cdes, ctextbook) \
+            VALUES (%s, %s, %s, %s)', (_cname, _ctid, _cdes, _ctextbook))
+        conn.commit()
+    else:
+        cursor.execute('SELECT * FROM courses WHERE cid=%s', (_cid,))
+        data = cursor.fetchone()
+
+        ## if course not found (omitted)
+        # msg = {}
+        # if len(data) == 0:
+        #     msg['info'] = 'NULL'
+        #     cursor.close()
+        #     conn.close()
+        #     return json.dumps(msg)
+
+        # update info
+        cursor.execute('UPDATE courses SET cname=%s, ctid=%s, cdes=%s, ctextbook=%s WHERE cid=%s',
+                    (_cname, _ctid, _cdes, _ctextbook, _cid))
+        conn.commit()
 
     # return to frontend
     cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_ctid,))
@@ -99,7 +110,7 @@ def deleteCourse():
 def viewCourses():
     # get parameters from request
     _id = request.form.get('userid', type=str)
-    _verbose = request.form.get('verbose',type=bool, default=False)
+    _verbose = request.form.get('verbose', type=bool, default=False)
     # connect to mysql
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
@@ -191,15 +202,15 @@ def viewStudents():
     for student in data:
         sid = student[0]
         sname = utils.getName(cursor, sid)
-        msg.append({'sid':sid, 'sname': sname})
+        msg.append({'sid': sid, 'sname': sname})
 
     cursor.close()
     conn.close()
     return json.dumps(msg)
 
 
-@TCP.app.route('/api/addstudents', methods=['POST'])
-def addStudents():
+@TCP.app.route('/api/addstudent', methods=['POST'])
+def addStudent():
     # get parameters from request
     _uid = request.form.get('uid', type=str)
     _cid = request.form.get('cid', type=str)
@@ -208,15 +219,47 @@ def addStudents():
     # connect to mysql
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
-    # validate student id and name (omitted)
+    # validate student id and name
+    cursor.execute(
+        'SELECT * FROM users WHERE id=%s AND uname=%s', (_sid, _sname))
+    data = cursor.fetchall()
+    if (not data):
+        cursor.close()
+        conn.close()
+        print('{} {} no matching students found in TCPDB.users'.format(_sid, _sname))
+        return json.dumps('no students found!')
 
     # check if student already enrolled
+    cursor.execute(
+        'SELECT * FROM rosters WHERE cid=%s AND sid=%s', (_cid, _sid))
+    data = cursor.fetchall()
+    if (data):
+        cursor.close()
+        conn.close()
+        print('{} already enrolled in {}'.format(_sid, _cid))
+        return json.dumps('student already enrolled in this course!')
 
-    
     cursor.execute('INSERT INTO rosters(cid, sid) \
-        VALUES (%s, %s)' , (_cid, _sid))
+        VALUES (%s, %s)', (_cid, _sid))
     conn.commit()
-    
+
+    cursor.close()
+    conn.close()
+    return json.dumps('success')
+
+
+@TCP.app.route('/api/removestudent', methods=['POST'])
+def removeStudent():
+    # get parameters from request
+    _cid = request.form.get('cid', type=str)
+    _sid = request.form.get('sid', type=str)
+    # connect to mysql
+    conn = TCP.mysql.connect()
+    cursor = conn.cursor()
+
+    # remove student
+    cursor.execute('DELETE FROM rosters WHERE cid=%s AND sid=%s', (_cid, _sid))
+    conn.commit()
 
     cursor.close()
     conn.close()

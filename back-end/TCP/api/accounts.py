@@ -40,10 +40,10 @@ def register():
             code = utils.send_email_captcha(_email)
             # verify email captcha
             #TODO
-            _code = request.form.get('code', type=int)
-            if code != _code:
-                msg['info'] = 'ERROR: wrong verification code!! Please check again.'
-                return json.dumps(msg)
+            # _code = request.form.get('code', type=int)
+            # if code != _code:
+            #     msg['info'] = 'ERROR: wrong verification code!! Please check again.'
+            #     return json.dumps(msg)
 
             # create new user and store in TCPDB
             _hashed_password = generate_password_hash(_password)

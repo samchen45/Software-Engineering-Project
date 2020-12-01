@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Popconfirm, Button, Icon, Table, Divider, BackTop, Affix, Anchor, Form, InputNumber, Input } from 'antd'
+import { message, Card, Popconfirm, Button, Icon, Table, Divider, BackTop, Affix, Anchor, Form, InputNumber, Input } from 'antd'
 import axios from 'axios'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
@@ -254,6 +254,7 @@ class TableDemo extends React.Component {
       pagination: {
         pageSize: 8
       },
+      createmode:false,
       data8: [
         {
           c_id: 'CN001',
@@ -369,13 +370,13 @@ class TableDemo extends React.Component {
       width: '30%',
       editable: true,
       render: (value, record) => {
-        if (record.info.length >= 25) {
+        if (record.cdes.length >= 25) {
           var sub = '';
           for (var i = 0; i < 24; i++) {
-            sub += record.info[i];
+            sub += record.cdes[i];
           }
           sub += '...'
-          return <div title={record.info}>{sub}</div>;
+          return <div title={record.cdes}>{sub}</div>;
         }
         else return record.info;
       }
@@ -497,10 +498,10 @@ class TableDemo extends React.Component {
     const index = arr.findIndex(item => item.cid === key)
     $.ajax({
       type: 'POST',
-      url: "/viewcourses",
+      url: "/deletecourse",
       data: {
-        cid: this.state.lecture,
-        uid: this.state.id
+        cid: arr[index].cid,
+        id: this.state.id
       },
       success: function (data) {
         message.info("success");
@@ -513,17 +514,18 @@ class TableDemo extends React.Component {
   handleAdd = () => {
     const { data8, count, creatingCount,dataSource } = this.state //本来想用data7的length来代替count，但是删除行后，length会-1
     const newData = {
-      c_id: '',
-      c_name: '',
-      info: '',
-      book: '',
+      cid: '',
+      cname: '',
+      cdes: '',
+      ctextbook: '',
     };
     console.log(dataSource, count, creatingCount);
     this.setState({
-      data8: [...dataSource, newData],
+      dataSource: [...dataSource, newData],
       count: count + 1,
       creatingCount: creatingCount + 1,
       editingKey: '',
+      createmode:true
     })
   }
   isEditing = (record) => {
@@ -555,11 +557,12 @@ class TableDemo extends React.Component {
           ...item,
           ...row,
         });
+        var _cid = this.state.createmode ? 'null' : row.cid;
         $.ajax({
           type: 'POST',
-          url: "/addstudents",
+          url: "/editcourse",
           data: {
-            cid: row.cid,
+            cid: _cid,
             cname: row.cname,
             cdes: row.cdes,
             ctextbook: row.ctextbook,
@@ -567,20 +570,26 @@ class TableDemo extends React.Component {
           },
           success: function (data) {
             message.info('success')
-            this.setState({ dataSource: newData, editingKey: '' });
+            ret = JSON.parse(data)
+            console.log(ret)
+            this.setState({
+              dataSource: ret, editingKey: '',
+              createmode: false
+            });
           }.bind(this)
         })
       } else {
         newData.push(row);
-        this.setState({ data8: newData, editingKey: '' });
+        this.setState({ dataSource: newData, editingKey: '' });
       }
     });
   }
 
   cancelCreate = (key) => {
     this.setState({
-      data8: this.state.data8.slice(0, this.state.count - 1),
+      dataSourse: this.state.dataSource.slice(0, this.state.count - 1),
       editingKey: '',
+      createmode:false,
       count: this.state.count - 1,
       creatingCount: this.state.creatingCount - 1
     })

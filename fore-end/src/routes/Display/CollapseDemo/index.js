@@ -266,7 +266,7 @@ class CollapseDemo extends React.Component {
     const index = arr.findIndex(item => item.sid === key)
     $.ajax({
       type: 'POST',
-      url: "/viewcourses",
+      url: "/removestudent",
       data: {
         cid: this.state.lecture,
         sid: arr[index].sid
@@ -336,7 +336,7 @@ class CollapseDemo extends React.Component {
         });
         $.ajax({
           type: 'POST',
-          url: "/addstudents",
+          url: "/addstudent",
           data: {
             cid: this.state.lecture,
             sid: row.sid,

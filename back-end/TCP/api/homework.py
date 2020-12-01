@@ -218,6 +218,9 @@ def submit_homework():
     Submit homework (for student).
     """
     # get parameters from request
+
+    print('------------')
+    print(request.form)
     _hid = request.form.get('hid', type=str)
     _uid = request.form.get('uid', type=str)
     # connect to mysql
@@ -226,6 +229,10 @@ def submit_homework():
 
     cursor.execute('SELECT cid, hdate FROM homeworks WHERE hid=%s', (_hid,))
     data = cursor.fetchone()
+    print(_hid)
+    print('test')
+    print(_uid)
+    # print(data)
     _cid = data[0]
     _date = data[1]
     
@@ -264,3 +271,4 @@ def submit_homework():
     cursor.close()
     conn.close()
     return json.dumps('FAILED')
+
