@@ -32,56 +32,77 @@ CREATE TABLE `TCPDB`.`people` (
   PRIMARY KEY (`id`)
 );
 
-/* COURSE TABLE */
-DROP TABLE IF EXISTS `TCPDB`.`courses`;
-CREATE TABLE `TCPDB`.`courses` (
-  `cid` INT AUTO_INCREMENT,
-  `cname` VARCHAR(20) NULL,
-  `ctid` VARCHAR(20) NULL,
-  `cdes` VARCHAR(500) NULL,
-  `ctextbook` VARCHAR(100) NULL,
-  PRIMARY KEY (`cid`)
+-- /* COURSE TABLE */
+-- DROP TABLE IF EXISTS `TCPDB`.`courses`;
+-- CREATE TABLE `TCPDB`.`courses` (
+--   `cid` INT AUTO_INCREMENT,
+--   `cname` VARCHAR(20) NULL,
+--   `ctid` VARCHAR(20) NULL,
+--   `cdes` VARCHAR(500) NULL,
+--   `ctextbook` VARCHAR(100) NULL,
+--   PRIMARY KEY (`cid`)
+-- );
+
+-- /* ROSTER TABLE */
+-- DROP TABLE IF EXISTS `TCPDB`.`rosters`;
+-- CREATE TABLE `TCPDB`.`rosters` (
+--   `cid` INT NOT NULL,
+--   `sid` VARCHAR(20) NOT NULL,
+--   FOREIGN KEY (`cid`) REFERENCES courses(`cid`) ON DELETE CASCADE,
+--   FOREIGN KEY (`sid`) REFERENCES users(`id`) ON DELETE CASCADE
+-- );
+
+-- /* OLD ROSTER TABLE */
+-- DROP TABLE IF EXISTS `TCPDB`.`pastrosters`;
+-- CREATE TABLE `TCPDB`.`pastrosters` (
+--   `cid` INT NOT NULL,
+--   `sid` VARCHAR(20) NOT NULL,
+--   FOREIGN KEY (`cid`) REFERENCES courses(`cid`) ON DELETE CASCADE,
+--   FOREIGN KEY (`sid`) REFERENCES users(`id`) ON DELETE CASCADE
+-- );
+
+-- /* HOMEWORK TABLE */
+-- DROP TABLE IF EXISTS `TCPDB`.`homeworks`;
+-- CREATE TABLE `TCPDB`.`homeworks` (
+--   `cid` INT NOT NULL,
+--   `hid` INT NOT NULL AUTO_INCREMENT,
+--   `hname` VARCHAR(20) NULL,
+--   `hdes` VARCHAR(500) NULL,
+--   `hdate` DATE NULL,
+--   `hanswer` VARCHAR(500) NULL,
+--   PRIMARY KEY (`hid`)
+-- );
+
+-- /* SUBMIT HOMEWORK TABLE */
+-- DROP TABLE IF EXISTS `TCPDB`.`submit`;
+-- CREATE TABLE `TCPDB`.`submit` (
+--   `hid` VARCHAR(20) NOT NULL,
+--   `uid` VARCHAR(20) NOT NULL,
+--   `hurl` VARCHAR(1000) NULL,
+--   `hstatus` enum('N', 'Y', 'E') DEFAULT 'N',  -- N: not submit yet; Y: submitted already; E: submitted overtime;
+--   `score` DOUBLE(5,2),
+--   PRIMARY KEY (`hid`, `uid`)
+-- );
+
+/* EXPERIMENT TABLE */
+DROP TABLE IF EXISTS `TCPDB`.`experiments`;
+CREATE TABLE `TCPDB`.`experiments` (
+  `eid` INT NOT NULL AUTO_INCREMENT,
+  `ename` VARCHAR(20) NULL,
+  `eaim` VARCHAR(500) NULL,
+  `edate` DATE NULL,
+  PRIMARY KEY (`eid`)
 );
 
-/* ROSTER TABLE */
-DROP TABLE IF EXISTS `TCPDB`.`rosters`;
-CREATE TABLE `TCPDB`.`rosters` (
-  `cid` INT NOT NULL,
-  `sid` VARCHAR(20) NOT NULL,
-  FOREIGN KEY (`cid`) REFERENCES courses(`cid`) ON DELETE CASCADE,
-  FOREIGN KEY (`sid`) REFERENCES users(`id`) ON DELETE CASCADE
-);
-
-/* OLD ROSTER TABLE */
-DROP TABLE IF EXISTS `TCPDB`.`pastrosters`;
-CREATE TABLE `TCPDB`.`pastrosters` (
-  `cid` INT NOT NULL,
-  `sid` VARCHAR(20) NOT NULL,
-  FOREIGN KEY (`cid`) REFERENCES courses(`cid`) ON DELETE CASCADE,
-  FOREIGN KEY (`sid`) REFERENCES users(`id`) ON DELETE CASCADE
-);
-
-/* HOMEWORK TABLE */
-DROP TABLE IF EXISTS `TCPDB`.`homeworks`;
-CREATE TABLE `TCPDB`.`homeworks` (
-  `cid` INT NOT NULL,
-  `hid` INT NOT NULL AUTO_INCREMENT,
-  `hname` VARCHAR(20) NULL,
-  `hdes` VARCHAR(500) NULL,
-  `hdate` DATE NULL,
-  `hanswer` VARCHAR(500) NULL,
-  PRIMARY KEY (`hid`)
-);
-
-/* SUBMIT HOMEWORK TABLE */
-DROP TABLE IF EXISTS `TCPDB`.`submit`;
-CREATE TABLE `TCPDB`.`submit` (
-  `hid` VARCHAR(20) NOT NULL,
+/* SUBMIT EXPERIMENT REPORT TABLE */
+DROP TABLE IF EXISTS `TCPDB`.`report`;
+CREATE TABLE `TCPDB`.`report` (
+  `eid` VARCHAR(20) NOT NULL,
   `uid` VARCHAR(20) NOT NULL,
-  `hurl` VARCHAR(1000) NULL,
-  `hstatus` enum('N', 'Y', 'E') DEFAULT 'N',  -- N: not submit yet; Y: submitted already; E: submitted overtime;
-  `score` DOUBLE(5,2),
-  PRIMARY KEY (`hid`, `uid`)
+  `eurl` VARCHAR(1000) NULL,
+  `estatus` enum('N', 'Y', 'E') DEFAULT 'N',  -- N: not submit yet; Y: submitted already; E: submitted overtime;
+  `escore` DOUBLE(5,2),
+  PRIMARY KEY (`eid`, `uid`)
 );
 
 /* GENERATE TEST STUDENT */
@@ -144,49 +165,75 @@ INSERT INTO people (id, uname, utype) VALUES (20003, 'teacher3', 'T');
 /* GENERATE TEST COURSE */
 /* source ./f_createRandomCid.sql; */
 
-INSERT INTO courses (cname, ctid, cdes, ctextbook) VALUES (
-  'math', '20000', 'math course description', 'math course textbook'
-), (
-  'english', '20002', 'english course desciption', 'english course textbook'
-), (
-  'course1', '20001', 'course1 description', 'course1 textbook'
-), (
-  'course2', '20002', 'course2 description', 'course2 textbook'
-), (
-  'course3', '20001', 'course3 description', 'course3 textbook'
-), (
-  'course4', '20001', 'course4 description', 'course4 textbook'
-), (
-  'course5', '20002', 'course5 description', 'course5 textbook'
-);
+-- INSERT INTO courses (cname, ctid, cdes, ctextbook) VALUES (
+--   'math', '20000', 'math course description', 'math course textbook'
+-- ), (
+--   'english', '20002', 'english course desciption', 'english course textbook'
+-- ), (
+--   'course1', '20001', 'course1 description', 'course1 textbook'
+-- ), (
+--   'course2', '20002', 'course2 description', 'course2 textbook'
+-- ), (
+--   'course3', '20001', 'course3 description', 'course3 textbook'
+-- ), (
+--   'course4', '20001', 'course4 description', 'course4 textbook'
+-- ), (
+--   'course5', '20002', 'course5 description', 'course5 textbook'
+-- );
 
-/* GENERATE TEST HOMEWORK */
-INSERT INTO homeworks (
-  cid, hname, hdes, hdate
+-- /* GENERATE TEST HOMEWORK */
+-- INSERT INTO homeworks (
+--   cid, hname, hdes, hdate
+-- )
+-- VALUES (
+--   1, 'calculation', 
+--   'math homework1', '2020-10-01'
+-- );
+
+-- INSERT INTO homeworks (
+--   cid, hname, hdes, hdate
+-- )
+-- VALUES (
+--   2, 'pronunciation', 
+--   'english homework1', '2021-01-01'
+-- );
+
+/* GENERATE TEST EXPERIMENT */
+INSERT INTO experiments (
+  eid, ename, eaim, edate
 )
 VALUES (
-  1, 'calculation', 
-  'math homework1', '2020-10-01'
+  1, 'physics', 
+  'physical study', '2020-10-01'
 );
 
-INSERT INTO homeworks (
-  cid, hname, hdes, hdate
+INSERT INTO experiments (
+  eid, ename, eaim, edate
 )
 VALUES (
-  2, 'pronunciation', 
-  'english homework1', '2021-01-01'
+  2, 'chemistry', 
+  'chemical study', '2021-01-01'
 );
 
-/* GENERATE TEST SUBMIT */
-INSERT INTO submit (
-  hid, uid, hurl, hstatus, score
+-- /* GENERATE TEST SUBMIT */
+-- INSERT INTO submit (
+--   hid, uid, hurl, hstatus, score
+-- )
+-- VALUES (
+--   '1', '10000', 'homework/1/1/10000/',  -- filename: homework/cid/hid/id
+--   'Y', 90.000001
+-- );
+
+/* GENERATE TEST SUBMIT EXPERIMENT REPORT */
+INSERT INTO report (
+  eid, uid, eurl, estatus, escore
 )
 VALUES (
-  '1', '10000', 'homework/1/1/10000/',  -- filename: homework/cid/hid/id
+  '1', '10000', 'experiment/1/1/10000/',  -- filename: homework/cid/hid/id
   'Y', 90.000001
 );
 
-/* GENERATE TEST ROSTERS */
-INSERT INTO rosters (cid, sid) VALUES (1, '10000'), (1, '10001'), (1, '10002'), (2, '10000'), (2, '10001'), (2, '10002'), (3, '10000'), (4, '10001'), (5, '10002'), (6, '10000');
-/* GENERATE OLD ROSTER */
-INSERT INTO pastrosters (cid, sid) VALUES (7, '10000'), (7, '10001'), (7, '10002'), (4, '10002'), (5, '10001'), (4, '10000');
+-- /* GENERATE TEST ROSTERS */
+-- INSERT INTO rosters (cid, sid) VALUES (1, '10000'), (1, '10001'), (1, '10002'), (2, '10000'), (2, '10001'), (2, '10002'), (3, '10000'), (4, '10001'), (5, '10002'), (6, '10000');
+-- /* GENERATE OLD ROSTER */
+-- INSERT INTO pastrosters (cid, sid) VALUES (7, '10000'), (7, '10001'), (7, '10002'), (4, '10002'), (5, '10001'), (4, '10000');
