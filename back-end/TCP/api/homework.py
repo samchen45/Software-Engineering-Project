@@ -104,7 +104,7 @@ def tea_view_detailed_homework():
     data = cursor.fetchall()
 
     msg = []
-    if len(data) > 0:
+    if data:
         for record in data:
             tempDic = {}
             tempDic['uid'] = record[0]
@@ -196,7 +196,7 @@ def stu_view_homework():
     data = cursor.fetchall()
 
     msg = []
-    if len(data) > 0:
+    if data:
         for record in data:
             tempDic = {}
             tempDic['hid'] = record[0]

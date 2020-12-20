@@ -56,7 +56,7 @@ def isOvertime(year, month, day, set_date):
 def getName(cursor, id):
     cursor.execute('SELECT uname FROM users WHERE id=%s', (id,))
     data = cursor.fetchone()
-    if len(data) == 0:
+    if not data == 0:
         print('ERROR: <id> not found in utils.getName()')
         return ''
     return data[0]
