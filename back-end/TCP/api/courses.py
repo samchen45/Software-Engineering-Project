@@ -34,7 +34,6 @@ import TCP.utils as utils
 def editCourse():
     # get parameters from request
     _cid = request.form.get('cid', type=str)
-    print(_cid)
     _cname = request.form.get('cname', type=str)
     _id = request.form.get('id', type=str)
     _cdes = request.form.get('cdes', type=str)
@@ -53,12 +52,12 @@ def editCourse():
             VALUES (%s, %s, %s, %s)', (_cname, _ctid, _cdes, _ctextbook))
         conn.commit()
     else:
-        cursor.execute('SELECT * FROM courses WHERE cid=%s', (_cid,))
-        data = cursor.fetchone()
+        # cursor.execute('SELECT * FROM courses WHERE cid=%s', (_cid,))
+        # data = cursor.fetchone()
 
         ## if course not found (omitted)
         # msg = {}
-        # if len(data) == 0:
+        # if not data == 0:
         #     msg['info'] = 'NULL'
         #     cursor.close()
         #     conn.close()
@@ -118,7 +117,7 @@ def viewCourses():
     # validate user id and get user type
     cursor.execute('SELECT utype FROM users WHERE id=%s', (_id,))
     data = cursor.fetchone()
-    if len(data) == 0:
+    if not data == 0:
         cursor.close()
         conn.close()
         print('viewCourses <id> not found!!')
@@ -183,7 +182,7 @@ def viewStudents():
     # validate course id
     cursor.execute('SELECT ctid FROM courses WHERE cid=%s', (_cid,))
     data = cursor.fetchone()
-    if len(data) == 0:
+    if not data == 0:
         cursor.close()
         conn.close()
         print('viewStudents <cid> not found!!')

@@ -29,7 +29,7 @@ def register():
             # check if id and name match in the database, get user type
             cursor.execute('SELECT * FROM people WHERE id=%s', (_id,))
             data = cursor.fetchone()
-            if len(data) == 0:
+            if not data:
                 msg['info'] = 'error: id does not exist in school database!!'
                 return json.dumps(msg)
             if _name != str(data[1]):
@@ -55,15 +55,6 @@ def register():
             msg['name'] = _name
             return json.dumps(msg)
 
-            # data = cursor.fetchall()
-            # if len(data) == 0:
-            #     conn.commit()
-            #     return json.dumps({'message': 'User created successfully !'})
-            # else:
-            #     return json.dumps({'error': str(data[0])})
-        # else:
-        #     return json.dumps({'html': '<span>Enter the required fields</span>'})
-
     except Exception as e:
         print(e)
         return json.dumps({'error': str(e)})
@@ -85,7 +76,7 @@ def login():
 
     # return to frontend
     msg = {}
-    if len(data) > 0:
+    if data:
         if check_password_hash(str(data[0][4]), _password):
             # session['user'] = data[0][0]
             msg['info'] = data[0][6]

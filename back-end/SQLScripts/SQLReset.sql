@@ -105,6 +105,35 @@ CREATE TABLE `TCPDB`.`report` (
   PRIMARY KEY (`eid`, `uid`)
 );
 
+/* DISCUSSION POSTS */
+DROP TABLE IF EXISTS `TCPDB`.`dis_posts`;
+CREATE TABLE `TCPDB`.`dis_posts` (
+  `id` INT AUTO_INCREMENT,
+  `labid` INT NOT NULL,
+  `title` VARCHAR(100) NOT NULL,
+  `text` VARCHAR(500) NOT NULL,
+  `owner` VARCHAR(20) NOT NULL,
+  `time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`owner`) REFERENCES users(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`labid`) REFERENCES homeworks(`hid`) ON DELETE CASCADE,
+  PRIMARY KEY (`id`)
+);
+
+/* DISCUSSION REPLIES */
+DROP TABLE IF EXISTS `TCPDB`.`dis_replies`;
+CREATE TABLE `TCPDB`.`dis_replies` (
+  `id` INT AUTO_INCREMENT,
+  `postid` INT NOT NULL,
+  `owner` VARCHAR(20) NOT NULL,
+  `time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `text` VARCHAR(500) NOT NULL,
+  `quote` INT NULL,
+  FOREIGN KEY (`owner`) REFERENCES users(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`postid`) REFERENCES dis_posts(`id`) ON DELETE CASCADE,
+  PRIMARY KEY (`id`)
+);
+
 /* GENERATE TEST STUDENT */
 INSERT INTO users (
   id, uname, email, upassword, phonenum, utype
