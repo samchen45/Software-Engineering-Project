@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Main backend Python codes.
 """
@@ -10,9 +11,8 @@ import TCP
 import datetime
 import time
 import utils
+import os
 
-# mysql = MySQL()
-# app = Flask(__name__)
 mysql = TCP.mysql
 app = TCP.app
 app.secret_key = 'secret'
@@ -178,7 +178,7 @@ def updateInfo():
     if check_password_hash(str(data[4]), _password):
         # update info
         _hashed_password_new = generate_password_hash(_password_new)
-        cursor.execute('UPDATE users SET name=%s, email=%s, password=%s, phonenum=%s WHERE id=%s',
+        cursor.execute('UPDATE users SET uname=%s, email=%s, upassword=%s, phonenum=%s WHERE id=%s',
                        (_name, _email, _hashed_password_new, _phonenum, _id))
         conn.commit()
         msg['info'] = 'Success!!'
@@ -191,42 +191,44 @@ def updateInfo():
     return json.dumps(msg)
 
 
-# @app.route('/')
-# def sendemail():
-#     utils.send_email_captcha('psypengsiyuan@vip.qq.com')
-#     return '<h1>邮件发送成功</h1>'
 
+# # view course(for teacher)
+# @app.route('/api/tea_viewcourse', methods=['POST'], strict_slashes=False)
+# def tea_view_course():
 
-# view course(for teacher)
-@app.route('/api/tea_viewcourse', methods=['POST'], strict_slashes=False)
-def tea_view_course():
+#     _id = request.form.get('userid', type=str)
 
-    _id = request.form.get('id', type=str)
+#     # connect to mysql
+#     conn = mysql.connect()
+#     cursor = conn.cursor()
+#     cursor.execute('SELECT utype FROM users WHERE id=%s', (_id,))
+#     data = cursor.fetchall()
 
-    # connect to mysql
-    conn = mysql.connect()
-    cursor = conn.cursor()
-    cursor.execute('SELECT utype FROM users WHERE id=%s', (_id,))
-    data = cursor.fetchall()
+#     # judge if it's teacher
+#     if data[0][0] != 'T':
+#         msg['info'] = 'NULL'
 
-    # judge if it's teacher
-    if data[0][0] != 'T':
-        return None
+#     cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_id,))
+#     data = cursor.fetchall()
 
-    cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_id,))
-    data = cursor.fetchall()
+#     # return to frontend
+#     msg = {}
+#     if len(data) > 0:
+#         arr = []
 
-    # return to frontend
-    msg = {}
-    if len(data) > 0:
-        msg['cid'] = data[0][0]
-        msg['cname'] = data[0][1]
-    else:
-        msg['info'] = 'NULL'
+#         msg['arr'] = [
+#             {
+#                 'cid': '1',
+#                 'cname': 'math'
+#             }
+#         ]
+#         msg['info'] = 'SUCCEED'
+#     else:
+#         msg['info'] = 'NULL'
 
-    cursor.close()
-    conn.close()
-    return json.dumps(msg)
+#     cursor.close()
+#     conn.close()
+#     return json.dumps(msg)
 
 
 # post homework(for teacher)
@@ -252,7 +254,11 @@ def tea_post_homework():
     _hdate = request.form.get('hdate', type=str)  # date: YYYY-MM-DD
     _hanswer = request.form.get('hanswer', type=str)
 
-    cursor.execute('INSERT INTO homwworks(id, hname, hdes, hdate, hanswer) \
+    _cid = "1"
+    _hdate = "2020-10-01"
+    _hanswer = "ANSWER"
+
+    cursor.execute('INSERT INTO homeworks(cid, hname, hdes, hdate, hanswer) \
         VALUES (%s, %s, %s, %s, %s)', (_cid, _hname, _hdes, _hdate, _hanswer))
     conn.commit()
 
@@ -371,7 +377,7 @@ def score_homework():
 
 
 # view course(for student)
-@app.route('/api/stu_viewcourse', methods=['POST'], strict_slashes=False)
+@app.route('/api/stu_viewcourse', methods=['POST'])
 def stu_view_course():
 
     _id = request.form.get('id', type=str)
@@ -379,11 +385,14 @@ def stu_view_course():
     # connect to mysql
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute('SELECT utype FROM users WHERE id=%s', (_id,))
-    data = cursor.fetchall()
+    cursor.execute('SELECT * FROM users WHERE id=%s', (_id,))
+    data = cursor.fetchone()
+
+    print(_id)
+    print(data)
 
     # judge if it's student
-    if data[0][0] != 'S':
+    if data[0] != 'S':
         return None
 
     cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_id,))
@@ -456,7 +465,7 @@ def submit_homework():
     conn.close()
 
     file_dir = os.path.join(
-        basedir, app.config['UPLOAD_FOLDER'], _cid, _hid, _uid)  # 拼接成合法文件夹地址
+        app.config['BASEDIR'], app.config['UPLOAD_FOLDER'], _cid, _hid, _uid)  # 拼接成合法文件夹地址
     if not os.path.exists(file_dir):
         os.makedirs(file_dir)  # 文件夹不存在就创建
     f = request.files['myfile']  # 从表单的file字段获取文件，myfile为该表单的name值
@@ -473,7 +482,7 @@ def submit_homework():
         # return render_template('upload.html', status='OK')
 
         now = datetime.datetime.now()
-        submit_status = isOvertime(now_time.year, now.month, now.day, _date)
+        submit_status = utils.isOvertime(now_time.year, now.month, now.day, _date)
         cursor.execute('REPLACE INTO submit(hid, uid, url, status) VALUES(%s, %s, %s, submit_status)',
                        (_hid, _uid, file_dir, submit_status))
         conn.commit()

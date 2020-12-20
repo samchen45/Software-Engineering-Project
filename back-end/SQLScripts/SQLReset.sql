@@ -65,12 +65,12 @@ CREATE TABLE `TCPDB`.`pastrosters` (
 DROP TABLE IF EXISTS `TCPDB`.`homeworks`;
 CREATE TABLE `TCPDB`.`homeworks` (
   `cid` INT NOT NULL,
-  `hid` VARCHAR(20) NOT NULL,
+  `hid` INT NOT NULL AUTO_INCREMENT,
   `hname` VARCHAR(20) NULL,
   `hdes` VARCHAR(500) NULL,
   `hdate` DATE NULL,
   `hanswer` VARCHAR(500) NULL,
-  PRIMARY KEY (`cid`, `hid`)
+  PRIMARY KEY (`hid`)
 );
 
 /* SUBMIT HOMEWORK TABLE */
@@ -78,7 +78,7 @@ DROP TABLE IF EXISTS `TCPDB`.`submit`;
 CREATE TABLE `TCPDB`.`submit` (
   `hid` VARCHAR(20) NOT NULL,
   `uid` VARCHAR(20) NOT NULL,
-  `hurl` VARCHAR(100) NULL,
+  `hurl` VARCHAR(1000) NULL,
   `hstatus` enum('N', 'Y', 'E') DEFAULT 'N',  -- N: not submit yet; Y: submitted already; E: submitted overtime;
   `score` DOUBLE(5,2),
   PRIMARY KEY (`hid`, `uid`)
@@ -153,7 +153,7 @@ INSERT INTO courses (cname, ctid, cdes, ctextbook) VALUES (
 ), (
   'course2', '20002', 'course2 description', 'course2 textbook'
 ), (
-  'course3', '20000', 'course3 description', 'course3 textbook'
+  'course3', '20001', 'course3 description', 'course3 textbook'
 ), (
   'course4', '20001', 'course4 description', 'course4 textbook'
 ), (
@@ -162,19 +162,19 @@ INSERT INTO courses (cname, ctid, cdes, ctextbook) VALUES (
 
 /* GENERATE TEST HOMEWORK */
 INSERT INTO homeworks (
-  cid, hid, hname, hdes
+  cid, hname, hdes, hdate
 )
 VALUES (
-  1, 'math1', 'calculation', 
-  'math homework1'
+  1, 'calculation', 
+  'math homework1', '2020-10-01'
 );
 
 INSERT INTO homeworks (
-  cid, hid, hname, hdes
+  cid, hname, hdes, hdate
 )
 VALUES (
-  2, 'english1', 'pronunciation', 
-  'english homework1'
+  2, 'pronunciation', 
+  'english homework1', '2021-01-01'
 );
 
 /* GENERATE TEST SUBMIT */
@@ -182,7 +182,7 @@ INSERT INTO submit (
   hid, uid, hurl, hstatus, score
 )
 VALUES (
-  'math1', '10000', 'homework/abc101/math1/10000/', 
+  '1', '10000', 'homework/1/1/10000/',  -- filename: homework/cid/hid/id
   'Y', 90.000001
 );
 

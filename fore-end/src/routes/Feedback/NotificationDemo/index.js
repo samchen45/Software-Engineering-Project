@@ -1,15 +1,102 @@
 import React from 'react'
-import {Card, Button, Form, Modal, Upload, Icon, Input, Tooltip, Col, Row, notification, Select} from 'antd'
+import {Card, Button, Form, Modal, Upload, Icon, Input, Tooltip, Col, Row, message,notification, Select} from 'antd'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
 import FormItem from 'antd/lib/form/FormItem'
+import { isAuthenticatedid } from '../../../utils/Session'
+import $ from 'jquery'
+
 
 const {TextArea} = Input
 const {Option} = Select;
+var ret = new Array()
+
+
+@Form.create()
 class NotificationDemo extends React.Component{
-  state = {
-    placement:''
+  constructor(props){
+    super(props);
+    
+    this.state = {
+      placement:'',
+      dataSource:[],
+      data_homework: [],
+      id:'',
+      lecture:'',
+      count: 0,
+      is_loading: false
+    }
+
+    this.loadlist = this.loadlist.bind(this)
   }
+
+  componentWillMount() {
+    this.setState({
+      is_loading: true
+    })
+    let uid = isAuthenticatedid()
+      console.log(0);
+      this.setState({id : uid},() => {
+        console.log(this.state.id);
+        this.loadlist();
+      })
+  }
+
+  loadlist(){
+    var that = this
+    $.ajax({
+      type: 'POST',
+      url: "/viewcourses",
+      data: {
+          userid: this.state.id,
+      },
+      success: function (data) {
+        message.info("success");
+        ret = JSON.parse(data)
+        console.log("ret1 ", ret)
+        this.setState({
+          dataSource: ret,
+          is_loading: false
+        });
+      }.bind(this)
+    })
+    
+  }
+  handleLectureChange = value => {
+    this.setState({lecture: value});
+  }
+  setCourse(course) {
+    this.setState({data_course: course})
+  }
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (err) {
+        message.warning('请先填写正确的表单')
+      } 
+      else {
+        console.log('psy');
+        console.log(this.state.lecture);
+        $.ajax({
+          type: 'POST',
+          url: "/tea_posthomework",
+          data: {
+            id: isAuthenticatedid(),
+            cid: this.state.lecture,
+            hname: values.homework_name,
+            hdes:values.homework_des,
+            hdate:"2020-12-25",
+            hanswer:"无"
+          },
+          success:function(data){
+            console.log(data);
+            message.info("提交成功")
+          }
+        });
+      }
+    });
+  }
+
   openNotification(obj){
     notification.open({
       message: 'Notification Title',
@@ -34,6 +121,8 @@ class NotificationDemo extends React.Component{
   }
   render(){
     const placement = this.state.placement
+    // const dataSource = this.state.dataSource
+    const handleLectureChange = this.handleLectureChange
     /*
     const cardContent = ` 在系统四个角显示通知提醒信息。经常用于以下情况：
           <ul class="card-ul">
@@ -42,32 +131,86 @@ class NotificationDemo extends React.Component{
             <li>系统主动推送</li>
           </ul>`
     */
+   const is_loading = this.state.is_loading
    const cardContent = ` 这个页面用于布置作业。 `
-   
-    return (
-      <div>
-        <CustomBreadcrumb arr={['作业','布置作业']}/>
-        <TypingCard source={cardContent}/>
-        <Card>
-        <Form>
-          <Form.Item label = '选择课程'>
-            <Select placeholder='选择课程'>
-              <Select.Option value = '1'>课程1</Select.Option>
-              <Select.Option value = '2'>课程2</Select.Option>
-              <Select.Option value = '3'>课程3</Select.Option>
+   const {getFieldDecorator, getFieldValue} = this.props.form
+    const formItemLayout = {
+      labelCol: {
+        xs: {span: 24},
+        sm: {span: 4},
+      },
+      wrapperCol: {
+        xs: {span: 24},
+        sm: {span: 12},
+      },
+    };
+    console.log(this.state.is_loading)
+    console.log('render data source',this.state.dataSource)
+    if (!is_loading) {
+      return (
+        <div>
+          <CustomBreadcrumb arr={['作业','布置作业']}/>
+          <TypingCard source={cardContent}/>
+          <Card>
+          <Form>
+            <Form.Item label = '选择课程'>
+            <Select defaultValue={this.state.dataSource[0].cname} style={{ width: 240 }} onChange={handleLectureChange}>
+              {this.state.dataSource.map(lecture => (
+                <Option key={lecture.cid}>{lecture.cname}</Option>
+              ))}
             </Select>
-          </Form.Item>
-          <Form.Item label = '作业名称'><Input placeholder='作业名称'/></Form.Item>
-          <Form.Item label = '作业描述'><TextArea placeholder='作业描述' rows={4}/></Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              提交
-            </Button>
-          </Form.Item>
-        </Form>
-        </Card>
-      </div>
-    )
+            </Form.Item>
+            <Form.Item label = '作业名称'  {...formItemLayout}>
+            {
+              getFieldDecorator('homework_name', {
+                rules: [
+                  // {
+                  //   // type: 'homework_name',
+                  //   message: '请输入正确的邮箱地址'
+                  // },
+                  {
+                    required: true,
+                    message: '请填写作业名称'
+                  }
+                ]
+              })(
+              <Input/>
+              )
+            }
+            </Form.Item>
+            <Form.Item label = '作业描述'>
+            {
+              getFieldDecorator('homework_des', {
+                rules: [
+                  // {
+                  //   type: 'homework_des',
+                  //   message: '请输入作业描述'
+                  // },
+                  {
+                    required: true,
+                    message: '请输入作业描述'
+                  }
+                ]
+              })(
+              <TextArea row = {4} />
+              )
+              }
+              </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" onClick={this.handleSubmit}>
+                提交
+              </Button>
+            </Form.Item>
+          </Form>
+          </Card>
+        </div>
+      )
+    } else {
+      return (
+        <div></div>
+      ) 
+    }
+    
     
     /*
     return (

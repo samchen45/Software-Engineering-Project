@@ -72,12 +72,13 @@ mysql>quit
 
 ### Start backend server
 ```
+cd back-end
 source env/bin/activate
 pip install .
-python TCP/app.py
+./bin/TCPrun
 ```
 ### Start frontend server
 ```
-cd fore-end
+cd ../fore-end
 npm start
 ```

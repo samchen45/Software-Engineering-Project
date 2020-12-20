@@ -1,12 +1,12 @@
 import React from 'react'
-import { Card, Button, Form, Modal, Upload, Icon, Input, Tooltip, Table, Notification, message } from 'antd'
+import { Card, Button, Form, Modal, Upload, Icon, Input, Tooltip, Table, Notification, message, Select } from 'antd'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb'
 import TypingCard from '../../../components/TypingCard'
 import reqwest from 'reqwest';
+import { isAuthenticatedid } from '../../../utils/Session'
+import $ from 'jquery'
 
-
-
-
+var ret = new Array();
 const FormItem = Form.Item
 const formItemLayout = {
   labelCol: {
@@ -19,6 +19,8 @@ const formItemLayout = {
   },
 };
 
+const LecturesRemote = ['课程1', '课程2']; // 更新这个当载入页面时从远程服务器
+const { Option } = Select;
 
 const EditableContext = React.createContext();
 const EditableRow = ({ form, index, ...props }) => (
@@ -43,60 +45,143 @@ class ModalDemo extends React.Component {
       confirmLoading: false
   } 
   */
-  state = {
-    /*
-    visible: false,
-    visible2: false,
-    visible3: false,
-    visible4: false,
-    visible5: false,
-    */
-    organCertUrl: "",
-    fileList: [],
-    uploading: false,
-    ModalText: '显示对话框的内容',
-    confirmLoading: false,
-    visible: false,
-    numbers: [
-      { key: 1 },
-      { key: 2 },
-      { key: 3 },
-      { key: 4 },
-      { key: 5 }
-    ],
-    num: 1,
+  constructor(props) {
+    super(props)
+    this.state = {
+      /*
+      visible: false,
+      visible2: false,
+      visible3: false,
+      visible4: false,
+      visible5: false,
+      */
+      is_loading: false,
+      dataSource: [],
+      id: '',
+      lecture: '',
+      organCertUrl: "",
+      fileList: [],
+      uploading: false,
+      ModalText: '显示对话框的内容',
+      confirmLoading: false,
+      visible: false,
+      homeworks: [
+        { key: 1 },
+        { key: 2 },
+        { key: 3 },
+        { key: 4 },
+        { key: 5 },
+      ],
+      homework: 1,
+      hoemwork_list:[],
+      h_id:'',
+      h_name:'',
+      h_des:'',
+      h_date:''
+    }
+    this.loadlist = this.loadlist.bind(this)
+  }
+  componentWillMount() {
+    this.setState({
+      is_loading: true
+    })
+    let uid = isAuthenticatedid()
+    console.log(0);
+    this.setState({ id: uid }, () => {
+      console.log(this.state.id);
+      this.loadlist();
+    })
   }
 
+  loadlist() {
+    var that = this
+    $.ajax({
+      type: 'POST',
+      url: "/viewcourses",
+      data: {
+        userid: this.state.id,
+      },
+      success: function (data) {
+        message.info("success");
+        ret = JSON.parse(data)
+        console.log("ret1 ", ret)
+        this.setState({
+          dataSource: ret,
+          lecture: ret[0].cid,
+          is_loading: false
+        });
+      }.bind(this)
+    })
+  }
+
+  get_hmk_list = () => {
+    console.log('11',this.state.lecture)
+    $.ajax({
+      type: 'POST',
+      url: "/stu_viewhomework",
+      data: {
+        userid: this.state.id,
+        cid: this.state.lecture
+      },
+      success: function (data) {
+        message.info("success");
+        ret = JSON.parse(data)
+        console.log("ret2 ", ret)
+        this.setState({
+          homework_list: ret,
+        });
+      }.bind(this)
+    })
+  }
   handleUpload = () => {
     const { fileList } = this.state;
-    const formData = new FormData();
-    fileList.forEach(file => {
-      formData.append('files[]', file);
-    });
+    var formData = new FormData();
+    const file = fileList[0]
+    formData.append('myfile', file)
+    formData.append('hid', this.state.h_id)
+    formData.append('uid', this.state.id)
+    // fileList.forEach(file => {
+    //   formData.append('files[]', file);
+    // });
 
     this.setState({
       uploading: true,
     });
 
+    console.log('33', formData.get('myfile'))
+    console.log('44', formData.get('hid'))
+    console.log('22',this.state.h_id)
     // You can use any AJAX library you like
-    reqwest({
-      url: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-      method: 'post',
+    //reqwest({
+    $.ajax({
+      // url: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+      type: 'POST',
+      url: '/submithomework',
       processData: false,
-      data: formData,
-      success: () => {
+      contentData: false,
+      cache: false,
+      // data: {
+      //   hid: this.state.h_id,
+      //   uid: this.state.id,
+      //   myfile: file
+      // },
+      // data: formData,
+      data: encodeURI(formData.serialize(), "UTF-8"),
+      // dataType: 'json',
+      success:function(data){
         this.setState({
           fileList: [],
           uploading: false,
         });
         message.success('upload successfully.');
-      },
-      error: () => {
+      }.bind(this),
+      error: function(data){
         this.setState({
           uploading: false,
         });
+        console.log(formData.get('myfile'));
         message.error('upload failed.');
-      },
+      }.bind(this)
     });
   }
 
@@ -275,7 +360,7 @@ class ModalDemo extends React.Component {
     })
   }
   */
-  
+
   /*
   columns7 = [
     {
@@ -315,10 +400,13 @@ class ModalDemo extends React.Component {
   ]
   */
 
-  showModal = (e, n) => {
+  showModal = (e, record) => {
     this.setState({
       visible: true,
-      num: n,
+      h_id: record.hid,
+      h_name: record.hname,
+      h_des: record.hdes,
+      h_date: record.hdate,
     })
   }
 
@@ -339,12 +427,19 @@ class ModalDemo extends React.Component {
       this.props.form.resetFields();
     }
   }
+
+  handleLectureChange = (value) => {
+    this.setState({
+      lecture:value
+    })
+  };
+
   render() {
     /*
     const {visible,visible1,visible2,visible3,visible4,visible5, ModalText, confirmLoading} = this.state
     */
 
-    const { uploading, fileList, num } = this.state;
+    const { is_loading, dataSource,uploading, fileList, homework: num } = this.state;
     const props = {
       onRemove: file => {
         this.setState(state => {
@@ -369,39 +464,50 @@ class ModalDemo extends React.Component {
 
     const columns7 = [
       {
-        title: '课程编号',
-        dataIndex: 'key',
+        title: '作业编号',
+        dataIndex: 'hid',
         width: '10%',
       },
       {
-        title: '课程名',
-        dataIndex: 'name',
+        title: '作业名',
+        dataIndex: 'hname',
+        width: '10%',
+      },
+      {
+        title: '作业说明',
+        dataIndex: 'hdes',
         width: '30%',
       },
       {
-        title: '作业编号',
-        dataIndex: 'num',
+        title: '作业日期',
+        dataIndex: 'hdate',
+        width: '10%',
+      },
+      {
+        title: '作业状态',
+        dataIndex: 'hstatus',
+        width: '10%',
+      },
+      {
+        title: '评分',
+        dataIndex: 'score',
         width: '10%',
       },
       {
         title: '操作',
         dataIndex: 'operation',
+        width: '10%',
         render: (text, record) => {
           return (
             <div>
-              <Button onClick={e=>this.showModal(e, record.key)}>提交</Button>
+              <Button onClick={e => this.showModal(e, record)}>提交</Button>
             </div>
           )
         }
       },
-      {
-        title: '评分',
-        dataIndex: 'score',
-        render: () => {
-          return <p>0/0</p>
-        }
-      },
     ]
+
+    const handleLectureChange = this.handleLectureChange;
 
 
 
@@ -415,48 +521,63 @@ class ModalDemo extends React.Component {
     )
     */
 
-
-    return (
-      <div>
-        <CustomBreadcrumb arr={['作业', '查看作业']} />
-        <TypingCard source={cardContent} />
-        <Card bordered={false} title='可编辑的表格' style={{ marginBottom: 10, minHeight: 440 }} id='editTable'>
-          {/* <Table bordered dataSource={this.state.data7} columns={this.columns7} style={styles.tableStyle}/> */}
-          <Table style={styles.tableStyle} bordered dataSource={this.state.numbers}
-            columns={columns7} />
-        </Card>
-        <Modal id='modal'
-          visible={this.state.visible}
-          title='作业'
-          okText='确认'
-          cancelText='取消'
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-          destroyOnClose={false}
-        >
-          <div>
-            <p>{'作业内容说明' + this.state.num}</p>
-            <p>{'作业内容说明' + this.state.num}</p>
-            <p>{'作业内容说明' + this.state.num}</p>
-            <FormItem label='上传文件' {...formItemLayout}>
-              <Upload {...props}>
-                <Button><Icon type='upload' />选择文件</Button>
-              </Upload>
-              <Button
-                type="primary"
-                onClick={this.handleUpload}
-                disabled={fileList.length === 0}
-                loading={uploading}
-                style={{ marginTop: 16 }}
-              >
-                {uploading ? 'Uploading' : 'Start Upload'}
-              </Button>
-            </FormItem>
-            <FormItem label='备注（可选）' {...formItemLayout}></FormItem>
-          </div>
-        </Modal>
-      </div>
-    )
+    if (!is_loading) {
+      return (
+        <div>
+          <CustomBreadcrumb arr={['作业功能', '查看作业']} />
+          <TypingCard source={cardContent} />
+          <Card bordered={false} title='作业列表' style={{ marginBottom: 10, minHeight: 440 }} id='editTable'>
+            {/* <Table bordered dataSource={this.state.data7} columns={this.columns7} style={styles.tableStyle}/> */}
+            <p>选择课程：
+            <Select defaultValue={dataSource[0].cname} style={{ width: 240 }} onChange={handleLectureChange}>
+                {dataSource.map(lecture => (
+                  <Option key={lecture.cid}>{lecture.cname}</Option>
+                )
+                )}
+              </Select>
+            </p>
+            <Button onClick = {this.get_hmk_list}>确认</Button>
+            <Table style={styles.tableStyle} dataSource={this.state.homework_list}
+              columns={columns7} />
+          </Card>
+          <Modal id='modal'
+            visible={this.state.visible}
+            title='作业'
+            okText='确认'
+            cancelText='取消'
+            onOk={this.handleOk}
+            onCancel={this.handleCancel}
+            destroyOnClose={false}
+          >
+            <div>
+              <p>{'作业名称' + this.state.h_name}</p>
+              <p>{'作业内容说明' + this.state.h_des}</p>
+              <p>{'作业截止日期' + this.state.h_date}</p>
+              <FormItem label='上传文件' {...formItemLayout}>
+                <Upload {...props}>
+                  <Button><Icon type='upload' />选择文件</Button>
+                </Upload>
+                <Button
+                  type="primary"
+                  onClick={this.handleUpload}
+                  disabled={fileList.length === 0}
+                  loading={uploading}
+                  style={{ marginTop: 16 }}
+                >
+                  {uploading ? 'Uploading' : 'Start Upload'}
+                </Button>
+              </FormItem>
+              <FormItem label='备注（可选）' {...formItemLayout}></FormItem>
+            </div>
+          </Modal>
+        </div>
+      )
+    }
+    else {
+      return (
+        <div></div>
+      )
+    }
     /*
     return (
       <div>
