@@ -406,7 +406,7 @@ class CollapseDemo extends React.Component {
           <CustomBreadcrumb arr={['课程功能', '学生管理']} />
           <TypingCard source={cardContent} height={178} />
           <Card bordered={false} title='学生列表' style={{ marginBottom: 10, minHeight: 440 }} id='studentList'>
-            <p>
+            {/* <p>
               <p>选择课程</p>
               <Select defaultValue={dataSource[0].cname} style={{ width: 240 }} onChange={handleLectureChange}>
                 {dataSource.map(lecture => (
@@ -414,7 +414,7 @@ class CollapseDemo extends React.Component {
                 ))}
               </Select>
               <Button onClick={this.get_stu_list}>确认</Button>
-            </p>
+            </p> */}
             <p>
               <Button onClick={this.handleAdd}>添加学生</Button>
             </p>

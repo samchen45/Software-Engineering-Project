@@ -27,17 +27,15 @@ def send_email_captcha(recv_addr):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in TCP.app.config['ALLOWED_EXTENSIONS']
 
-# convert courses tuple (usually from database) to dictionary
-def courses2list(courses: tuple):
+# convert labs tuple (usually from database) to dictionary
+def labs2list(labs: tuple):
     msg = []
-    for course in courses:
-        cdict = {}
-        cdict['cid'] = course[0]
-        cdict['cname'] = course[1]
-        cdict['ctid'] = course[2]
-        cdict['cdes'] = course[3]
-        cdict['ctextbook'] = course[4]
-        msg.append(cdict)
+    for lab in labs:
+        d = {}
+        d['labid'] = lab[0]
+        d['labname'] = lab[1]
+        d['labaim'] = lab[2]
+        msg.append(d)
     return msg
 
 # judge if submitting is overtime
