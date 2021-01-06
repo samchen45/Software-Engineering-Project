@@ -9,6 +9,10 @@ export function isAuthenticatedid () {
   return _getCookie_id(LOGIN_COOKIE_NAME)
 }
 
+export function isAuthenticatedtype () {
+  return _getCookie_type(LOGIN_COOKIE_NAME)
+}
+
 export function authenticateSuccess (token) {
   _setCookie(LOGIN_COOKIE_NAME, token)
 }
@@ -17,6 +21,27 @@ export function logout () {
 
   _setCookie(LOGIN_COOKIE_NAME, '', 0)
 
+}
+
+function _getCookie_type (name) {
+  let start, end, start2, start3
+  if (document.cookie.length > 0) {
+    start = document.cookie.indexOf(name + '=')
+    console.log(document.cookie)
+    if (start !== -1) {
+      start = start + name.length + 1
+      start2 = document.cookie.indexOf('D', start) + 1
+      start3 = document.cookie.indexOf('D', start2) + 1
+      end = document.cookie.indexOf('%', start3)
+      
+      if (end === -1) {
+        end = document.cookie.length
+      }
+      console.log(document.cookie.substring(start3, end))
+      return unescape(document.cookie.substring(start3, end))
+    }
+  }
+  return ''
 }
 
 function _getCookie_id (name) {
