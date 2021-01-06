@@ -43,14 +43,6 @@ CREATE TABLE `TCPDB`.`people` (
 --   PRIMARY KEY (`cid`)
 -- );
 
--- /* ROSTER TABLE */
--- DROP TABLE IF EXISTS `TCPDB`.`rosters`;
--- CREATE TABLE `TCPDB`.`rosters` (
---   `cid` INT NOT NULL,
---   `sid` VARCHAR(20) NOT NULL,
---   FOREIGN KEY (`cid`) REFERENCES courses(`cid`) ON DELETE CASCADE,
---   FOREIGN KEY (`sid`) REFERENCES users(`id`) ON DELETE CASCADE
--- );
 
 -- /* OLD ROSTER TABLE */
 -- DROP TABLE IF EXISTS `TCPDB`.`pastrosters`;
@@ -84,25 +76,36 @@ CREATE TABLE `TCPDB`.`people` (
 --   PRIMARY KEY (`hid`, `uid`)
 -- );
 
-/* EXPERIMENT TABLE */
-DROP TABLE IF EXISTS `TCPDB`.`experiments`;
-CREATE TABLE `TCPDB`.`experiments` (
-  `eid` INT NOT NULL AUTO_INCREMENT,
-  `ename` VARCHAR(20) NULL,
-  `eaim` VARCHAR(500) NULL,
-  `edate` DATE NULL,
-  PRIMARY KEY (`eid`)
+/* LAB TABLE */
+DROP TABLE IF EXISTS `TCPDB`.`labs`;
+CREATE TABLE `TCPDB`.`labs` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(20) NULL,
+  `aim` VARCHAR(500) NULL,
+  `date` DATE NULL,
+  PRIMARY KEY (`id`)
 );
 
-/* SUBMIT EXPERIMENT REPORT TABLE */
-DROP TABLE IF EXISTS `TCPDB`.`report`;
-CREATE TABLE `TCPDB`.`report` (
-  `eid` VARCHAR(20) NOT NULL,
+
+/* ROSTER TABLE */
+DROP TABLE IF EXISTS `TCPDB`.`rosters`;
+CREATE TABLE `TCPDB`.`rosters` (
+  `labid` INT NOT NULL,
+  `sid` VARCHAR(20) NOT NULL,
+  FOREIGN KEY (`labid`) REFERENCES labs(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`sid`) REFERENCES users(`id`) ON DELETE CASCADE
+);
+
+/* SUBMIT LAB REPORT TABLE */
+DROP TABLE IF EXISTS `TCPDB`.`reports`;
+CREATE TABLE `TCPDB`.`reports` (
+  `labid` INT NOT NULL,
   `uid` VARCHAR(20) NOT NULL,
-  `eurl` VARCHAR(1000) NULL,
-  `estatus` enum('N', 'Y', 'E') DEFAULT 'N',  -- N: not submit yet; Y: submitted already; E: submitted overtime;
-  `escore` DOUBLE(5,2),
-  PRIMARY KEY (`eid`, `uid`)
+  `url` VARCHAR(1000) NULL,
+  `status` enum('N', 'Y', 'E') DEFAULT 'N',  -- N: not submit yet; Y: submitted already; E: submitted overtime;
+  `score` DOUBLE(5,2),
+  FOREIGN KEY (`labid`) REFERENCES labs(`id`) ON DELETE CASCADE,
+  PRIMARY KEY (`labid`, `uid`)
 );
 
 /* DISCUSSION POSTS */
@@ -116,7 +119,7 @@ CREATE TABLE `TCPDB`.`dis_posts` (
   `time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`owner`) REFERENCES users(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`labid`) REFERENCES homeworks(`hid`) ON DELETE CASCADE,
+  FOREIGN KEY (`labid`) REFERENCES labs(`id`) ON DELETE CASCADE,
   PRIMARY KEY (`id`)
 );
 
@@ -227,21 +230,13 @@ INSERT INTO people (id, uname, utype) VALUES (20003, 'teacher3', 'T');
 --   'english homework1', '2021-01-01'
 -- );
 
-/* GENERATE TEST EXPERIMENT */
-INSERT INTO experiments (
-  eid, ename, eaim, edate
-)
-VALUES (
-  1, 'physics', 
-  'physical study', '2020-10-01'
-);
-
-INSERT INTO experiments (
-  eid, ename, eaim, edate
-)
-VALUES (
-  2, 'chemistry', 
-  'chemical study', '2021-01-01'
+/* GENERATE TEST LAB */
+INSERT INTO labs (
+  name, aim, date
+) VALUES (
+  'physics', 'physical study', '2020-10-01'
+), (
+  'chemistry', 'chemical study', '2021-01-01'
 );
 
 -- /* GENERATE TEST SUBMIT */
@@ -253,16 +248,44 @@ VALUES (
 --   'Y', 90.000001
 -- );
 
-/* GENERATE TEST SUBMIT EXPERIMENT REPORT */
-INSERT INTO report (
-  eid, uid, eurl, estatus, escore
+/* GENERATE TEST SUBMIT LAB REPORT */
+INSERT INTO reports (
+  labid, uid, url, status, score
 )
 VALUES (
-  '1', '10000', 'experiment/1/1/10000/',  -- filename: homework/cid/hid/id
+  '1', '10000', 'labs/1/1/10000/',  -- filename: homework/cid/hid/id
   'Y', 90.000001
 );
 
--- /* GENERATE TEST ROSTERS */
--- INSERT INTO rosters (cid, sid) VALUES (1, '10000'), (1, '10001'), (1, '10002'), (2, '10000'), (2, '10001'), (2, '10002'), (3, '10000'), (4, '10001'), (5, '10002'), (6, '10000');
+/* GENERATE TEST POSTS */
+INSERT INTO dis_posts (
+  labid, title, text, owner, time
+)
+VALUES (
+  1, 'physics_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
+), (
+  1, 'physics_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
+), (
+  2, 'chem_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
+), (
+  2, 'chem_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
+);
+
+/* GENERATE TEST REPLIES */
+INSERT INTO dis_replies (
+  postid, owner, time, text, quote
+)
+VALUES (
+  1, '10001','2021-01-01 20:21:01', '1st floor,  沙发', NULL
+), (
+  1, '20000','2021-01-02 00:53:03', '2nd floor, teacher', NULL
+), (
+  1, '10000','2021-01-04 18:19:01', '3rd floor, 笑摸一楼狗头', 1
+), (
+  2, '10001','2021-01-06 12:45:32', '1st floor', NULL
+);
+
+/* GENERATE TEST ROSTERS */
+INSERT INTO rosters (labid, sid) VALUES (1, '10000'), (1, '10001'), (1, '10002'), (2, '10000'), (2, '10001'), (2, '10002');
 -- /* GENERATE OLD ROSTER */
 -- INSERT INTO pastrosters (cid, sid) VALUES (7, '10000'), (7, '10001'), (7, '10002'), (4, '10002'), (5, '10001'), (4, '10000');
