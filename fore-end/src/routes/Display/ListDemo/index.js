@@ -53,6 +53,7 @@ const props = {
   },
 };
 
+@Form.create()
 class ListDemo extends React.Component {
 
   constructor(props) {
@@ -131,6 +132,7 @@ class ListDemo extends React.Component {
           console.log("ret_post ", ret)
           this.setState({
             experiments: ret,
+            chosenStudent: this.state.id,
             is_loading: false
           });
         }.bind(this)
@@ -223,7 +225,7 @@ class ListDemo extends React.Component {
         console.log("ret_post11 ", ret)
         this.setState({
           repo: ret[0],
-          chosenStudent: value
+          chosenExperiment: value 
         });
       }.bind(this)
     })
@@ -250,7 +252,37 @@ class ListDemo extends React.Component {
     })
   }
 
+  handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(e)
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (err) {
+        message.warning('请先填写正确的表单')
+      }
+      else {
+        console.log('caonima')
+        console.log(this.state.chosenStudent)
+        console.log(this.state.chosenExperiment)
+        $.ajax({
+          type: 'POST',
+          url: "/add_comment",
+          data: {
+            labid: this.state.chosenExperiment,
+            uid: this.state.chosenStudent,
+            stucomment: values.student_comment,
+            teacomment: values.teacher_comment
+          },
+          success: function (data) {
+            console.log(data);
+            message.info("提交成功")
+          }
+        });
+      }
+    });
+  }
+
   render() {
+    const { getFieldDecorator, getFieldValue } = this.props.form
     const { size, bordered, is_loading,repo, data2, loadingMore, experiments, students, chosenExperiment, chosenStudent } = this.state
     // const loadMore = (
     //   <div style={styles.loadMore}>
@@ -297,14 +329,15 @@ class ListDemo extends React.Component {
                   </div>
               }
             </p>
-            <Form>
+            { this.state.chosenExperiment != '' ?
+            <Form onSubmit={this.handleSubmit}>
               <Card showHeader={false}>
                 <Card.Grid style={{ width: '15%', textAlign: 'left', fontSize: 24 }} hoverable={false}>实验名称</Card.Grid>
                 <Card.Grid style={{ width: '85%', textAlign: 'left', fontSize: 24 }} hoverable={false}>{repo.labname}</Card.Grid>
                 <Card.Grid style={{ width: '15%', textAlign: 'left', fontSize: 24 }} hoverable={false}>姓名</Card.Grid>
-                <Card.Grid style={{ width: '35%', textAlign: 'left', fontSize: 24 }} hoverable={false}>{repo.stu_name}</Card.Grid>
+                <Card.Grid style={{ width: '35%', textAlign: 'left', fontSize: 24 }} hoverable={false}>{repo.uname}</Card.Grid>
                 <Card.Grid style={{ width: '15%', textAlign: 'left', fontSize: 24 }} hoverable={false}>学号</Card.Grid>
-                <Card.Grid style={{ width: '35%', textAlign: 'left', fontSize: 24 }} hoverable={false}>{repo.stu_id}</Card.Grid>
+                <Card.Grid style={{ width: '35%', textAlign: 'left', fontSize: 24 }} hoverable={false}>{repo.uid}</Card.Grid>
                 <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24 }} hoverable={false}>一、实验目的</Card.Grid>
                 <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>{repo.labaim}</Card.Grid>
                 <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24 }} hoverable={false}>二、自定义学生实验报告（根据实验和学科内容自拟实验报告格式，建议包括实验关键过程与参数、实验结果、分析与思考等。包括文字性描述、实验截图、表格等信息）</Card.Grid>
@@ -317,13 +350,24 @@ class ListDemo extends React.Component {
                     <div>
                       <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
                         分析与思考：
-                      <Form.Item name='student_comment'>
-                          <Input.TextArea defaultValue={repo.student_comment} />
+                      <Form.Item label='学生评语'>
+                          {
+                            getFieldDecorator('student_comment', {
+                              rules: [
+                                {
+                                  required: true,
+                                  message: '请填写学生评价'
+                                }
+                              ]
+                            })(
+                              <Input defaultValue={ repo.student_comment}/>
+                            )
+                          }
                       </Form.Item>
                       </Card.Grid>
                       <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
                         附件：
-                        <Form.Item name='student_upload'>
+                        <Form.Item label='student_upload'>
                           <Upload {...props}>
                             <Button>Click to Upload</Button>
                           </Upload>
@@ -351,9 +395,20 @@ class ListDemo extends React.Component {
                     <div>
                       <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
                         教师评语：
-                         <Form.Item name='teacher_comment'>
-                  < Input.TextArea defaultValue={repo.teacher_comment} />
-                      </Form.Item>
+                         <Form.Item label='老师评语'>
+                          {
+                            getFieldDecorator('teacher_comment', {
+                              rules: [  
+                                {
+                                  required: true,
+                                  message: '请填写老师评价'
+                                }
+                              ]
+                            })(
+                              <Input defaultValue={ repo.teacher_comment} />
+                            )
+                          }
+                        </Form.Item>
                       </Card.Grid>
                       <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
                         电子签名：
@@ -375,9 +430,9 @@ class ListDemo extends React.Component {
                       </Card.Grid>
                     </div>
                 }
-                <Button>提交</Button><Button>生成PDF</Button>
+                <Button htmlType = 'submit'>提交</Button><Button>生成PDF</Button>
               </Card>
-            </Form>
+            </Form> :<div></div>}
           </Card>
         </div>
         /*

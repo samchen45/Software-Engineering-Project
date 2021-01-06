@@ -41,7 +41,7 @@ const menus = [
     key: '/home/display',
     subs: [
       {key: '/home/display/table', title: '实验管理', icon: ''},
-      {key: '/home/display/collapse', title: '学生管理', icon: ''},
+      //{key: '/home/display/collapse', title: '学生管理', icon: ''},
       {key: '/home/display/list', title: '实验报告', icon: ''},
       {key: '/home/display/carousel', title: '实验讨论', icon: ''},
       //{key: '/home/display/tabs', title: '课程管理', icon: '',},

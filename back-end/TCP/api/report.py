@@ -237,10 +237,11 @@ def read_report():
     return json.dumps(msg)
 
 
-@TCP.app.route('/api/add_stucomment', methods=['POST'])
-def updateInfo():
+@TCP.app.route('/api/add_comment', methods=['POST'])
+def add_comment():
     # get parameters from request
     _stucomment = request.form.get('stucomment', type=str)
+    _teacomment = request.form.get('teacomment', type=str)
     _labid = request.form.get('labid', type=str)
     _uid = request.form.get('uid', type=str)
     # connect to mysql
@@ -248,9 +249,11 @@ def updateInfo():
     cursor = conn.cursor()
 
     # add comment
-    cursor.execute('UPDATE reports SET stucomment=%s WHERE labid=%s AND uid=%s',
-                    (_comment, _labid, _uid),
+    print(_stucomment)
+    cursor.execute('UPDATE reports SET stucomment=%s, teacomment=%s WHERE labid=%s AND uid=%s',
+                   (_stucomment, _teacomment, _labid, _uid),)
     conn.commit()
+    msg = {}
     msg['info'] = 'Success!!'
 
     cursor.close()
@@ -258,25 +261,25 @@ def updateInfo():
     return json.dumps(msg)
 
 
-@TCP.app.route('/api/add_teachercomment', methods=['POST'])
-def updateInfo():
-    # get parameters from request
-    _teachercomment = request.form.get('teachercomment', type=str)
-    _labid = request.form.get('labid', type=str)
-    _uid = request.form.get('uid', type=str)
-    # connect to mysql
-    conn = TCP.mysql.connect()
-    cursor = conn.cursor()
+# @TCP.app.route('/api/add_teachercomment', methods=['POST'])
+# def updateInfo():
+#     # get parameters from request
+#     _teachercomment = request.form.get('teachercomment', type=str)
+#     _labid = request.form.get('labid', type=str)
+#     _uid = request.form.get('uid', type=str)
+#     # connect to mysql
+#     conn = TCP.mysql.connect()
+#     cursor = conn.cursor()
     
-    # add comment
-    cursor.execute('UPDATE reports SET teachercomment=%s WHERE labid=%s AND uid=%s',
-                    (_comment, _labid, _uid),
-    conn.commit()
-    msg['info'] = 'Success!!'
+#     # add comment
+#     cursor.execute('UPDATE reports SET teachercomment=%s WHERE labid=%s AND uid=%s',
+#                     (_comment, _labid, _uid),
+#     conn.commit()
+#     msg['info'] = 'Success!!'
 
-    cursor.close()
-    conn.close()
-    return json.dumps(msg)
+#     cursor.close()
+#     conn.close()
+#     return json.dumps(msg)
 
 
 # @TCP.app.route('/api/generate_report', methods=["GET", 'POST'])

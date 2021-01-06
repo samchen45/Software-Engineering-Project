@@ -632,8 +632,9 @@ class TableDemo extends React.Component {
       };
     });
     const cardContent = `<ul class="card-ul">
-            <li>教师课程功能界面</li>
-            <li>可以对课程内容进行增删改查</li>
+            <li>实验管理功能界面</li>
+            <li>教师可以对实验内容进行增删改查</li>
+            <li>学生可以对实验内容进行查询</li>
           </ul>`
     if (!is_loading) {
       return (
