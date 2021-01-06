@@ -105,7 +105,7 @@ class CarouselDemo extends React.Component {
     var that = this
     $.ajax({
       type: 'POST',
-      url: "/getpostlist",
+      url: "/getlablist",
       data: {
         uid: this.state.id,
       },
@@ -178,11 +178,13 @@ class CarouselDemo extends React.Component {
     this.setState({
       cid: e,
     })
+    console.log("rinima")
+    console.log(this.state.cid)
     $.ajax({
       type: 'POST',
       url: "/getpostlist",
       data: {
-        cid: this.state.cid,
+        labid: this.state.cid,
       },
       success: function (data) {
         message.info("success");
@@ -210,8 +212,8 @@ class CarouselDemo extends React.Component {
             <Select showSearch style={{ width: 200 }} placeholder='选择实验' onChange={this.onChangeExperiment}>
               {
                 experiments.map(experiment => (
-                  <Option key={experiment.c_id}>
-                    {experiment.c_name}
+                  <Option key={experiment.labid}>
+                    {experiment.labname}
                   </Option>
                 ))
               }
