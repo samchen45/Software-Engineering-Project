@@ -199,7 +199,6 @@ import TCP.utils as utils
 #     return "SUCCEED"
 
 
-
 @TCP.app.route('/api/read_report', methods=["GET", 'POST'])
 def read_report():
     # get parameters from request
@@ -235,6 +234,48 @@ def read_report():
     cursor.close()
     conn.close()
     print(msg)
+    return json.dumps(msg)
+
+
+@TCP.app.route('/api/add_stucomment', methods=['POST'])
+def updateInfo():
+    # get parameters from request
+    _stucomment = request.form.get('stucomment', type=str)
+    _labid = request.form.get('labid', type=str)
+    _uid = request.form.get('uid', type=str)
+    # connect to mysql
+    conn = TCP.mysql.connect()
+    cursor = conn.cursor()
+
+    # add comment
+    cursor.execute('UPDATE reports SET stucomment=%s WHERE labid=%s AND uid=%s',
+                    (_comment, _labid, _uid),
+    conn.commit()
+    msg['info'] = 'Success!!'
+
+    cursor.close()
+    conn.close()
+    return json.dumps(msg)
+
+
+@TCP.app.route('/api/add_teachercomment', methods=['POST'])
+def updateInfo():
+    # get parameters from request
+    _teachercomment = request.form.get('teachercomment', type=str)
+    _labid = request.form.get('labid', type=str)
+    _uid = request.form.get('uid', type=str)
+    # connect to mysql
+    conn = TCP.mysql.connect()
+    cursor = conn.cursor()
+    
+    # add comment
+    cursor.execute('UPDATE reports SET teachercomment=%s WHERE labid=%s AND uid=%s',
+                    (_comment, _labid, _uid),
+    conn.commit()
+    msg['info'] = 'Success!!'
+
+    cursor.close()
+    conn.close()
     return json.dumps(msg)
 
 
