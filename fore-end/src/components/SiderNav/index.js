@@ -36,28 +36,30 @@ const menus = [
     ]
   },
   {
-    title: '课程功能',
+    title: '实验功能',
     icon: 'desktop',
     key: '/home/display',
     subs: [
-      {key: '/home/display/table', title: '课程管理(老师)', icon: ''},
+      {key: '/home/display/table', title: '实验管理', icon: ''},
       {key: '/home/display/collapse', title: '学生管理', icon: ''},
-      //{key: '/home/display/list', title: '列表', icon: ''},
-      //{key: '/home/display/carousel', title: '表格', icon: ''},
-      {key: '/home/display/tabs', title: '课程管理（学生）', icon: '',},
+      {key: '/home/display/list', title: '实验报告', icon: ''},
+      {key: '/home/display/carousel', title: '实验讨论', icon: ''},
+      //{key: '/home/display/tabs', title: '课程管理', icon: '',},
     ] //老师应当只显示上面那个课程管理，学生显示下面那个
   },
+  /*
   {
     title: '作业功能',
     icon: 'message',
     key: '/home/feedback',
     subs: [
-      {key: '/home/feedback/modal', title: '查看作业提交（学生）', icon: '',},
-      //{key: '/home/feedback/modification', title: '修改作业', icon: ''},
-      {key: '/home/feedback/notification', title: '布置作业（老师）', icon: ''},
-      {key: '/home/feedback/spin', title: '批改作业（老师）', icon: '',}
+      {key: '/home/feedback/modal', title: '查看作业', icon: '',},
+      {key: '/home/feedback/modification', title: '修改作业', icon: ''},
+      {key: '/home/feedback/notification', title: '布置作业', icon: ''},
+      {key: '/home/feedback/spin', title: '批改作业', icon: '',}
     ] //老师有布置作业和批改作业，学生只有查看作业
   }
+  */
   //, {
   //   title: '其它',
   //   icon: 'bulb',
