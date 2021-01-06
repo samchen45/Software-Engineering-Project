@@ -37,7 +37,6 @@ def editLab():
     _labname = request.form.get('labname', type=str)
     _id = request.form.get('id', type=str)
     _labaim = request.form.get('labaim', type=str)
-    print(type(_labid))
     # connect to mysql
     conn = TCP.mysql.connect()
     cursor = conn.cursor()

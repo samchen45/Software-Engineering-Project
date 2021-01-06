@@ -14,5 +14,6 @@ setup(
         'flask-mysql',
         'cryptography',
         'flask-mail',
+        'reportlab',
     ],
 )

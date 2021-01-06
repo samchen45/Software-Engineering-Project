@@ -169,7 +169,6 @@ def viewPost():
 def getPostList():
     # get parameters from request
     _postid = request.form.get('labid', type=int)
-    print(_postid)
     # connect to mysql
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
@@ -201,7 +200,6 @@ def getPostList():
     # return to frontend
     cursor.close()
     conn.close()
-    print(msg)
     return json.dumps(msg)
 
 
@@ -209,6 +207,7 @@ def getPostList():
 def getLabList():
     # get parameters from request
     _uid = request.form.get('uid', type=str)
+    print(_uid)
     # connect to mysql
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
@@ -219,5 +218,33 @@ def getLabList():
     # return to frontend
     cursor.close()
     conn.close()
+    print(msg)
     return json.dumps(msg)
 
+
+@TCP.app.route('/api/getalllist', methods=['POST'])
+def getAllList():
+    # get parameters from request
+    # _uid = request.form.get('uid', type=str)
+    # print(_uid)
+    # connect to mysql
+    conn = TCP.mysql.connect()
+    cursor = conn.cursor()
+    msg = []
+    cursor.execute('SELECT * FROM labs')
+    all_labs = cursor.fetchall()
+    msg.append(utils.labs2list(all_labs))
+
+    # students
+    cursor.execute('SELECT id, uname FROM users')
+    all_students = cursor.fetchall()
+    s = []
+    for stu in all_students:
+        _id, _name = stu
+        s.append({'id': _id, 'name': _name})
+    msg.append(s)
+    # return to frontend
+    cursor.close()
+    conn.close()
+    print(msg)
+    return json.dumps(msg)

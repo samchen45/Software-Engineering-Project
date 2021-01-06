@@ -60,19 +60,20 @@ class ListDemo extends React.Component {
     this.state = {
       size: 'default',
       bordered: true,
+      id:'',
       data2: [],
       is_loading: false,
       repo: {},
       loadingMore: false,
       experiments: [
-        '实验1',
-        '实验2',
-        '实验3',
+        // '实验1',
+        // '实验2',
+        // '实验3',
       ],
       students: [
-        '张三',
-        '李四',
-        '王五',
+        // '张三',
+        // '李四',
+        // '王五',
       ],
       experimentName: '实验1',
       chosenExperiment: '',
@@ -105,6 +106,7 @@ class ListDemo extends React.Component {
       is_loading: true
     })
     let uid = isAuthenticatedid()
+    console.log("coanima")
     console.log(0);
     this.setState({
       id: uid
@@ -116,22 +118,43 @@ class ListDemo extends React.Component {
 
   loadlist() {
     var that = this
-    $.ajax({
-      type: 'POST',
-      url: "/getpostlist",
-      data: {
-        uid: this.state.id,
-      },
-      success: function (data) {
-        message.info("success");
-        ret = JSON.parse(data)
-        console.log("ret_post ", ret)
-        this.setState({
-          experiments: ret,
-          is_loading: false
-        });
-      }.bind(this)
-    })
+    if (isAuthenticatedtype() === 'S') {
+      $.ajax({
+        type: 'POST',
+        url: "/getlablist",
+        data: {
+          uid: this.state.id,
+        },
+        success: function (data) {
+          message.info("success");
+          ret = JSON.parse(data)
+          console.log("ret_post ", ret)
+          this.setState({
+            experiments: ret,
+            is_loading: false
+          });
+        }.bind(this)
+      })
+    }
+    else {
+      $.ajax({
+        type: 'POST',
+        url: "/getalllist",
+        data: {
+          uid: this.state.id,
+        },
+        success: function (data) {
+          message.info("success");
+          ret = JSON.parse(data)
+          console.log("ret_post ", ret)
+          this.setState({
+            experiments: ret[0],
+            students: ret[1],
+            is_loading: false
+          });
+        }.bind(this)
+      })
+    }
   }
 
   componentDidMount() {
@@ -158,47 +181,48 @@ class ListDemo extends React.Component {
 
   onChangeExperimentTeacher = value => {
     // request all student in this experiment
-    // this.setState({
-    //   chosenExperiment: value,
-    //   students: [
-    //     '张三',
-    //     '李四',
-    //     '王五',
-    //   ],
-    //   chosenStudent: this.state.students[0], // need request
-    // })
-    $.ajax({
-      type: 'POST',
-      url: "/getpostlist",
-      data: {
-        labid: value,
-      },
-      success: function (data) {
-        message.info("success");
-        ret = JSON.parse(data)
-        console.log("ret_post22 ", ret)
-        this.setState({
-          students: ret,
-          chosenExperiment: value
-        });
-      }.bind(this)
+    this.setState({
+      chosenExperiment: value,
+      // students: [
+        // '张三',
+        // '李四',
+        // '王五',
+      // ],
+      chosenStudent: this.state.students[0].id, // need request
     })
+    // $.ajax({
+    //   type: 'POST',
+    //   url: "/getalllist",
+    //   data: {
+    //     labid: value,
+    //   },
+    //   success: function (data) {
+    //     message.info("success");
+    //     ret = JSON.parse(data)
+    //     console.log("ret_post22 ", ret)
+    //     this.setState({
+    //       students: ret,
+    //       chosenExperiment: value
+    //     });
+    //   }.bind(this)
+    // })
   }
 
   onChangeExperimentStudent = value => {
     // request all report data
     $.ajax({
       type: 'POST',
-      url: "/getpostlist",
+      url: "/read_report",
       data: {
-        uid: value,
+        labid: value,
+        uid: this.state.id
       },
       success: function (data) {
         message.info("success");
         ret = JSON.parse(data)
         console.log("ret_post11 ", ret)
         this.setState({
-          repo: ret,
+          repo: ret[0],
           chosenStudent: value
         });
       }.bind(this)
@@ -209,9 +233,10 @@ class ListDemo extends React.Component {
     // request all report data
     $.ajax({
       type: 'POST',
-      url: "/getpostlist",
+      url: "/read_report",
       data: {
         uid: value,
+        labid: this.state.chosenExperiment
       },
       success: function (data) {
         message.info("success");
@@ -285,27 +310,31 @@ class ListDemo extends React.Component {
                 <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24 }} hoverable={false}>二、自定义学生实验报告（根据实验和学科内容自拟实验报告格式，建议包括实验关键过程与参数、实验结果、分析与思考等。包括文字性描述、实验截图、表格等信息）</Card.Grid>
 
                 <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
-                  {repo.stu_sys_repo}
+                  评分:{repo.score_repo}
                 </Card.Grid>
                 {
                   isAuthenticatedtype() === 'S' ?
                     <div>
                       <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
                         分析与思考：
-                      <Input.TextArea defaultValue={this.state.student_comment} />
+                      <Form.Item name='student_comment'>
+                          <Input.TextArea defaultValue={repo.student_comment} />
+                      </Form.Item>
                       </Card.Grid>
                       <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
                         附件：
-                      <Upload {...props}>
-                          <Button>Click to Upload</Button>
-                        </Upload>
+                        <Form.Item name='student_upload'>
+                          <Upload {...props}>
+                            <Button>Click to Upload</Button>
+                          </Upload>
+                        </Form.Item>
                       </Card.Grid>
                     </div> : <div>
 
                       <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
                         分析与思考：
                       <br />
-                        {this.state.student_comment}
+                        {repo.student_comment}
                       </Card.Grid>
                       <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
                         附件：
@@ -322,13 +351,17 @@ class ListDemo extends React.Component {
                     <div>
                       <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
                         教师评语：
-                  < Input.TextArea defaultValue={this.state.teacher_comment} />
+                         <Form.Item name='teacher_comment'>
+                  < Input.TextArea defaultValue={repo.teacher_comment} />
+                      </Form.Item>
                       </Card.Grid>
                       <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
                         电子签名：
+                         <Form.Item name='teacher_upload'>
                     <Upload {...props}>
                           <Button>Click to Upload</Button>
-                        </Upload>
+                          </Upload>
+                          </Form.Item>
                       </Card.Grid>
                     </div> : <div>
                       <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
