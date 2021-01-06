@@ -11,7 +11,7 @@ class AppStore {
     console.log(document.cookie)
     this.loginUser = info  //设置登录用户信息
     console.log(info.id)
-    let msg = info.username + '&S_I='+ info.id + '&S_T=' + 'A'
+    let msg = info.username + '&S_I='+ info.id + '&S_T=' + 'A' + "&MSG"
     if (flag) {
       authenticateSuccess(msg)
       this.isLogin = true
