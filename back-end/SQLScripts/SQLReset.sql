@@ -100,10 +100,16 @@ CREATE TABLE `TCPDB`.`rosters` (
 DROP TABLE IF EXISTS `TCPDB`.`reports`;
 CREATE TABLE `TCPDB`.`reports` (
   `labid` INT NOT NULL,
+  `labname` VARCHAR(20) NULL,
+  `labaim` VARCHAR(500) NULL,
   `uid` VARCHAR(20) NOT NULL,
-  `url` VARCHAR(1000) NULL,
+  `uname` VARCHAR(20) NULL,
+  `stucomment` VARCHAR(1000) NULL,
+  `teacomment` VARCHAR(1000) NULL,
+  `attachment` VARCHAR(100) NULL,
+  `signature` VARCHAR(100) NULL,
   `status` enum('N', 'Y', 'E') DEFAULT 'N',  -- N: not submit yet; Y: submitted already; E: submitted overtime;
-  `score` DOUBLE(5,2),
+  `score` DOUBLE(5, 2) DEFAULT 0.0,
   FOREIGN KEY (`labid`) REFERENCES labs(`id`) ON DELETE CASCADE,
   PRIMARY KEY (`labid`, `uid`)
 );
@@ -250,11 +256,19 @@ INSERT INTO labs (
 
 /* GENERATE TEST SUBMIT LAB REPORT */
 INSERT INTO reports (
-  labid, uid, url, status, score
+  labid, labname, labaim, uid, uname, stucomment, teacomment, attachment, signature, score
 )
 VALUES (
-  '1', '10000', 'labs/1/1/10000/',  -- filename: homework/cid/hid/id
-  'Y', 90.000001
+  '1', '实验一', '提高学生动手能力', '10001', 'student1', '学生评价', '教师评语', '附件', '电子签名',  -- filename: homework/cid/hid/id
+  90.01
+);
+
+INSERT INTO reports (
+  labid, labname, labaim, uid, uname, stucomment, teacomment, attachment, signature, score
+)
+VALUES (
+  '2', '实验二', '提高学生动手能力', '10002', 'student2', '学生评价', '教师评语', '附件', '电子签名',  -- filename: homework/cid/hid/id
+  90.01
 );
 
 /* GENERATE TEST POSTS */
