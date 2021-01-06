@@ -94,7 +94,7 @@ class FormDemo1 extends React.Component {
       else {
         $.ajax({
           type: 'POST',
-          url: "/updateinform",
+          url: "/updateinfo",
           data: {
             name: isAuthenticated(),
             id: isAuthenticatedid(),

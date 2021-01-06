@@ -82,19 +82,20 @@ CREATE TABLE `TCPDB`.`labs` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(20) NULL,
   `aim` VARCHAR(500) NULL,
-  `date` DATE NULL,
+  -- `date` DATE NULL,
+  -- `tid` VARCHAR(20) NOT NULL,
   PRIMARY KEY (`id`)
 );
 
 
-/* ROSTER TABLE */
-DROP TABLE IF EXISTS `TCPDB`.`rosters`;
-CREATE TABLE `TCPDB`.`rosters` (
-  `labid` INT NOT NULL,
-  `sid` VARCHAR(20) NOT NULL,
-  FOREIGN KEY (`labid`) REFERENCES labs(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`sid`) REFERENCES users(`id`) ON DELETE CASCADE
-);
+-- /* ROSTER TABLE */
+-- DROP TABLE IF EXISTS `TCPDB`.`rosters`;
+-- CREATE TABLE `TCPDB`.`rosters` (
+--   `labid` INT NOT NULL,
+--   `sid` VARCHAR(20) NOT NULL,
+--   FOREIGN KEY (`labid`) REFERENCES labs(`id`) ON DELETE CASCADE,
+--   FOREIGN KEY (`sid`) REFERENCES users(`id`) ON DELETE CASCADE
+-- );
 
 /* SUBMIT LAB REPORT TABLE */
 DROP TABLE IF EXISTS `TCPDB`.`reports`;
@@ -232,11 +233,11 @@ INSERT INTO people (id, uname, utype) VALUES (20003, 'teacher3', 'T');
 
 /* GENERATE TEST LAB */
 INSERT INTO labs (
-  name, aim, date
+  name, aim
 ) VALUES (
-  'physics', 'physical study', '2020-10-01'
+  'physics', 'physical study'
 ), (
-  'chemistry', 'chemical study', '2021-01-01'
+  'chemistry', 'chemical study'
 );
 
 -- /* GENERATE TEST SUBMIT */
@@ -286,6 +287,6 @@ VALUES (
 );
 
 /* GENERATE TEST ROSTERS */
-INSERT INTO rosters (labid, sid) VALUES (1, '10000'), (1, '10001'), (1, '10002'), (2, '10000'), (2, '10001'), (2, '10002');
+-- INSERT INTO rosters (labid, sid) VALUES (1, '10000'), (1, '10001'), (1, '10002'), (2, '10000'), (2, '10001'), (2, '10002');
 -- /* GENERATE OLD ROSTER */
 -- INSERT INTO pastrosters (cid, sid) VALUES (7, '10000'), (7, '10001'), (7, '10002'), (4, '10002'), (5, '10001'), (4, '10000');

@@ -175,16 +175,12 @@ class CarouselDemo extends React.Component {
   };
 
   onChangeExperiment = e => {
-    this.setState({
-      cid: e,
-    })
-    console.log("rinima")
     console.log(this.state.cid)
     $.ajax({
       type: 'POST',
       url: "/getpostlist",
       data: {
-        labid: this.state.cid,
+        labid: e,
       },
       success: function (data) {
         message.info("success");
@@ -192,6 +188,7 @@ class CarouselDemo extends React.Component {
         console.log("ret_post2 ", ret)
         this.setState({
           dataSource: ret,
+          cid:e
         });
       }.bind(this)
     })

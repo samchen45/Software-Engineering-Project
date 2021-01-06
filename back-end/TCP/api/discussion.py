@@ -120,7 +120,7 @@ def viewPost():
         #TODO: return to frontend
         # get user name and user type
         cursor.execute('SELECT uname, utype FROM users \
-            WHERE id=%s' , (_owner,))
+            WHERE id=%s', (_owner,))
         data = cursor.fetchone()
         if data is None:
             print('_owner not found in viewPost')
@@ -132,7 +132,7 @@ def viewPost():
         d['utype'] = _utype
         d['content'] = _content
         d['datetime'] = _datetime
-        d['avatar'] = 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'  #TODO
+        d['avatar'] = 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'  # TODO
         msg.append(d)
 
     # return to frontend
@@ -141,26 +141,67 @@ def viewPost():
     return json.dumps(msg)
 
 
+# @TCP.app.route('/api/getpostlist', methods=['POST'])
+# def getPostList():
+#     # get parameters from request
+#     _labid = request.form.get('labid', type=int)
+#     _owner = request.form.get('uid', type=str)
+#     # connect to mysql
+#     conn = TCP.mysql.connect()
+#     cursor = conn.cursor()
+
+#     # TODO: list posts ordered by last edit
+#     cursor.execute('SELECT title FROM dis_posts \
+#             WHERE labid=%s ORDER BY updated_time DESC', (_labid,))
+#     data = cursor.fetchall()
+#     msg = []
+#     for post in data:
+#         pass
+
+#     # return to frontend
+#     msg = ['success']
+#     cursor.close()
+#     conn.close()
+#     return json.dumps(msg)
+
+#TODO: ADD POST LAYER AND REMOVE THIS FUNCTION!!!!!
 @TCP.app.route('/api/getpostlist', methods=['POST'])
 def getPostList():
     # get parameters from request
-    _labid = request.form.get('labid', type=int)
-    _owner = request.form.get('uid', type=str)
+    _postid = request.form.get('labid', type=int)
+    print(_postid)
     # connect to mysql
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
 
-    # TODO: list posts ordered by last edit
-    cursor.execute('SELECT title FROM dis_posts \
-            WHERE labid=%s ORDER BY updated_time DESC', (_labid,))
+    cursor.execute('SELECT id, owner, time, text, quote text FROM dis_replies \
+            WHERE postid=%s ORDER BY id DESC', (_postid,))
     data = cursor.fetchall()
-    for post in data:
-        pass
+    msg = []
+    for reply in data:
+        _id, _owner, _datetime, _content, _quote = reply
+        #TODO: return to frontend
+        # get user name and user type
+        cursor.execute('SELECT uname, utype FROM users \
+            WHERE id=%s', (_owner,))
+        data = cursor.fetchone()
+        if data is None:
+            print('_owner not found in viewPost')
+            msg = ['owner id not found, contact psy']
+            break
+        d = {}
+        _author, _utype = data
+        d['author'] = _author
+        d['utype'] = _utype
+        d['content'] = _content
+        d['datetime'] = _datetime
+        d['avatar'] = 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'  # TODO
+        msg.append(d)
 
     # return to frontend
-    msg = ['success']
     cursor.close()
     conn.close()
+    print(msg)
     return json.dumps(msg)
 
 
@@ -172,14 +213,10 @@ def getLabList():
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
 
-    cursor.execute('SELECT title FROM dis_posts \
-            WHERE labid=%s ORDER BY updated_time DESC', (_labid,))
-    data = cursor.fetchall()
-    for post in data:
-        pass
-
+    cursor.execute('SELECT * FROM labs')
+    all_labs = cursor.fetchall()
+    msg = utils.labs2list(all_labs)
     # return to frontend
-    msg = ['success']
     cursor.close()
     conn.close()
     return json.dumps(msg)

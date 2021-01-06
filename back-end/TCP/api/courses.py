@@ -30,31 +30,27 @@ import TCP.utils as utils
 #     return json.dumps(msg)
 
 
-@TCP.app.route('/api/editcourse', methods=['POST'])
-def editCourse():
+@TCP.app.route('/api/editlab', methods=['POST'])
+def editLab():
     # get parameters from request
-    _cid = request.form.get('cid', type=str)
-    _cname = request.form.get('cname', type=str)
+    _labid = request.form.get('labid', type=str)
+    _labname = request.form.get('labname', type=str)
     _id = request.form.get('id', type=str)
-    _cdes = request.form.get('cdes', type=str)
-    _ctextbook = request.form.get('ctextbook', type=str)
-    _ctid = _id
+    _labaim = request.form.get('labaim', type=str)
+    print(type(_labid))
     # connect to mysql
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
 
-    if _cid == 'null':
-        # create course
-        # check if course already exists (omitted)
+    if _labid == 'null':
+        # create lab
+        # check if lab already exists (omitted)
 
-        # create new course and store in TCPDB.courses
-        cursor.execute('INSERT INTO courses(cname, ctid, cdes, ctextbook) \
-            VALUES (%s, %s, %s, %s)', (_cname, _ctid, _cdes, _ctextbook))
+        # create new lab and store in TCPDB.labs
+        cursor.execute('INSERT INTO labs(name, aim) \
+            VALUES (%s, %s)', (_labname, _labaim))
         conn.commit()
     else:
-        # cursor.execute('SELECT * FROM courses WHERE cid=%s', (_cid,))
-        # data = cursor.fetchone()
-
         ## if course not found (omitted)
         # msg = {}
         # if not data == 0:
@@ -64,41 +60,39 @@ def editCourse():
         #     return json.dumps(msg)
 
         # update info
-        cursor.execute('UPDATE courses SET cname=%s, ctid=%s, cdes=%s, ctextbook=%s WHERE cid=%s',
-                    (_cname, _ctid, _cdes, _ctextbook, _cid))
+        cursor.execute('UPDATE labs SET name=%s, aim=%s WHERE id=%s', (_labname, _labaim, _labid))
         conn.commit()
 
     # return to frontend
-    cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_ctid,))
-    all_courses = cursor.fetchall()
-    msg = utils.courses2list(all_courses)
+    cursor.execute('SELECT * FROM labs')
+    all_labs = cursor.fetchall()
+    msg = utils.labs2list(all_labs)
 
     cursor.close()
     conn.close()
     return json.dumps(msg)
 
 
-@TCP.app.route('/api/deletecourse', methods=['POST'])
-def deleteCourse():
+@TCP.app.route('/api/deletelab', methods=['POST'])
+def deleteLab():
     # get parameters from request
-    _cid = request.form.get('cid', type=str)
+    _labid = request.form.get('labid', type=str)
     _id = request.form.get('id', type=str)
-    _ctid = _id
     # connect to mysql
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
 
     # validate identity (omitted)
 
-    # delete course from TCPDB.courses
-    cursor.execute('DELETE FROM courses WHERE cid=%s', (_cid,))
+    # delete lab from TCPDB.labs
+    cursor.execute('DELETE FROM labs WHERE id=%s', (_labid,))
     conn.commit()
     # TCPDB.rosters will be deleted via FOREIGN KEY
 
     # return to frontend
-    cursor.execute('SELECT * FROM courses WHERE ctid=%s', (_ctid,))
-    all_courses = cursor.fetchall()
-    msg = utils.courses2list(all_courses)
+    cursor.execute('SELECT * FROM labs')
+    all_labs = cursor.fetchall()
+    msg = utils.labs2list(all_labs)
 
     cursor.close()
     conn.close()
