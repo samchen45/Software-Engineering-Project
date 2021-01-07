@@ -1,6 +1,6 @@
 # Software-Engineering-Project
 
-A **Teaching Cloud Platform** for Software Engineering.
+A **DALAB Experiment Management System** for Software Engineering.
 
 
 ## Installation
