@@ -639,12 +639,13 @@ class TableDemo extends React.Component {
     if (!is_loading) {
       return (
         <div>
-          <CustomBreadcrumb arr={['课程功能', '课程管理']} />
+          <CustomBreadcrumb arr={['实验功能', '实验管理']} />
           <TypingCard id='howUse' source={cardContent} height={178} />
-          <Card bordered={false} title='课程列表' style={{ marginBottom: 10, minHeight: 440 }} id='editTable'>
-            <p>
-              <Button onClick={this.handleAdd}>添加课程</Button>
-            </p>
+          <Card bordered={false} title='实验列表' style={{ marginBottom: 10, minHeight: 440 }} id='editTable'>
+            {isAuthenticatedtype() === 'T' ?
+              <p>
+                <Button onClick={this.handleAdd}>添加实验</Button>
+              </p> : <div></div>}
             <Table style={styles.tableStyle} components={components} dataSource={this.state.dataSource}
               columns={isAuthenticatedtype() === 'T' ? columns8 : columns7} />
           </Card>

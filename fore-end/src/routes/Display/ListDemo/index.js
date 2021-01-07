@@ -350,7 +350,7 @@ class ListDemo extends React.Component {
                     <div>
                       <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
                         分析与思考：
-                      <Form.Item label='学生评语'>
+                      <Form.Item >
                           {
                             getFieldDecorator('student_comment', {
                               rules: [
@@ -388,14 +388,14 @@ class ListDemo extends React.Component {
                 }
                 <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24 }} hoverable={false}>三、自定义实验评价报告（根据实验和学科内容自拟实验评价格式，包括实验得分项细节、总成绩、评语，以及可考虑采用评价教师电子签名）</Card.Grid>
                 <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
-                  {repo.score_repo}
+                  评分:{repo.score_repo}
                 </Card.Grid>
                 {
                   isAuthenticatedtype() === 'T' ?
                     <div>
                       <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
                         教师评语：
-                         <Form.Item label='老师评语'>
+                         <Form.Item >
                           {
                             getFieldDecorator('teacher_comment', {
                               rules: [  

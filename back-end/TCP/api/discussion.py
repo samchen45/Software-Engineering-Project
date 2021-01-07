@@ -81,6 +81,7 @@ def postReply():
 
     # validate postid
     cursor.execute('SELECT * FROM dis_posts where id=%s', (_postid,))
+    print(_postid)
     data = cursor.fetchone()
     if data is None:
         msg = 'postid <{}> does not exist in postReply()'.format(_postid)
@@ -96,8 +97,32 @@ def postReply():
             VALUES (%s, %s, %s, %s)', (_postid, _owner, _text, _quote))
     conn.commit()
 
+    cursor.execute('SELECT id, owner, time, text, quote text FROM dis_replies \
+            WHERE postid=%s ORDER BY id DESC', (_postid,))
+    data = cursor.fetchall()
+    msg = []
+    for reply in data:
+        _id, _owner, _datetime, _content, _quote = reply
+        #TODO: return to frontend
+        # get user name and user type
+        cursor.execute('SELECT uname, utype FROM users \
+            WHERE id=%s', (_owner,))
+        data = cursor.fetchone()
+        if data is None:
+            print('_owner not found in viewPost')
+            msg = ['owner id not found, contact psy']
+            break
+        d = {}
+        _author, _utype = data
+        d['author'] = _author
+        d['utype'] = _utype
+        d['content'] = _content
+        d['datetime'] = _datetime
+        d['avatar'] = 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'  # TODO
+        msg.append(d)
+
     # return to frontend
-    msg = ['success']
+    # msg = ['success']
     cursor.close()
     conn.close()
     return json.dumps(msg)

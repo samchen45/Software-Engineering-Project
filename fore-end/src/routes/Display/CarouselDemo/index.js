@@ -65,7 +65,7 @@ class CarouselDemo extends React.Component {
     super(props)
     this.state = {
       experiments: [],
-      cid: '',
+      labid: '',
       comments: [
         {
           author: 'Anonymous',
@@ -135,7 +135,7 @@ class CarouselDemo extends React.Component {
       type: 'POST',
       url: "/postreply",
       data: {
-        postid: this.state.c_id,
+        postid: this.state.labid,
         content: this.state.value,
         uid: this.state.id
       },
@@ -145,7 +145,8 @@ class CarouselDemo extends React.Component {
         console.log("ret_post ", ret)
         this.setState({
           dataSource: ret,
-          submitting: false
+          submitting: false,
+          value: ''
         });
       }.bind(this)
     })
@@ -175,7 +176,7 @@ class CarouselDemo extends React.Component {
   };
 
   onChangeExperiment = e => {
-    console.log(this.state.cid)
+    console.log(this.state.labid)
     $.ajax({
       type: 'POST',
       url: "/getpostlist",
@@ -188,7 +189,7 @@ class CarouselDemo extends React.Component {
         console.log("ret_post2 ", ret)
         this.setState({
           dataSource: ret,
-          cid:e
+          labid:e
         });
       }.bind(this)
     })
