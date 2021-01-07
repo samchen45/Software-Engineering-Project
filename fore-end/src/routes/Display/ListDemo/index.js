@@ -245,7 +245,7 @@ class ListDemo extends React.Component {
         ret = JSON.parse(data)
         console.log("ret_post11 ", ret)
         this.setState({
-          repo: ret,
+          repo: ret[0],
           chosenStudent: value
         });
       }.bind(this)
@@ -260,17 +260,24 @@ class ListDemo extends React.Component {
         message.warning('请先填写正确的表单')
       }
       else {
-        console.log('caonima')
-        console.log(this.state.chosenStudent)
-        console.log(this.state.chosenExperiment)
+        var s_comment
+        var t_comment
+        if (isAuthenticatedtype() === "T") {
+          s_comment = this.state.repo.stu_comment
+          t_comment = values.teacher_comment
+        }
+        else {
+          s_comment = values.student_comment
+          t_comment = this.state.repo.teacher_comment
+        }
         $.ajax({
           type: 'POST',
           url: "/add_comment",
           data: {
             labid: this.state.chosenExperiment,
             uid: this.state.chosenStudent,
-            stucomment: values.student_comment,
-            teacomment: values.teacher_comment
+            stucomment: s_comment,
+            teacomment: t_comment 
           },
           success: function (data) {
             console.log(data);
@@ -360,7 +367,7 @@ class ListDemo extends React.Component {
                                 }
                               ]
                             })(
-                              <Input defaultValue={ repo.student_comment}/>
+                              <Input defaultValue={ repo.stu_comment}/>
                             )
                           }
                       </Form.Item>
@@ -378,7 +385,7 @@ class ListDemo extends React.Component {
                       <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
                         分析与思考：
                       <br />
-                        {repo.student_comment}
+                        {repo.stu_comment}
                       </Card.Grid>
                       <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
                         附件：

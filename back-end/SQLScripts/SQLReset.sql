@@ -260,16 +260,16 @@ INSERT INTO reports (
   labid, labname, labaim, uid, uname, stucomment, teacomment, attachment, signature, score
 )
 VALUES (
-  '1', 'physics', '提高学生动手能力', '10001', 'student1', '学生评价', '教师评语', '附件', '电子签名',  -- filename: homework/cid/hid/id
+  '1', 'physics', '提高学生动手能力', '10001', 'student1', '', '做得好', '附件', '电子签名',  -- filename: homework/cid/hid/id
   90.01
 ), (
-  '2', 'chemistry', '提高学生动手能力', '10002', 'student2', '学生评价', '教师评语', '附件', '电子签名',  -- filename: homework/cid/hid/id
+  '2', 'chemistry', '提高学生动手能力', '10002', 'student2', '', '做得好', '附件', '电子签名',  -- filename: homework/cid/hid/id
   90.01
 ), (
-  '1', 'physics', '提高学生动手能力', '10002', 'student2', '学生评价', '教师评语', '附件', '电子签名',  -- filename: homework/cid/hid/id
+  '1', 'physics', '提高学生动手能力', '10002', 'student2', '非常难', '做得好', '附件', '电子签名',  -- filename: homework/cid/hid/id
   90.01
 ), (
-  '2', 'chemistry', '提高学生动手能力', '10001', 'student1', '学生评价', '教师评语', '附件', '电子签名',  -- filename: homework/cid/hid/id
+  '2', 'chemistry', '提高学生动手能力', '10001', 'student1', '', '做得好', '附件', '电子签名',  -- filename: homework/cid/hid/id
   90.01
 );
 
