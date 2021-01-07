@@ -20,7 +20,7 @@ version：0.8
 
 ### 2.1用例建模
 
- ![RUNOOB 用例](https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/%E7%94%A8%E4%BE%8B%E8%A7%86%E5%9B%BE.png)
+ ![RUNOOB 用例](https://github.com/samchen45/Software-Engineering-Project/blob/%E5%9F%BA%E5%87%86%E5%BA%93/Document/pic/%E7%94%A8%E4%BE%8B%E8%A7%86%E5%9B%BE.png)
  冲刺二主要完成作业相关功能
 
 ## 3.具体说明
