@@ -3,7 +3,7 @@ import { message, Card, Popconfirm, Button, Icon, Table, Divider, BackTop, Affix
 import axios from 'axios'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
-import { isAuthenticatedid } from '../../../utils/Session'
+import { isAuthenticatedid, isAuthenticatedtype } from '../../../utils/Session'
 import $ from 'jquery'
 
 var ret = new Array()
@@ -275,7 +275,7 @@ class TableDemo extends React.Component {
           book: '大学英语',
         }
       ],
-
+      u_type: 'T',
       editingKey: '',
       count: 3,
       creatingCount: 0,
@@ -299,9 +299,9 @@ class TableDemo extends React.Component {
     var that = this
     $.ajax({
       type: 'POST',
-      url: "/viewcourses",
+      url: "/getlablist",
       data: {
-        userid: this.state.id,
+        uid: this.state.id,
       },
       success: function (data) {
         message.info("success");
@@ -309,7 +309,7 @@ class TableDemo extends React.Component {
         console.log("ret1 ", ret)
         this.setState({
           dataSource: ret,
-          lecture: ret[0].cid,
+          lecture: ret[0].labid,
           is_loading: false
         });
       }.bind(this)
@@ -322,71 +322,76 @@ class TableDemo extends React.Component {
 
   columns7 = [
     {
-      title: 'name',
-      dataIndex: 'name',
+      title: '实验编号',
+      dataIndex: 'labid',
+      width: '15%',
+      editable: true,
+    },
+    {
+      title: '实验名',
+      dataIndex: 'labname',
       width: '30%',
+      editable: true,
     },
     {
-      title: 'age',
-      dataIndex: 'age',
-    },
-    {
-      title: 'address',
-      dataIndex: 'address',
-    },
-    {
-      title: 'state',
-      dataIndex: 'state',
-    },
-    {
-      title: 'operation',
-      dataIndex: 'operation',
-      render: (text, record) => {
-        return (
-          this.state.data7.length > 1 ?
-            <Popconfirm title="Sure to delete?" onConfirm={() => this.onDelete(record.key)}>
-              <a>Delete</a>
-            </Popconfirm> : null
-        )
+      title: '实验目的',
+      dataIndex: 'labaim',
+      width: '55%',
+      editable: true,
+      render: (value, record) => {
+        if (record.labaim.length >= 25) {
+          console.log("meinv")
+          console.log()
+          var sub = '';
+          for (var i = 0; i < 24; i++) {
+            sub += record.labaim[i];
+          }
+          sub += '...'
+          return <div title={record.labaim}>{sub}</div>;
+        }
+        else return record.labaim;
       }
-    }
+    },
   ]
+
   columns8 = [
     {
-      title: '课程编号',
-      dataIndex: 'cid',
+      title: '实验编号',
+      dataIndex: 'labid',
       width: '10%',
       editable: true,
     },
     {
-      title: '课程名',
-      dataIndex: 'cname',
+      title: '实验名',
+      dataIndex: 'labname',
       width: '20%',
       editable: true,
     },
     {
-      title: '课程介绍',
-      dataIndex: 'cdes',
-      width: '30%',
+      title: '实验目的',
+      dataIndex: 'labaim',
+      width: '40%',
       editable: true,
       render: (value, record) => {
-        if (record.cdes.length >= 25) {
+        if (record.labaim.length >= 25) {
+          console.log("meinv")
+          console.log()
           var sub = '';
           for (var i = 0; i < 24; i++) {
-            sub += record.cdes[i];
+            sub += record.labaim[i];
           }
           sub += '...'
-          return <div title={record.cdes}>{sub}</div>;
+          return <div title={record.labaim}>{sub}</div>;
         }
-        else return record.info;
+        else return record.labaim;
       }
     },
-    {
-      title: '参考文献',
-      dataIndex: 'ctextbook',
-      width: '20%',
-      editable: true,
-    },
+    // {
+    //   title: '参考文献',
+    //   dataIndex: 'ctextbook',
+    //   width: '20%',
+    //   editable: true,
+    // },
     {
       title: '操作',
       dataIndex: 'operation',
@@ -400,7 +405,7 @@ class TableDemo extends React.Component {
                   {form => (
                     <a
 
-                      onClick={() => this.save(form, record.cid)}
+                      onClick={() => this.save(form, record.labid)}
                       style={{ marginRight: 8 }}
                     >
                       保存
@@ -408,7 +413,7 @@ class TableDemo extends React.Component {
                   )}
                 </EditableContext.Consumer>
                 {this.state.data8.length > 1 ?
-                  <Popconfirm title="Sure to delete?" onConfirm={() => this.onDelete(record.cid)}>
+                  <Popconfirm title="Sure to delete?" onConfirm={() => this.onDelete(record.labid)}>
                     <a>删除   </a>
                   </Popconfirm> : null
                 }
@@ -417,8 +422,8 @@ class TableDemo extends React.Component {
                   onConfirm={() => {
                     console.log(this.state.creatingCount);
                     this.state.creatingCount > 0 ?
-                      this.cancelCreate(record.cid) :
-                      this.cancel(record.cid)
+                      this.cancelCreate(record.labid) :
+                      this.cancel(record.labid)
                   }}
                 >
                   <a>取消</a>
@@ -426,7 +431,7 @@ class TableDemo extends React.Component {
 
               </span>
             ) : (
-                <a onClick={() => this.edit(record.cid)}>编辑</a>
+                <a onClick={() => this.edit(record.labid)}>编辑</a>
               )}
           </div>
         );
@@ -495,18 +500,18 @@ class TableDemo extends React.Component {
   }
   onDelete = (key) => {
     const arr = this.state.dataSource.slice()
-    const index = arr.findIndex(item => item.cid === key)
+    const index = arr.findIndex(item => item.labid === key)
     $.ajax({
       type: 'POST',
-      url: "/deletecourse",
+      url: "/deletelab",
       data: {
-        cid: arr[index].cid,
+        labid: arr[index].labid,
         id: this.state.id
       },
       success: function (data) {
         message.info("success");
         this.setState({
-          dataSource: arr.filter(item => item.cid !== key)
+          dataSource: arr.filter(item => item.labid !== key)
         })
       }.bind(this)
     })
@@ -514,10 +519,9 @@ class TableDemo extends React.Component {
   handleAdd = () => {
     const { data8, count, creatingCount,dataSource } = this.state //本来想用data7的length来代替count，但是删除行后，length会-1
     const newData = {
-      cid: '',
-      cname: '',
-      cdes: '',
-      ctextbook: '',
+      labid: '',
+      labname: '',
+      labaim: '',
     };
     console.log(dataSource, count, creatingCount);
     this.setState({
@@ -529,7 +533,7 @@ class TableDemo extends React.Component {
     })
   }
   isEditing = (record) => {
-    return record.cid === this.state.editingKey;
+    return record.labid === this.state.editingKey;
   };
 
   edit(key) {
@@ -550,22 +554,21 @@ class TableDemo extends React.Component {
         return;
       }
       const newData = [...this.state.dataSource];
-      const index = newData.findIndex(item => key === item.cid);
+      const index = newData.findIndex(item => key === item.labid);
       if (index > -1) {
         const item = newData[index];
         newData.splice(index, 1, {
           ...item,
           ...row,
         });
-        var _cid = this.state.createmode ? 'null' : row.cid;
+        var _labid = this.state.createmode ? 'null' : row.labid;
         $.ajax({
           type: 'POST',
-          url: "/editcourse",
+          url: "/editlab",
           data: {
-            cid: _cid,
-            cname: row.cname,
-            cdes: row.cdes,
-            ctextbook: row.ctextbook,
+            labid: _labid,
+            labname: row.labname,
+            labaim: row.labaim,
             id: this.state.id
           },
           success: function (data) {
@@ -612,6 +615,7 @@ class TableDemo extends React.Component {
         cell: EditableCell,
       },
     };
+    const columns7 = this.columns7;
     const columns8 = this.columns8.map((col) => {
       if (!col.editable) {
         return col;
@@ -628,20 +632,22 @@ class TableDemo extends React.Component {
       };
     });
     const cardContent = `<ul class="card-ul">
-            <li>教师课程功能界面</li>
-            <li>可以对课程内容进行增删改查</li>
+            <li>实验管理功能界面</li>
+            <li>教师可以对实验内容进行增删改查</li>
+            <li>学生可以对实验内容进行查询</li>
           </ul>`
     if (!is_loading) {
       return (
         <div>
-          <CustomBreadcrumb arr={['课程功能', '课程管理']} />
+          <CustomBreadcrumb arr={['实验功能', '实验管理']} />
           <TypingCard id='howUse' source={cardContent} height={178} />
-          <Card bordered={false} title='课程列表' style={{ marginBottom: 10, minHeight: 440 }} id='editTable'>
-            <p>
-              <Button onClick={this.handleAdd}>添加课程</Button>
-            </p>
+          <Card bordered={false} title='实验列表' style={{ marginBottom: 10, minHeight: 440 }} id='editTable'>
+            {isAuthenticatedtype() === 'T' ?
+              <p>
+                <Button onClick={this.handleAdd}>添加实验</Button>
+              </p> : <div></div>}
             <Table style={styles.tableStyle} components={components} dataSource={this.state.dataSource}
-              columns={columns8} />
+              columns={isAuthenticatedtype() === 'T' ? columns8 : columns7} />
           </Card>
           <BackTop visibilityHeight={200} style={{ right: 50 }} />
         </div>

@@ -94,7 +94,7 @@ class FormDemo1 extends React.Component {
       else {
         $.ajax({
           type: 'POST',
-          url: "/updateinform",
+          url: "/updateinfo",
           data: {
             name: isAuthenticated(),
             id: isAuthenticatedid(),
@@ -269,7 +269,7 @@ class FormDemo1 extends React.Component {
                 )
               }
             </FormItem>
-            <FormItem{...formItemLayout} label="验证码">
+            <FormItem {...formItemLayout} label="验证码">
               <Row gutter={8}>
                 <Col span={12}>
                   {getFieldDecorator('captcha', {

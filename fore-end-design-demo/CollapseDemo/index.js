@@ -79,17 +79,14 @@ class CollapseDemo extends React.Component {
   state = {
     data: [
       {
-        key: '0',
         s_id: '120037910001',
         s_name: '张三',
       },
       {
-        key: '1',
         s_id: '120037910002',
         s_name: '李四',
       },
       {
-        key: '2',
         s_id: '120037910003',
         s_name: '王五',
       }
@@ -99,6 +96,7 @@ class CollapseDemo extends React.Component {
       '课程2',
     ],
     lecture: '课程1',
+    count: 2,
   }
 
   columns = [
@@ -127,7 +125,7 @@ class CollapseDemo extends React.Component {
                   {form => (
                     <a
 
-                      onClick={() => this.save(form, record.key)}
+                      onClick={() => this.save(form, record.s_id)}
                       style={{ marginRight: 8 }}
                     >
                       保存
@@ -136,12 +134,12 @@ class CollapseDemo extends React.Component {
                 </EditableContext.Consumer>
                 <Popconfirm
                   title="确定要取消吗？"
-                  onConfirm={() => this.cancel(record.key)}
+                  onConfirm={() => this.cancel(record.s_id)}
                 >
                   <a>取消</a>
                 </Popconfirm>
               </div> :
-              <Popconfirm title="确定要删除吗？" onConfirm={() => this.onDelete(record.key)}>
+              <Popconfirm title="确定要删除吗？" onConfirm={() => this.onDelete(record.s_id)}>
                 <a>删除   </a>
               </Popconfirm>
             }
@@ -218,25 +216,25 @@ class CollapseDemo extends React.Component {
   onDelete = (key) => {
     const arr = this.state.data.slice()
     this.setState({
-      data: arr.filter(item => item.key !== key)
+      data: arr.filter(item => item.s_id !== key),
+      count: this.state.count - 1,
     })
   }
 
   handleAdd = () => {
     const { data, count } = this.state //本来想用data7的length来代替count，但是删除行后，length会-1
     const newData = {
-      key: count,
-      c_name: 'new_course',
-      info: 'introction',
-      book: 'book',
+      s_id: '',
+      s_name: '',
     };
     this.setState({
       data: [...data, newData],
-      count: count + 1
+      count: count + 1,
+      editingKey: '',
     })
   }
   isEditing = (record) => {
-    return record.key === this.state.editingKey;
+    return record.s_id === this.state.editingKey;
   };
 
   edit(key) {
@@ -249,23 +247,26 @@ class CollapseDemo extends React.Component {
         return;
       }
       const newData = [...this.state.data];
-      const index = newData.findIndex(item => key === item.key);
+      const index = newData.findIndex(item => row.s_id === item.s_id);
       if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-        });
-        this.setState({ data: newData, editingKey: '' });
+        newData.splice(index, 1, row);
+        const fore = newData.slice(0, this.state.count);
+        this.setState({ data: fore, editingKey: '', count: this.state.count - 1 });
       } else {
-        newData.push(data);
-        this.setState({ data: newData, editingKey: '' });
+        newData.splice(this.state.count, 1, row);
+        this.setState({ data: newData, editingKey: ''});
       }
     });
   }
 
   cancel = () => {
-    this.setState({ editingKey: '' });
+    const { data, count } = this.state;
+    const fore = data.slice(0, count);
+    this.setState({
+      editingKey: '',
+      data: fore,
+      count: count - 1,
+    });
   };
 
   render() {
@@ -307,7 +308,7 @@ class CollapseDemo extends React.Component {
 
     return (
       <div>
-        <CustomBreadcrumb arr={['课程', '学生管理']} />
+        <CustomBreadcrumb arr={['课程功能', '学生管理']} />
         <TypingCard source={cardContent} height={178} />
         <Card bordered={false} title='学生列表' style={{ marginBottom: 10, minHeight: 440 }} id='studentList'>
           <p>
@@ -322,7 +323,7 @@ class CollapseDemo extends React.Component {
             <Button onClick={this.handleAdd}>添加学生</Button>
           </p>
           {/* <Table bordered dataSource={this.state.data7} columns={this.columns7} style={styles.tableStyle}/> */}
-          <Table style={styles.tableStyle} components={components} bordered dataSource={this.state.data}
+          <Table style={styles.tableStyle} components={components} dataSource={this.state.data}
             columns={columns} />
         </Card>
       </div>
