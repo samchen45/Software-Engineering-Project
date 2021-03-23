@@ -1,0 +1,81 @@
+/*questionItem*/
+
+:global(.upMove-enter),:global(.upMove-appear) {
+	margin-top: 20px;
+  	/* opacity: 0.01; */
+}
+
+:global(.upMove-enter.upMove-enter-active),
+:global(.upMove-appear.upMove-appear-active){
+	margin-top: 0;
+ 	/* opacity: 1; */
+  	transition: margin-top 300ms linear;
+}
+
+:global(.upMove-leave) {
+  	opacity: 1;
+}
+
+:global(.upMove-leave.upMove-leave-active) {
+  	opacity: 0.01;
+  	transition: opacity 300ms linear;
+}
+.question-list{
+	margin-top: 20px;
+	margin-left: 0%;
+}
+.question-list .questionItem{
+	/* padding: 0 1%; */
+}
+.question-list .questionItem .question-show-content{
+	display: flex;
+	padding: 20px 0;
+	border-bottom: 2px solid #EEEEEE;
+}
+.question-list .questionItem .question-show-content .left-area{
+	width: 50px;
+	/* margin-right: 20px; */
+	position: absolute;
+}
+.question-list .questionItem .question-show-content .left-area .user-msg .user-pic{
+	width: 48px;
+	height: 48px;
+}
+.question-list .questionItem .question-show-content .left-area .user-name{
+	font-size: 60%;
+	text-align: center;
+}
+.question-list .questionItem .question-show-content .right-area{
+	margin-left: 70px;
+}
+.question-list .questionItem .question-show-content .question-title{
+	font-size: 130%;
+	font-weight: bold;
+}
+.question-list .questionItem .question-show-content .question-title a{
+	color: #000000;
+}
+.question-list .questionItem .question-show-content .question-title a:hover{
+	color: #0099FF;
+}
+.question-list .questionItem .question-show-content .question-substance{
+	margin-top: 10px;
+}
+.question-list .questionItem .question-show-content .question-msg{
+	display: flex;
+	justify-content: space-between;
+	margin-top: 10px;
+}
+.question-list .questionItem .question-show-content .question-msg .question-item{
+	color: #888888;
+}
+.question-list .questionItem .question-show-content .question-msg .question-tool{
+	display: flex;
+}
+.question-list .questionItem .question-show-content .question-msg .upvote-tool{
+	display: flex;
+	margin-right: 5%;
+}
+.question-list .questionItem .question-show-content .question-msg .upvote-tool .down-vote a:hover{
+	color: #CC0000;
+}
