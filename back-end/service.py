@@ -47,7 +47,7 @@ class User:
 
     def searchCurrentCourse(self, id, course_id):
         # Search current course information
-        print("Current course %d was Searched from your list." % course_id
+        print("Current course %d was Searched from your list." % course_id)
 
     def searchFinishedCourse(self, id, course_id):
         # Search finished course information
