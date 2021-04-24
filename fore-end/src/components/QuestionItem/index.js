@@ -29,7 +29,7 @@ class QuestionItem extends React.Component {
         let count=value.upvote;
         if(count>0 || num>0){
             count+=num;
-            this.props.dispatch(changeQuestionUpvote(value.id,count));//根据id修改数据中的点赞数
+            //this.props.dispatch(changeQuestionUpvote(value.id,count));//根据id修改数据中的点赞数
         }
     }
 
@@ -49,7 +49,7 @@ class QuestionItem extends React.Component {
                     <div className="question-title">
                         <Link to={{
                               pathname: '/home/display/questions/detail',
-                              id: value.id
+                              state:{id: value.id, questionDetail: value}
                             }}>{value.title}
                         </Link>
                     </div>

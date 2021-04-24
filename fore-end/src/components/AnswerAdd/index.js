@@ -38,9 +38,23 @@ class AnswerAdd extends React.Component{
     	// //this.props.addAnswer(pid,answer);
     	// this.props.dispatch(addAnswer(pid,answer));
     	// this.props.dispatch(addQuestionSonCount(pid));
-    	this.setState({
-    		answer:''
-    	})
+		$.ajax({
+			type: 'POST',
+			url: "/",
+			data: {
+				uid: this.state.id,
+				answer: answer
+			},
+			success: function (data) {
+				message.info("success");
+				ret = JSON.parse(data)
+				console.log("a_new")
+				this.props.addAnswer(ret)
+				this.setState({
+					answer: ''
+				})
+			}.bind(this)
+		})
 
     }
 

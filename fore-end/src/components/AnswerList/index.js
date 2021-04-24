@@ -9,16 +9,6 @@ import AnswerItem from '../AnswerItem/index';
 import * as styles from "./css/answerList.less";
 
 class AnswerList extends React.Component{
-    state = {
-        answerList: [
-            {
-                answer: '答案1'
-            },
-            {
-                answer: '答案2'
-            }
-        ]
-    }
 
     shouldComponentUpdate(nextProps, nextState) {
         if(!is(nextProps.answerList,this.props.answerList) || nextProps.sort!==this.props.sort){
@@ -36,7 +26,8 @@ class AnswerList extends React.Component{
     }
 
     renderPanel(){        
-        const {answerList,sort}=this.state;  
+        const {sort}=this.state;
+        const {answerList} = this.props  
     	return(
     		<div className={styles["answer-list-area"]}>
                 <div className={styles["caption-tool"]}>
