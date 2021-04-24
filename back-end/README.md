@@ -25,7 +25,7 @@ source env/bin/activate
 
 5. Install TCP local package
 ```
-pip install .
+pip3 install .
 ```
 
 6. Start backend server
