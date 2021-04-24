@@ -31,12 +31,12 @@ class Index extends React.Component{
           </Sider>
           <Layout>
             <Header style={{background: '#fff', padding: '0 16px'}}>
-              <HeaderBar collapsed={this.state.collapsed} onToggle={this.toggle}/>
+              <HeaderBar collapsed={this.state.collapsed} onToggle={this.toggle} />
             </Header>
             <Content>
               <ContentMain/>
             </Content>
-            <Footer style={{textAlign: 'center'}}>React-Admin ©2018 Created by 137596665@qq.com <a target='_blank' href='https://github.com/zhangZhiHao1996/react-admin-master'>github地址</a></Footer>
+            <Footer style={{ textAlign: 'center' }}>React-Admin ©2021 Created by DALAB <a target='_blank' href='https://github.com/samchen45/Software-Engineering-Project'>github地址</a></Footer>
           </Layout>
         </Layout>
       </div>
