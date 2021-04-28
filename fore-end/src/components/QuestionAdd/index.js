@@ -1,7 +1,7 @@
 import React from 'react';
 import { Map, is } from 'immutable';
 import classnames from "classnames";
-import { isAuthenticatedid, isAuthenticated } from '../../../utils/Session'
+// import { isAuthenticatedid, isAuthenticated } from '../../../utils/Session'
 import { message } from "antd/lib/index";
 import $ from 'jquery';
 import { addQuestion } from '../public/action.js';
@@ -10,10 +10,10 @@ import { addQuestion } from '../public/action.js';
 import './css/questionAdd.css';
 import '../public/css/style.css';
 
-let ret = '';
-
 
 import { eventBus } from '../public/eventBus.js';
+
+let ret = '';
 
 class QuestionAdd extends React.Component {
 
@@ -69,7 +69,7 @@ class QuestionAdd extends React.Component {
         }
         $.ajax({
             type: 'POST',
-            url: "/",
+            url: "/createpost",
             data: {
                 uid: this.state.id,
                 title: title,

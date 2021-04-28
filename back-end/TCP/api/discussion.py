@@ -61,6 +61,7 @@ def viewPosts():
 @TCP.app.route('/api/createpost', methods=['POST'])
 def createPost():
     # get parameters from request
+    # print(request.form.get('labid', type=int))
     _labid = request.form.get('labid', type=int)
     _title = request.form.get('title', type=str)
     _text = request.form.get('text', type=str)

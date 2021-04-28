@@ -25,6 +25,8 @@ const CollapseDemo = LoadableComponent(()=>import('../../routes/Display/Collapse
 const ListDemo = LoadableComponent(()=>import('../../routes/Display/ListDemo/index'))
 const TableDemo = LoadableComponent(()=>import('../../routes/Display/TableDemo/index'))
 const TabsDemo = LoadableComponent(()=>import('../../routes/Display/TabsDemo/index'))
+const QuestionsDemo = LoadableComponent(()=>import('../../routes/Display/QuestionsDemo/index'))
+const QuestionsDetail = LoadableComponent(()=>import('../../routes/Display/QuestionsDemo/QuestionsDetail/index'))
 
 //反馈组件Demo
 const SpinDemo = LoadableComponent(()=>import('../../routes/Feedback/SpinDemo/index'))
@@ -67,6 +69,8 @@ class ContentMain extends React.Component {
           <PrivateRoute exact path='/home/display/list' component={ListDemo}/>
           <PrivateRoute exact path='/home/display/table' component={TableDemo}/>
           <PrivateRoute exact path='/home/display/tabs' component={TabsDemo}/>
+          <PrivateRoute exact path='/home/display/questions' component={QuestionsDemo}/>
+          <PrivateRoute exact path='/home/display/questions/detail' component={QuestionsDetail}/>
 
           <PrivateRoute exact path='/home/feedback/modal' component={ModalDemo}/>
           <PrivateRoute exact path='/home/feedback/notification' component={NotificationDemo}/>
