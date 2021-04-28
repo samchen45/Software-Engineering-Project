@@ -7,6 +7,9 @@ import {Map} from 'immutable';
 // import {addQuestionSonCount} from '../../question/action.js'
 import "../AnswerList/css/answerList.css";
 import '../public/css/style.css';
+import { message } from "antd/lib/index";
+import $ from 'jquery';
+let ret = '';
 
 class AnswerAdd extends React.Component{
 
