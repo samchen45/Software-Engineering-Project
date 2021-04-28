@@ -4,7 +4,8 @@ import TCP.utils as utils
 import datetime
 
 # view all posts
-@TCP.app.route('/api/viewposts', method=['POST'])
+
+@TCP.app.route('/api/viewposts', methods=['POST'])
 def viewPosts():
     # connect to mysql
     conn = TCP.mysql.connect()
@@ -126,7 +127,7 @@ def deletePost():
 
 
 # view all posts of certain lab
-@TCP.app.route('/api/viewlabpost', method=['POST'])
+@TCP.app.route('/api/viewlabpost', methods=['POST'])
 def viewLabPosts():
     # get parameters from request
     _labid = request.form.get('labid', type=int)    
