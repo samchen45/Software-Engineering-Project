@@ -2,12 +2,15 @@ import React from 'react';
 import { Map, is } from 'immutable';
 import classnames from "classnames";
 import { isAuthenticatedid, isAuthenticated } from '../../../utils/Session'
-import $ from 'jquery'
+import { message } from "antd/lib/index";
+import $ from 'jquery';
 import { addQuestion } from '../public/action.js';
 // import * as mainStyles from '../public/style.less';
 // import * as styles from './questionAdd.less';
 import './css/questionAdd.css';
 import '../public/css/style.css';
+
+let ret = '';
 
 
 import { eventBus } from '../public/eventBus.js';
