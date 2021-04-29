@@ -119,14 +119,14 @@ CREATE TABLE `TCPDB`.`reports` (
 DROP TABLE IF EXISTS `TCPDB`.`dis_posts`;
 CREATE TABLE `TCPDB`.`dis_posts` (
   `id` INT AUTO_INCREMENT,
-  `labid` INT NOT NULL,
+  -- `labid` INT NOT NULL,
   `title` VARCHAR(100) NOT NULL,
   `text` VARCHAR(500) NOT NULL,
   `owner` VARCHAR(20) NOT NULL,
   `time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`owner`) REFERENCES users(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`labid`) REFERENCES labs(`id`) ON DELETE CASCADE,
+  -- FOREIGN KEY (`labid`) REFERENCES labs(`id`) ON DELETE CASCADE,
   PRIMARY KEY (`id`)
 );
 
@@ -275,16 +275,16 @@ VALUES (
 
 /* GENERATE TEST POSTS */
 INSERT INTO dis_posts (
-  labid, title, text, owner, time
+  title, text, owner, time
 )
 VALUES (
-  1, 'physics_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
+  'physics_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
 ), (
-  1, 'physics_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
+  'physics_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
 ), (
-  2, 'chem_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
+  'chem_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
 ), (
-  2, 'chem_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
+  'chem_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
 );
 
 /* GENERATE TEST REPLIES */
