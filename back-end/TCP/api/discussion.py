@@ -33,7 +33,6 @@ def viewPosts():
         d['qid'] = _id
         d['author'] = _author
         d['utype'] = _utype
-        d['lab'] = _labname
         d['title'] = _title
         d['preview'] = _preview
         d['createtime'] = _createtime
