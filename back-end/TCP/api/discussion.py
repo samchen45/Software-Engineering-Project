@@ -66,8 +66,39 @@ def createPost():
             VALUES (%s, %s, %s)', (_title, _text, _owner))
     conn.commit()
 
+    cursor.execute('SELECT id, title, text, owner, time, updated_time FROM dis_posts \
+            ORDER BY updated_time DESC')
+    data = cursor.fetchall()
+    msg = []
+    for post in data:
+        _id, _title, _text, _owner, _createtime, _updatedtime = post
+        # preview content
+        if len(_text) > 30:
+            _preview = _text[:10] + '...' + _text[-10:]
+        else:
+            _preview = _text
+        # get user name and user type
+        cursor.execute('SELECT uname, utype FROM users \
+            WHERE id=%s', (_owner,))
+        user_data = cursor.fetchone()
+        if user_data is None:
+            print('_owner <{}> not found in viewPosts()'.format(_owner))
+            msg = ['owner id not found, please contact backend crews']
+            break  
+        _author, _utype = user_data
+
+        d = {}
+        d['qid'] = _id
+        d['author'] = _author
+        d['utype'] = _utype
+        d['title'] = _title
+        d['preview'] = _preview
+        d['createtime'] = _createtime
+        d['updatedtime'] = _updatedtime
+        d['avatar'] = 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'  # TODO
+        msg.append(d)
+
     # return to frontend
-    msg = ['success']
     cursor.close()
     conn.close()
     return json.dumps(msg)
