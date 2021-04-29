@@ -131,7 +131,8 @@ const styles = {
     height: '100vh',
     // backgroundImage: 'url(https://github.com/zhangZhiHao1996/image-store/blob/master/react-admin-master/bg5.jpg?raw=true)',
     //backgroundImage: 'url(https://github.com/zhangZhiHao1996/image-store/blob/master/react-admin-master/bg1.jpg?raw=true)',
-    backgroundImage: 'url(https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/background.jpg?raw=true)',
+    //backgroundImage: 'url(https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/background.jpg?raw=true)',
+    backgroundImage: 'url(https://wx3.sinaimg.cn/mw690/006LiU2Igy1gq0ov3elmfj31hc0u0qge.jpg)',
     backgroundSize: '100% 100%',
     transition:'all .5s'
   },
