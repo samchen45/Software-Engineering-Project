@@ -17,8 +17,10 @@ def viewPosts():
     for post in data:
         _id, _title, _text, _owner, _createtime, _updatedtime = post
         # preview content
-        _preview = _text[:20] + '...' + _text[-20:]
-
+        if len(_text) > 30:
+            _preview = _text[:10] + '...' + _text[-10:]
+        else:
+            _preview = _text
         # get user name and user type
         cursor.execute('SELECT uname, utype FROM users \
             WHERE id=%s', (_owner,))
@@ -61,7 +63,7 @@ def createPost():
 
     # insert into database
     cursor.execute('INSERT INTO dis_posts(title, text, owner) \
-            VALUES (%s, %s, %s, %s)', (_title, _text, _owner))
+            VALUES (%s, %s, %s)', (_title, _text, _owner))
     conn.commit()
 
     # return to frontend
