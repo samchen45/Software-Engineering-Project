@@ -58,19 +58,27 @@ class QuestionsDetail extends React.Component {
             id: uid
         }, () => {
             console.log(this.state.id);
-            console.log(this.props.location.state.questionDetail)
+            //console.log(this.props.location.state.questionDetail)
             this.loadlist();
         })
     }
 
     loadlist() {
         var that = this
+        var id = ''
+        var qid = localStorage.getItem('qid')
+        if (qid != ''){
+            id = parseInt(qid)
+        }
+        else {
+            id = this.props.location.state.id
+        }
         $.ajax({
             type: 'POST',
             url: "/viewreplies",
             data: {
                 uid: this.state.id,
-                postid:this.props.location.state.id,
+                postid:id,
             },
             success: function (data) {
                 message.info("success");
@@ -108,16 +116,16 @@ class QuestionsDetail extends React.Component {
                                     <span className="tag">JavaScript</span>
                                     <span className="tag">前端</span>
                                 </div>
-                                <div className={classnames("questioner-name", "color0099FF")}>{questionDetail.username}</div>
+                                <div className={classnames("questioner-name", "color0099FF")}>{questionDetail.author}</div>
                                 <div className={"questioner-time"}>
-                                    {moment().fromNow((questionDetail.subtime))}
+                                    {moment().fromNow((questionDetail.createtime))}
                                 </div>
                             </div>
                         </div>
                         <div className="question-desc">
                             <div className="right-area">
                                 <div className="question-substance">
-                                    {questionDetail.substance}
+                                    {questionDetail.text}
                                 </div>
                             </div>
                         </div>
