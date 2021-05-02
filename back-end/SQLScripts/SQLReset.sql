@@ -97,22 +97,43 @@ CREATE TABLE `TCPDB`.`labs` (
 --   FOREIGN KEY (`sid`) REFERENCES users(`id`) ON DELETE CASCADE
 -- );
 
-/* SUBMIT LAB REPORT TABLE */
+-- /* SUBMIT LAB REPORT TABLE */
+-- DROP TABLE IF EXISTS `TCPDB`.`reports`;
+-- CREATE TABLE `TCPDB`.`reports` (
+--   `labid` INT NOT NULL,
+--   `labname` VARCHAR(20) NULL,
+--   `labaim` VARCHAR(500) NULL,
+--   `uid` VARCHAR(20) NOT NULL,
+--   `uname` VARCHAR(20) NULL,
+--   `stucomment` VARCHAR(1000) NULL,
+--   `teacomment` VARCHAR(1000) NULL,
+--   `attachment` VARCHAR(100) NULL,
+--   `signature` VARCHAR(100) NULL,
+--   `status` enum('N', 'Y', 'E') DEFAULT 'N',  -- N: not submit yet; Y: submitted already; E: submitted overtime;
+--   `score` DOUBLE(5, 2) DEFAULT 0.0,
+--   FOREIGN KEY (`labid`) REFERENCES labs(`id`) ON DELETE CASCADE,
+--   PRIMARY KEY (`labid`, `uid`)
+-- );
+
+/* LAB REPORTS TABLE */
 DROP TABLE IF EXISTS `TCPDB`.`reports`;
 CREATE TABLE `TCPDB`.`reports` (
-  `labid` INT NOT NULL,
-  `labname` VARCHAR(20) NULL,
-  `labaim` VARCHAR(500) NULL,
-  `uid` VARCHAR(20) NOT NULL,
-  `uname` VARCHAR(20) NULL,
-  `stucomment` VARCHAR(1000) NULL,
-  `teacomment` VARCHAR(1000) NULL,
-  `attachment` VARCHAR(100) NULL,
-  `signature` VARCHAR(100) NULL,
-  `status` enum('N', 'Y', 'E') DEFAULT 'N',  -- N: not submit yet; Y: submitted already; E: submitted overtime;
-  `score` DOUBLE(5, 2) DEFAULT 0.0,
-  FOREIGN KEY (`labid`) REFERENCES labs(`id`) ON DELETE CASCADE,
-  PRIMARY KEY (`labid`, `uid`)
+  `labname` VARCHAR(50) NOT NULL,
+  `labgoal` VARCHAR(500) NULL,
+  `sid` VARCHAR(20) NOT NULL,
+  `score` FLOAT DEFAULT 0.0,
+  `method` VARCHAR(500) NULL,
+  `review` VARCHAR(500) NULL,
+  FOREIGN KEY (`sid`) REFERENCES users(`id`) ON DELETE CASCADE,
+  PRIMARY KEY (`sid`, `labname`)
+);
+
+/* REPORT PICTURES TABLE */
+DROP TABLE IF EXISTS `TCPDB`.`pictures`;
+CREATE TABLE `TCPDB`.`pictures` (
+  `filename` VARCHAR(100) NOT NULL,
+  `des` VARCHAR(500) NULL,
+  PRIMARY KEY (`filename`)
 );
 
 /* DISCUSSION POSTS */
@@ -255,22 +276,32 @@ INSERT INTO labs (
 --   'Y', 90.000001
 -- );
 
+-- /* GENERATE TEST SUBMIT LAB REPORT */
+-- INSERT INTO reports (
+--   labid, labname, labaim, uid, uname, stucomment, teacomment, attachment, signature, score
+-- )
+-- VALUES (
+--   '1', 'physics', '提高学生动手能力', '10001', 'student1', '', '做得好', '附件', '电子签名',  -- filename: homework/cid/hid/id
+--   90.01
+-- ), (
+--   '2', 'chemistry', '提高学生动手能力', '10002', 'student2', '', '做得好', '附件', '电子签名',  -- filename: homework/cid/hid/id
+--   90.01
+-- ), (
+--   '1', 'physics', '提高学生动手能力', '10002', 'student2', '非常难', '做得好', '附件', '电子签名',  -- filename: homework/cid/hid/id
+--   90.01
+-- ), (
+--   '2', 'chemistry', '提高学生动手能力', '10001', 'student1', '', '做得好', '附件', '电子签名',  -- filename: homework/cid/hid/id
+--   90.01
+-- );
+
 /* GENERATE TEST SUBMIT LAB REPORT */
 INSERT INTO reports (
-  labid, labname, labaim, uid, uname, stucomment, teacomment, attachment, signature, score
+  labname, labgoal, sid, score, method, review
 )
 VALUES (
-  '1', 'physics', '提高学生动手能力', '10001', 'student1', '', '做得好', '附件', '电子签名',  -- filename: homework/cid/hid/id
-  90.01
+  'test_labname_1', 'test_labgoal_1', '10001', 91.1, 'test method 1', 'test review 1'
 ), (
-  '2', 'chemistry', '提高学生动手能力', '10002', 'student2', '', '做得好', '附件', '电子签名',  -- filename: homework/cid/hid/id
-  90.01
-), (
-  '1', 'physics', '提高学生动手能力', '10002', 'student2', '非常难', '做得好', '附件', '电子签名',  -- filename: homework/cid/hid/id
-  90.01
-), (
-  '2', 'chemistry', '提高学生动手能力', '10001', 'student1', '', '做得好', '附件', '电子签名',  -- filename: homework/cid/hid/id
-  90.01
+  'test_labname_2', 'test_labgoal_2', '10002', 81.2, 'test method 2', 'test review 2'
 );
 
 /* GENERATE TEST POSTS */
