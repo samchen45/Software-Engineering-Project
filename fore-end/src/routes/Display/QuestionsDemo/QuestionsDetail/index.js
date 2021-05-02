@@ -55,10 +55,10 @@ class QuestionsDetail extends React.Component {
         let uid = isAuthenticatedid()
         console.log('qd test');
         this.setState({
-            id: uid,
-            questionDetail: this.props.location.state.value,
+            id: uid
         }, () => {
             console.log(this.state.id);
+            console.log(this.props.location.state.questionDetail)
             this.loadlist();
         })
     }
@@ -67,10 +67,10 @@ class QuestionsDetail extends React.Component {
         var that = this
         $.ajax({
             type: 'POST',
-            url: "/",
+            url: "/viewreplies",
             data: {
                 uid: this.state.id,
-                qid:this.props.location.state.id,
+                postid:this.props.location.state.id,
             },
             success: function (data) {
                 message.info("success");
@@ -123,7 +123,7 @@ class QuestionsDetail extends React.Component {
                         </div>
                     </Fragment>
                     <AnswerList answerList={answerList} dispatch={dispatch}/>
-                    <AnswerAdd dispatch={dispatch} addAnswer={this.addAnswer}/>
+                    <AnswerAdd postid = {this.props.location.state.id} dispatch={dispatch} addAnswer={this.addAnswer}/>
                 </Card>
             </div>
         )

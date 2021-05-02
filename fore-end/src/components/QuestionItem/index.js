@@ -41,7 +41,7 @@ class QuestionItem extends React.Component {
                 <div className="left-area">
                     <div className="user-msg">
                         <div className={classnames("fa","fa-user-circle-o","fa-3x","user-pic")}></div>
-                        <div className="user-name">LikeLit</div>
+                        <div className="user-name">{value.author}</div>
                     </div>
                         
                 </div>
@@ -49,16 +49,17 @@ class QuestionItem extends React.Component {
                     <div className="question-title">
                         <Link to={{
                               pathname: '/home/display/questions/detail',
-                              state:{id: value.id, questionDetail: value}
+                              state:{id: value.qid, questionDetail: value}
                             }}>{value.title}
                         </Link>
                     </div>
-                    <div className="question-substance">{value.substance}</div>
+                    <div className="question-substance">{value.preview}</div>
                     <div className="question-msg">
                         <div className="question-tool">                                                          
                             <div className="question-item">
                                 {/*GetDateDiff(value.get("subtime"))*/}
-                                {moment().fromNow()}
+                                {/*moment().fromNow()*/}
+                                {value.createtime}
                             </div>
                             <div className="dot">·</div>
                             <div className="question-item">
@@ -66,21 +67,6 @@ class QuestionItem extends React.Component {
                                 <span>{value.answerCount}</span>
                             </div>
                             
-                        </div>
-                        <div className="upvote-tool">
-                            <div className="up-vote">
-                                <a href="javascript:;" onClick={this.changeQuestionUpvote.bind(this,1)}>
-                                    <span className={classnames("fa","fa-thumbs-o-up")}></span>
-                                </a>
-                            </div>  
-                            <div className="dot">·</div>
-                            <div className="upvote-count">{value.upvote}</div>
-                            <div className="dot">·</div>
-                            <div className="down-vote">
-                                <a href="javascript:;" onClick={this.changeQuestionUpvote.bind(this,-1)}>
-                                    <span className={classnames("fa","fa-thumbs-o-down")}></span>
-                                </a>
-                            </div>           
                         </div>
                     </div>
                     

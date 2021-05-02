@@ -15,7 +15,7 @@ class AnswerAdd extends React.Component{
 
 	constructor(props){
 		super(props);
-
+         
 		this.state={	
 			answer:''
 		}
@@ -43,10 +43,12 @@ class AnswerAdd extends React.Component{
     	// this.props.dispatch(addQuestionSonCount(pid));
 		$.ajax({
 			type: 'POST',
-			url: "/",
+			url: "/postreply",
 			data: {
 				uid: this.state.id,
-				answer: answer
+				answer: answer,
+				postid: this.props.postid,
+				quote:''
 			},
 			success: function (data) {
 				message.info("success");

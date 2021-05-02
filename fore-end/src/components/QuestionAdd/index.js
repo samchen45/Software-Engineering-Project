@@ -5,6 +5,7 @@ import classnames from "classnames";
 import { message } from "antd/lib/index";
 import $ from 'jquery';
 import { addQuestion } from '../public/action.js';
+import { isAuthenticatedid, isAuthenticated } from '../../utils/Session'
 // import * as mainStyles from '../public/style.less';
 // import * as styles from './questionAdd.less';
 import './css/questionAdd.css';
@@ -21,6 +22,7 @@ class QuestionAdd extends React.Component {
         super(props);
 
         this.state = {
+            id:'',
             value: Map({
                 title: "", //标题
                 substance: "", //内容
@@ -71,9 +73,9 @@ class QuestionAdd extends React.Component {
             type: 'POST',
             url: "/createpost",
             data: {
-                uid: this.state.id,
+                uid: isAuthenticatedid(),
                 title: title,
-                sub:substance
+                text:substance
             },
             success: function (data) {
                 message.info("success");

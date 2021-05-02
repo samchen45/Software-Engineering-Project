@@ -26,7 +26,7 @@ class AnswerList extends React.Component{
     }
 
     renderPanel(){        
-        const {sort}=this.state;
+        //const {sort}=this.state;
         const {answerList} = this.props  
     	return(
     		<div className={styles["answer-list-area"]}>
