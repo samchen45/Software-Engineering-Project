@@ -8,6 +8,7 @@ import $ from 'jquery'
 import QuestionAdd from '../../../components/QuestionAdd/index'
 import QuestionList from '../../../components/QuestionList/index'
 
+let ret = '';
 class QuestionsDemo extends React.Component {
     constructor(props) {
         super(props)
@@ -42,7 +43,7 @@ class QuestionsDemo extends React.Component {
         var that = this
         $.ajax({
             type: 'POST',
-            url: "/",
+            url: "/viewposts",
             data: {
                 uid: this.state.id,
             },
@@ -60,7 +61,7 @@ class QuestionsDemo extends React.Component {
 
     render() {
         const { dispatch, getState } = this.props;
-        const { questionList } = this.state;
+        const { questionList,is_loading } = this.state;
         const cardContent = `
         <li>这个页面用来进行对实验的提问。</li>
       `

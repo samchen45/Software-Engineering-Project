@@ -7,7 +7,7 @@ import TypingCard from '../../../../components/TypingCard'
 import { Map, is } from 'immutable';
 
 import Upvote from '../../../../components/public/Upvote.js';
-import { isAuthenticatedid, isAuthenticated } from '../../../utils/Session'
+import { isAuthenticatedid, isAuthenticated } from '../../../../utils/Session'
 import $ from 'jquery'
 import classnames from 'classnames';
 import "./css/questionDetail.css";
@@ -20,6 +20,7 @@ import AnswerList from '../../../../components/AnswerList'
 import AnswerAdd from '../../../../components/AnswerAdd'
 
 
+let ret = '';
 class QuestionsDetail extends React.Component {
     constructor(props) {
         super(props)
@@ -43,7 +44,7 @@ class QuestionsDetail extends React.Component {
 
     addAnswer(answer) {
         this.setState({
-            answerList: list
+            answerList: answer
         })
     }
 

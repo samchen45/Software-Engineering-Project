@@ -52,7 +52,7 @@ def editLab():
     else:
         ## if course not found (omitted)
         # msg = {}
-        # if not data == 0:
+        # if not data:
         #     msg['info'] = 'NULL'
         #     cursor.close()
         #     conn.close()
@@ -110,7 +110,7 @@ def viewCourses():
     # validate user id and get user type
     cursor.execute('SELECT utype FROM users WHERE id=%s', (_id,))
     data = cursor.fetchone()
-    if not data == 0:
+    if not data:
         cursor.close()
         conn.close()
         print('viewCourses <id> not found!!')
@@ -175,7 +175,7 @@ def viewStudents():
     # validate course id
     cursor.execute('SELECT ctid FROM courses WHERE cid=%s', (_cid,))
     data = cursor.fetchone()
-    if not data == 0:
+    if not data:
         cursor.close()
         conn.close()
         print('viewStudents <cid> not found!!')

@@ -6,6 +6,7 @@ TCP helper functions.
 import TCP
 import random
 from flask_mail import Mail, Message
+import base64
 
 mail = Mail(TCP.app)
 
@@ -54,7 +55,14 @@ def isOvertime(year, month, day, set_date):
 def getName(cursor, id):
     cursor.execute('SELECT uname FROM users WHERE id=%s', (id,))
     data = cursor.fetchone()
-    if not data == 0:
-        print('ERROR: <id> not found in utils.getName()')
+    if not data:
+        print('ERROR: id <{}> not found in utils.getName()'.format(id))
         return ''
     return data[0]
+
+# decode and save base64 images
+def decode_base64_image(base64_img, out_fullpath):
+    base64_img_bytes = base64_img.encode('utf-8')
+    with open(out_fullpath, 'wb') as out_file:
+        decoded_image_data = base64.decodebytes(base64_img_bytes)
+        out_file.write(decoded_image_data)

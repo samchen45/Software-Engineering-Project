@@ -1,17 +1,10 @@
 import React from 'react'
-import {Carousel} from 'antd'
 import './style.css'
-
 
 class Home extends React.Component {
   render() {
     return (
       <div>
-        <div style={styles.bg} className='home'>
-          <Carousel arrows effect='fade' className='size'>
-            <iframe src="http://dalab.se.sjtu.edu.cn/mse/" height="780px" frameborder="1" scrolling="auto"/>
-          </Carousel>
-        </div>
         <div style={{
           position: 'fixed',
           top: 0,
@@ -20,9 +13,11 @@ class Home extends React.Component {
           fontSize: 42,
           textAlign: 'center',
         }}>
-          DALAB实验管理系统
+          交互媒体应用设计与开发VR实验项目
         </div>
-        
+        <div >
+          <iframe src="http://dalab.se.sjtu.edu.cn/mse/" height={window.screen.height * window.devicePixelRatio * 0.70} width="100%" scrolling="auto"/>
+        </div>
       </div>
     )
   }

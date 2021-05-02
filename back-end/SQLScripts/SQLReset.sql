@@ -140,14 +140,14 @@ CREATE TABLE `TCPDB`.`pictures` (
 DROP TABLE IF EXISTS `TCPDB`.`dis_posts`;
 CREATE TABLE `TCPDB`.`dis_posts` (
   `id` INT AUTO_INCREMENT,
-  `labid` INT NOT NULL,
+  -- `labid` INT NOT NULL,
   `title` VARCHAR(100) NOT NULL,
   `text` VARCHAR(500) NOT NULL,
   `owner` VARCHAR(20) NOT NULL,
   `time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`owner`) REFERENCES users(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`labid`) REFERENCES labs(`id`) ON DELETE CASCADE,
+  -- FOREIGN KEY (`labid`) REFERENCES labs(`id`) ON DELETE CASCADE,
   PRIMARY KEY (`id`)
 );
 
@@ -159,7 +159,7 @@ CREATE TABLE `TCPDB`.`dis_replies` (
   `owner` VARCHAR(20) NOT NULL,
   `time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `text` VARCHAR(500) NOT NULL,
-  `quote` INT NULL,
+  `quote` INT DEFAULT 0, -- default quote the main post
   FOREIGN KEY (`owner`) REFERENCES users(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`postid`) REFERENCES dis_posts(`id`) ON DELETE CASCADE,
   PRIMARY KEY (`id`)
@@ -306,16 +306,16 @@ VALUES (
 
 /* GENERATE TEST POSTS */
 INSERT INTO dis_posts (
-  labid, title, text, owner, time
+  title, text, owner, time
 )
 VALUES (
-  1, 'physics_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
+  'physics_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
 ), (
-  1, 'physics_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
+  'physics_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
 ), (
-  2, 'chem_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
+  'chem_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
 ), (
-  2, 'chem_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
+  'chem_post_test', 'texttest', '10001', CURRENT_TIMESTAMP
 );
 
 /* GENERATE TEST REPLIES */
@@ -323,13 +323,13 @@ INSERT INTO dis_replies (
   postid, owner, time, text, quote
 )
 VALUES (
-  1, '10001','2021-01-01 20:21:01', '1st floor,  沙发', NULL
+  1, '10001','2021-01-01 20:21:01', '1st floor,  沙发', 0
 ), (
-  1, '20000','2021-01-02 00:53:03', '2nd floor, teacher', NULL
+  1, '20000','2021-01-02 00:53:03', '2nd floor, teacher', 0
 ), (
   1, '10000','2021-01-04 18:19:01', '3rd floor, 笑摸一楼狗头', 1
 ), (
-  2, '10001','2021-01-06 12:45:32', '1st floor', NULL
+  2, '10001','2021-01-06 12:45:32', '1st floor', 1
 );
 
 /* GENERATE TEST ROSTERS */
