@@ -40,10 +40,10 @@ const menus = [
     icon: 'desktop',
     key: '/home/display',
     subs: [
-      {key: '/home/display/table', title: '实验管理', icon: ''},
-      {key: '/home/display/collapse', title: '学生管理', icon: ''},
+      //{key: '/home/display/table', title: '实验管理', icon: ''},
+      //{key: '/home/display/collapse', title: '学生管理', icon: ''},
       {key: '/home/display/list', title: '实验报告', icon: ''},
-      {key: '/home/display/carousel', title: '实验讨论', icon: ''},
+      //{key: '/home/display/carousel', title: '实验讨论', icon: ''},
       {key: '/home/display/tabs', title: '实验评价', icon: ''},
       {key: '/home/display/questions', title: '实验提问', icon: ''},
     ]

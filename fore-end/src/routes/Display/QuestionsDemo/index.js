@@ -51,6 +51,7 @@ class QuestionsDemo extends React.Component {
                 message.info("success");
                 ret = JSON.parse(data)
                 console.log("q_list_post ", ret)
+                localStorage.setItem('qid','')
                 this.setState({
                     questionList: ret,
                     is_loading: false
