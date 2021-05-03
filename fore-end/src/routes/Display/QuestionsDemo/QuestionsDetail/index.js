@@ -72,6 +72,7 @@ class QuestionsDetail extends React.Component {
         }
         else {
             id = this.props.location.state.id
+            localStorage.setItem('qid',id.toString())
         }
         $.ajax({
             type: 'POST',
