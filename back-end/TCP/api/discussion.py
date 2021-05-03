@@ -223,14 +223,32 @@ def postReply():
 def viewReplies():
     # get parameters from request
     _postid = request.form.get('postid', type=int)
+
+    msg = {}
+    d_post = {}
+    d_reply = {}
+    replylist = []
+
     # connect to mysql
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
 
+    # TODO: post_title, post_content, post_owner, post_createtime
+    cursor.execute('SELECT title, text, owner, create_time FROM dis_posts \
+            WHERE postid=%s', (_postid,))
+    data = cursor.fetchone()
+    _title, _pcontent, _powner, _createtime = data
+
+    d_post['ptitle'] = _title
+    d_post['pcontent'] = _pcontent
+    d_post['powner'] = _powner
+    d_post['pcreatetime'] = _createtime
+    
+    msg['post'] = d_post
+
     cursor.execute('SELECT id, owner, time, text, quote FROM dis_replies \
             WHERE postid=%s ORDER BY id DESC', (_postid,))
     data = cursor.fetchall()
-    msg = []
     for reply in data:
         _id, _owner, _datetime, _content, _quote = reply
         # get user name and user type
@@ -241,16 +259,18 @@ def viewReplies():
             print('_owner <{}> not found in viewReplies()'.format(_owner))
             msg = ['owner id not found, please contact backend crews']
             break
-        d = {}
         _author, _utype = user_data
 
-        d['author'] = _author
-        d['utype'] = _utype
-        d['content'] = _content
-        d['datetime'] = _datetime
-        d['quote'] = _quote
-        d['avatar'] = 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'  # TODO
-        msg.append(d)
+        d_reply['author'] = _author
+        d_reply['utype'] = _utype
+        d_reply['content'] = _content
+        d_reply['datetime'] = _datetime
+        d_reply['quote'] = _quote
+        d_reply['avatar'] = 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'  # TODO
+        
+        replylist.append(d_reply)
+
+    msg['reply'] = replylist
 
     # return to frontend
     cursor.close()
