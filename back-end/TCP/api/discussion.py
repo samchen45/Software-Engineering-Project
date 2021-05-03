@@ -234,7 +234,7 @@ def viewReplies():
     cursor = conn.cursor()
 
     # TODO: post_title, post_content, post_owner, post_createtime
-    cursor.execute('SELECT title, text, owner, create_time FROM dis_posts \
+    cursor.execute('SELECT title, text, owner, time FROM dis_posts \
             WHERE postid=%s', (_postid,))
     data = cursor.fetchone()
     _title, _pcontent, _powner, _createtime = data
