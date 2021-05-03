@@ -132,7 +132,7 @@ class QuestionsDetail extends React.Component {
                         </div>
                     </Fragment>
                     <AnswerList answerList={answerList} dispatch={dispatch}/>
-                    <AnswerAdd postid = {this.props.location.state.id} dispatch={dispatch} addAnswer={this.addAnswer}/>
+                    <AnswerAdd postid = {localStorage.getItem('qid')} uid = {this.state.id} dispatch={dispatch} addAnswer={this.addAnswer}/>
                 </Card>
             </div>
         )
