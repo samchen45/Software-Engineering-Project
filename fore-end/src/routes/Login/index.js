@@ -11,7 +11,6 @@ import LoginForm from './LoginForm'
 import RegisterForm from './RegisterForm'
 
 
-
 const url = 'https://github.com/zhangZhiHao1996/image-store/blob/master/react-admin-master/bg1.jpg?raw=true'
 const imgs = [
   'https://github.com/zhangZhiHao1996/image-store/blob/master/react-admin-master/slide1.jpg?raw=true',
@@ -20,24 +19,13 @@ const imgs = [
   'https://github.com/zhangZhiHao1996/image-store/blob/master/react-admin-master/slide4.jpg?raw=true'
 ]
 
-/*const url = 'https://wx3.sinaimg.cn/mw690/006LiU2Igy1gq0ov3elmfj31hc0u0qge.jpg'
-const imgs = [
-  'https://wx3.sinaimg.cn/mw690/006LiU2Igy1gq0ov3elmfj31hc0u0qge.jpg'
-]*/
-
-
 
 
 
 
 @withRouter @inject('appStore') @observer
 class Login extends React.Component {
-  
-  
-  
-  
-  
-  
+
   state = {
     showBox: 'login',   //展示当前表单
     url: '',  //背景图片
@@ -51,8 +39,8 @@ class Login extends React.Component {
       this.props.history.go(1)     //当浏览器用后退按钮回到登录页时，判断登录页是否登录，是登录就重定向上个页面
       // this.props.appStore.toggleLogin(false) //也可以设置退出登录
     }
-    this.initPage()
-    preloadingImages(imgs)  //预加载下一个页面的图片，预加载了第二次为什么还会去请求图片资源？
+    //this.initPage()
+    //preloadingImages(imgs)  //预加载下一个页面的图片，预加载了第二次为什么还会去请求图片资源？
   }
 
   componentWillUnmount () {
@@ -113,8 +101,31 @@ class Login extends React.Component {
               <Loading2/>
             </div>:
             <div>
-              <div id='backgroundBox' style={styles.backgroundBox}/>
-              <div className='container'>
+              <div id='backgroundBox' style={styles.backgroundBox} />
+              <div id='header' style={{
+                position: 'fixed',
+                textAlign: 'center',
+                width: '50%',
+                top: '40%',
+                left: '10%',
+                fontWeight: 500,
+                fontSize: 48,
+              }}>DALAB实验管理系统</div>
+              <div id='sub-header' style={{
+                position: 'fixed',
+                textAlign: 'center',
+                width: '50%',
+                top: '50%',
+                left: '10%',
+                fontWeight: 500,
+                fontSize: 24,
+              }}>DALAB实验管理系统简介</div>
+              <div className='container' style={{
+                position: 'fixed',
+                textAlign: 'center',
+                top: '20%',
+                right: '25%',
+              }}>
                 <LoginForm
                   className={showBox === 'login' ? 'box showBox' : 'box hiddenBox'}
                   switchShowBox={this.switchShowBox}/>
@@ -137,10 +148,9 @@ const styles = {
     width: '100vw',
     height: '100vh',
     // backgroundImage: 'url(https://github.com/zhangZhiHao1996/image-store/blob/master/react-admin-master/bg5.jpg?raw=true)',
-    //backgroundImage: 'url(https://github.com/zhangZhiHao1996/image-store/blob/master/react-admin-master/bg1.jpg?raw=true)',
-    //backgroundImage: 'url(https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/background.jpg?raw=true)',
-    //backgroundImage: 'url(https://wx3.sinaimg.cn/mw690/006LiU2Igy1gq0ov3elmfj31hc0u0qge.jpg)',
-    backgroundImage: 'url()',
+    // backgroundImage: 'url(https://github.com/zhangZhiHao1996/image-store/blob/master/react-admin-master/bg1.jpg?raw=true)',
+    // backgroundImage: 'url(https://github.com/samchen45/Software-Engineering-Project/blob/sprint1/Document/pic/background.jpg?raw=true)',
+    backgroundColor: '#999999',
     backgroundSize: '100% 100%',
     transition:'all .5s'
   },

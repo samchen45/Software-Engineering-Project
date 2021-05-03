@@ -19,6 +19,7 @@ class AnswerAdd extends React.Component{
 		this.state={	
 			answer:''
 		}
+		this.submitAnswer
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
@@ -36,8 +37,11 @@ class AnswerAdd extends React.Component{
     //添加新答案
     submitAnswer=(ev)=>{
     	ev.preventDefault();//阻止默认提交
-        const {pid}=this.props;
-    	let answer=this.state.answer;   	 	
+        //const {pid}=this.props;
+    	let answer=this.state.answer;   
+		console.log('???here')
+		console.log(this.props.uid)
+		console.log('???hwtf')	
     	// //this.props.addAnswer(pid,answer);
     	// this.props.dispatch(addAnswer(pid,answer));
     	// this.props.dispatch(addQuestionSonCount(pid));
@@ -45,10 +49,10 @@ class AnswerAdd extends React.Component{
 			type: 'POST',
 			url: "/postreply",
 			data: {
-				uid: this.state.id,
-				answer: answer,
+				uid: this.props.uid,
+				content: answer,
 				postid: this.props.postid,
-				quote:''
+				quote:0
 			},
 			success: function (data) {
 				message.info("success");
@@ -67,7 +71,7 @@ class AnswerAdd extends React.Component{
 		return(
 			<div className={"write-answer-area"}>
 				<div className={"caption"}>撰写答案</div>	
-				<form onSubmit={this.submitAmswer}>
+				<form onSubmit={this.submitAnswer}>
 					<div className={"write-amswer"}>
 						<textarea className={"width100"} name="answer"  rows="8" 
 							onChange={this.answerChange} value={this.state.answer}

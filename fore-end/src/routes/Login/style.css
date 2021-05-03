@@ -27,7 +27,7 @@
     height: 100%;
     padding: 40px 40px 40px 40px;
     backface-visibility: hidden;
-    background: linear-gradient(230deg, rgba(53, 57, 74, 0) 0%, rgb(0, 0, 0) 100%);
+    background: linear-gradient(230deg, rgba(53, 57, 74, 50) 0%, rgb(0, 0, 0) 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='rgba(53, 57, 74, 0)', endColorstr='rgb(0, 0, 0)',GradientType=1 );
     box-shadow: -15px 15px 15px rgba(0,0,0,.4);
     transition: all 1s;
@@ -112,6 +112,12 @@
     top:0;
     height: 41px;
     /*box-shadow: -2px 2px 2px rgba(0,0,0,.3);*/
+}
+#login-page #header{
+    color:#ffffff;
+}
+#login-page #sub-header{
+    color:#ffffff;
 }
 .login-notification{
     background: transparent;

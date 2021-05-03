@@ -17,6 +17,9 @@ class Home extends React.Component {
         </div>
         <div >
           <iframe src="http://dalab.se.sjtu.edu.cn/mse/" height={window.screen.height * window.devicePixelRatio * 0.70} width="100%" scrolling="auto"/>
+           
+          {/*<iframe src="http://10.119.7.114/mse_frontend/index.html" height={window.screen.height * window.devicePixelRatio * 0.70} width="100%" scrolling="auto"/>
+           */}
         </div>
       </div>
     )
