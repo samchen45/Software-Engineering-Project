@@ -13,7 +13,8 @@ import os
 import json
 
 
-def generate_pdf(sid, labname):
+# @TCP.app.route('/api/generate_pdf', methods=['POST'])
+def generate_pdf(report_id):
     data = {}
     data['sname'] = '输入学生姓名'
     data['sid'] = 'student id here!'
@@ -30,19 +31,21 @@ def generate_pdf(sid, labname):
     cursor = conn.cursor()
 
     cursor.execute(
-        'SELECT * FROM reports WHERE sid=%s AND labname=%s', (sid, labname))
+        'SELECT * FROM reports WHERE id=%s', (report_id))
     data_report = cursor.fetchone()
     if not data_report:
-        print('report not found with sid=<{}> and labname=<{}>'.format(sid, labname))
+        print('report not found with id=<{}>'.format(report_id))
         cursor.close()
         conn.close()
         return
 
+    labname = data_report[1]
+    labgoal = data_report[2]
+    sid = data_report[3]
+    score = data_report[4]
+    method = data_report[5]
+    review = data_report[6]
     sname = utils.getName(cursor, sid)
-    labgoal = data_report[1]
-    score = data_report[3]
-    method = data_report[4]
-    review = data_report[5]
 
     TCP_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     pdfmetrics.registerFont(
@@ -51,7 +54,7 @@ def generate_pdf(sid, labname):
     # get all stored pictures related to this report
     pics = []
     for pic in os.listdir(os.path.join(TCP_dir, 'files', 'pictures')):
-        if pic.startswith('{}_{}'.format(sid, labname)):
+        if pic.startswith('{}_'.format(report_id)):
             pics.append(pic)
 
     # create reports folder if not exists
@@ -59,7 +62,7 @@ def generate_pdf(sid, labname):
         os.makedirs(os.path.join(TCP_dir, 'files', 'reports'))
 
     out_report_name = os.path.join(
-        TCP_dir, 'files', 'reports', 'sreport_{}.pdf'.format(sid))
+        TCP_dir, 'files', 'reports', '{}_sreport_{}.pdf'.format(report_id, sid))
 
     doc = SimpleDocTemplate(out_report_name, showBoundary=1, pagesize=A4,
                             leftMargin=20 * mm, rightMargin=20 * mm, topMargin=20 * mm, bottomMargin=20 * mm)
@@ -132,110 +135,146 @@ def save_report_details():
     method = grades['method']
     review = grades['review']
 
-    # save pictures
-    TCP_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    # create pictures folder if not exists
-    if not os.path.exists(os.path.join(TCP_dir, 'files', 'pictures')):
-        os.makedirs(os.path.join(TCP_dir, 'files', 'pictures'))
-    pictureList = json.loads(pictureList_json)
-    for i, pic in enumerate(pictureList['target']):
-        img_base64 = pic['base64']
-        des = pic['des']
-        out_picname = '{}_{}_{}.png'.format(sid, labname, i)
-        out_fullpath = os.path.join(TCP_dir, 'files', 'pictures', out_picname)
-        utils.decode_base64_image(img_base64, out_fullpath)
-        # delete existing pictures
-        cursor.execute(
-            'DELETE FROM pictures WHERE filename=%s', (out_picname,))
-        conn.commit()
-        cursor.execute('INSERT INTO pictures(filename, des) \
-            VALUES (%s, %s)', (out_picname, des))
-        conn.commit()
-
     # if report already exists, update current report
     cursor.execute(
         'SELECT * FROM reports WHERE sid=%s AND labname=%s', (sid, labname))
     data = cursor.fetchone()
     if data is not None:
+        report_id = data[0]
         # update current report
         cursor.execute('UPDATE reports SET score=%s, method=%s, review=%s WHERE sid=%s AND labname=%s',
                        (score, method, review, sid, labname))
         conn.commit()
     else:
-        # inser new report into database
+        # insert new report into database
         cursor.execute('INSERT INTO reports(labname, labgoal, sid, score, method, review) \
             VALUES (%s, %s, %s, %s, %s, %s)', (labname, labgoal, sid, score, method, review))
+        cursor.execute('SELECT LAST_INSERT_ID()')
+        # get the inserted report id
+        report_id = cursor.fetchone()[0]
+        conn.commit()
+
+    # PICTURES
+    TCP_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # create pictures folder if not exists
+    if not os.path.exists(os.path.join(TCP_dir, 'files', 'pictures')):
+        os.makedirs(os.path.join(TCP_dir, 'files', 'pictures'))
+    # delete existing pictures from database
+    cursor.execute('DELETE FROM pictures WHERE reportid=%s', (report_id,))
+    conn.commit()
+    # delete existing pictures from file system
+    for pic in os.listdir(os.path.join(TCP_dir, 'files', 'pictures')):
+        if pic.startswith('{}_'.format(report_id)):
+            os.remove(os.path.join(TCP_dir, 'files', 'pictures', pic))
+    # save pictures
+    pictureList = json.loads(pictureList_json)
+    for i, pic in enumerate(pictureList['target']):
+        img_base64 = pic['base64']
+        des = pic['des']
+        out_picname = '{}_{}.png'.format(report_id, i)
+        out_fullpath = os.path.join(TCP_dir, 'files', 'pictures', out_picname)
+        utils.decode_base64_image(img_base64, out_fullpath)
+        # insert into database
+        cursor.execute('INSERT INTO pictures(reportid, filename, des) \
+            VALUES (%s, %s, %s)', (report_id, out_picname, des))
         conn.commit()
 
     cursor.close()
     conn.close()
 
-    generate_pdf(sid, labname)
+    generate_pdf(report_id)
     msg = ['success']
     return json.dumps(msg)
 
 
-@TCP.app.route('/api/read_report', methods=["GET", 'POST'])
-def read_report():
+@TCP.app.route('/api/get_report_list', methods=['POST'])
+def get_report_list():
     # get parameters from request
-    _labid = request.form.get('labid', type=str)
-    _uid = request.form.get('uid', type=str)
-    print(_labid, _uid)
+    sid = request.form.get('sid', type=str)
 
     # connect to mysql
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
 
-    # get parameters from request
-    cursor.execute(
-        'SELECT * FROM reports WHERE labid=%s AND uid=%s', (_labid, _uid))
-    reportData = cursor.fetchall()
-
-    # return to frontend
-    msg = []
-    if reportData:
-        for record in reportData:
-            tempDic = {}
-            tempDic['labid'] = record[0]
-            tempDic['labname'] = record[1]
-            tempDic['labaim'] = record[2]
-            tempDic['uid'] = record[3]
-            tempDic['uname'] = record[4]
-            tempDic['stu_comment'] = record[5]
-            tempDic['teacher_comment'] = record[6]
-            tempDic['attachment'] = record[7]
-            tempDic['signature'] = record[8]
-            tempDic['score_repo'] = record[9]
-            msg.append(tempDic)
+    cursor.execute('SELECT * FROM reports WHERE sid=%s', (sid, labname))
+    data_reports = cursor.fetchall()
+    report_list = []
+    for report in data_reports:
+        report_id, labname = report[0], report[1]
+        tempDic = {}
+        tempDic['id'] = report_id
+        tempDic['labname'] = labname
+        report_list.append(tempDic)
 
     cursor.close()
     conn.close()
-    print(msg)
-    return json.dumps(msg)
-
-
-@TCP.app.route('/api/add_comment', methods=['POST'])
-def add_comment():
-    # get parameters from request
-    _stucomment = request.form.get('stucomment', type=str)
-    _teacomment = request.form.get('teacomment', type=str)
-    _labid = request.form.get('labid', type=str)
-    _uid = request.form.get('uid', type=str)
-    # connect to mysql
-    conn = TCP.mysql.connect()
-    cursor = conn.cursor()
-
-    # add comment
-    print(_stucomment)
-    cursor.execute('UPDATE reports SET stucomment=%s, teacomment=%s WHERE labid=%s AND uid=%s',
-                   (_stucomment, _teacomment, _labid, _uid),)
-    conn.commit()
     msg = {}
-    msg['info'] = 'Success!!'
-
-    cursor.close()
-    conn.close()
+    msg['code'] = 0
+    msg['report_list'] = report_list
     return json.dumps(msg)
+
+
+# @TCP.app.route('/api/read_report', methods=["GET", 'POST'])
+# def read_report():
+#     # get parameters from request
+#     _labid = request.form.get('labid', type=str)
+#     _uid = request.form.get('uid', type=str)
+#     print(_labid, _uid)
+
+#     # connect to mysql
+#     conn = TCP.mysql.connect()
+#     cursor = conn.cursor()
+
+#     # get parameters from request
+#     cursor.execute(
+#         'SELECT * FROM reports WHERE labid=%s AND uid=%s', (_labid, _uid))
+#     reportData = cursor.fetchall()
+
+#     # return to frontend
+#     msg = []
+#     if reportData:
+#         for record in reportData:
+#             tempDic = {}
+#             tempDic['labid'] = record[0]
+#             tempDic['labname'] = record[1]
+#             tempDic['labaim'] = record[2]
+#             tempDic['uid'] = record[3]
+#             tempDic['uname'] = record[4]
+#             tempDic['stu_comment'] = record[5]
+#             tempDic['teacher_comment'] = record[6]
+#             tempDic['attachment'] = record[7]
+#             tempDic['signature'] = record[8]
+#             tempDic['score_repo'] = record[9]
+#             msg.append(tempDic)
+
+#     cursor.close()
+#     conn.close()
+#     print(msg)
+#     return json.dumps(msg)
+
+
+# @TCP.app.route('/api/add_comment', methods=['POST'])
+# def add_comment():
+#     # get parameters from request
+#     _stucomment = request.form.get('stucomment', type=str)
+#     _teacomment = request.form.get('teacomment', type=str)
+#     _labid = request.form.get('labid', type=str)
+#     _uid = request.form.get('uid', type=str)
+#     # connect to mysql
+#     conn = TCP.mysql.connect()
+#     cursor = conn.cursor()
+
+#     # add comment
+#     print(_stucomment)
+#     cursor.execute('UPDATE reports SET stucomment=%s, teacomment=%s WHERE labid=%s AND uid=%s',
+#                    (_stucomment, _teacomment, _labid, _uid),)
+#     conn.commit()
+#     msg = {}
+#     msg['info'] = 'Success!!'
+
+#     cursor.close()
+#     conn.close()
+#     return json.dumps(msg)
 
 
 # @TCP.app.route('/api/add_teachercomment', methods=['POST'])

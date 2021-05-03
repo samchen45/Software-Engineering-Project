@@ -118,6 +118,7 @@ CREATE TABLE `TCPDB`.`labs` (
 /* LAB REPORTS TABLE */
 DROP TABLE IF EXISTS `TCPDB`.`reports`;
 CREATE TABLE `TCPDB`.`reports` (
+  `id` INT AUTO_INCREMENT,
   `labname` VARCHAR(50) NOT NULL,
   `labgoal` VARCHAR(500) NULL,
   `sid` VARCHAR(20) NOT NULL,
@@ -125,15 +126,16 @@ CREATE TABLE `TCPDB`.`reports` (
   `method` VARCHAR(500) NULL,
   `review` VARCHAR(500) NULL,
   FOREIGN KEY (`sid`) REFERENCES users(`id`) ON DELETE CASCADE,
-  PRIMARY KEY (`sid`, `labname`)
+  PRIMARY KEY (`id`)
 );
 
 /* REPORT PICTURES TABLE */
 DROP TABLE IF EXISTS `TCPDB`.`pictures`;
 CREATE TABLE `TCPDB`.`pictures` (
+  `reportid` INT NOT NULL,
   `filename` VARCHAR(100) NOT NULL,
   `des` VARCHAR(500) NULL,
-  PRIMARY KEY (`filename`)
+  PRIMARY KEY (`reportid`, `filename`)
 );
 
 /* DISCUSSION POSTS */
