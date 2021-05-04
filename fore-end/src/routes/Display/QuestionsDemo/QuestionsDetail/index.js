@@ -84,9 +84,11 @@ class QuestionsDetail extends React.Component {
             success: function (data) {
                 message.info("success");
                 ret = JSON.parse(data)
-                console.log("qd_list_post ", ret)
+                //console.log("qd_list_post ", ret)
+                console.log('rep',ret.reply)
                 this.setState({
-                    answerList: ret,
+                    questionDetail: ret.post,
+                    answerList: ret.reply,
                     is_loading: false
                 });
             }.bind(this)
@@ -109,24 +111,19 @@ class QuestionsDetail extends React.Component {
                     <Fragment>
                         <div className="question-header">
                             <div className="question-title">
-                                <span className={classnames("fa", "fa-question-circle")}></span>  {questionDetail.title}
+                                <span className={classnames("fa", "fa-question-circle")}></span>  {'问题：' + questionDetail.ptitle}
                             </div>
                             <div className="questioner-msg">
-                                <div className="tag-list">
-                                    <span className="tag">React</span>
-                                    <span className="tag">JavaScript</span>
-                                    <span className="tag">前端</span>
-                                </div>
-                                <div className={classnames("questioner-name", "color0099FF")}>{questionDetail.author}</div>
+                                <div className={classnames("questioner-name", "color0099FF")}>{questionDetail.powner + '\n'}</div>
                                 <div className={"questioner-time"}>
-                                    {moment().fromNow((questionDetail.createtime))}
+                                    {questionDetail.pcreatetime}
                                 </div>
                             </div>
                         </div>
                         <div className="question-desc">
                             <div className="right-area">
                                 <div className="question-substance">
-                                    {questionDetail.text}
+                                    {'问题详情：' + questionDetail.pcontent}
                                 </div>
                             </div>
                         </div>
