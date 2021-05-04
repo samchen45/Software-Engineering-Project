@@ -122,7 +122,7 @@ class ListDemo extends React.Component {
     if (isAuthenticatedtype() === 'S') {
       $.ajax({
         type: 'POST',
-        url: "/getlablist",
+        url: "/get_report_list",
         data: {
           uid: this.state.id,
         },
@@ -131,14 +131,14 @@ class ListDemo extends React.Component {
           ret = JSON.parse(data)
           console.log("ret_post ", ret)
           this.setState({
-            experiments: ret,
+            experiments: ret.report_list,
             chosenStudent: this.state.id,
             is_loading: false
           });
         }.bind(this)
       })
     }
-    else {
+    /*else {
       $.ajax({
         type: 'POST',
         url: "/getalllist",
@@ -156,7 +156,7 @@ class ListDemo extends React.Component {
           });
         }.bind(this)
       })
-    }
+    }*/
   }
 
   componentDidMount() {
@@ -308,7 +308,7 @@ class ListDemo extends React.Component {
                   <Select showSearch style={{ width: 200 }} placeholder='选择实验' onChange={this.onChangeExperimentTeacher}>
                     {
                       experiments.map(experiment => (
-                        <Option key={experiment.labid}>
+                        <Option key={experiment.id}>
                           {experiment.labname}
                         </Option>
                       ))
@@ -327,7 +327,7 @@ class ListDemo extends React.Component {
                     <Select showSearch style={{ width: 200 }} placeholder='选择实验' onChange={this.onChangeExperimentStudent}>
                       {
                         experiments.map(experiment => (
-                          <Option key={experiment.labid}>
+                          <Option key={experiment.id}>
                             {experiment.labname}
                           </Option>
                         ))

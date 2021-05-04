@@ -233,15 +233,20 @@ def viewReplies():
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
 
+    print(_postid)
     # TODO: post_title, post_content, post_owner, post_createtime
     cursor.execute('SELECT title, text, owner, time FROM dis_posts \
-            WHERE postid=%s', (_postid,))
+            WHERE id=%s', (_postid,))
     data = cursor.fetchone()
-    _title, _pcontent, _powner, _createtime = data
+    _title, _pcontent, _pownerid, _createtime = data
+
+    cursor.execute('SELECT uname FROM users \
+            WHERE id=%s', (_pownerid,))
+    _pownername = cursor.fetchone()
 
     d_post['ptitle'] = _title
     d_post['pcontent'] = _pcontent
-    d_post['powner'] = _powner
+    d_post['powner'] = _pownername
     d_post['pcreatetime'] = _createtime
     
     msg['post'] = d_post
@@ -261,6 +266,7 @@ def viewReplies():
             break
         _author, _utype = user_data
 
+        d_reply = {}
         d_reply['author'] = _author
         d_reply['utype'] = _utype
         d_reply['content'] = _content
@@ -269,7 +275,7 @@ def viewReplies():
         d_reply['avatar'] = 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'  # TODO
         
         replylist.append(d_reply)
-
+    # print(replylist)
     msg['reply'] = replylist
 
     # return to frontend

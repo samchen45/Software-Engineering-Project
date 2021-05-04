@@ -56,10 +56,10 @@ class HeaderBar extends React.Component {
           
           <Menu.Item><span onClick={this.logout}>退出登录</span></Menu.Item>
         </Menu.ItemGroup>
-        <Menu.ItemGroup title='设置中心' className='menu-group'>
+        {/*<Menu.ItemGroup title='设置中心' className='menu-group'>
           
           <Menu.Item>系统设置</Menu.Item>
-        </Menu.ItemGroup>
+    </Menu.ItemGroup>*/}
       </Menu>
     )
     const login = (
@@ -77,9 +77,9 @@ class HeaderBar extends React.Component {
           <ul className='header-ul'>
             <li><Icon type={icon} onClick={this.screenfullToggle}/></li>
             <li onClick={() => this.setState({count: 0})}>
-              <Badge count={appStore.isLogin ? count : 0} overflowCount={99} style={{marginRight: -17}}>
+              {/*<Badge count={appStore.isLogin ? count : 0} style={{marginRight: -17}}>
                 <Icon type="notification"/>
-              </Badge>
+    </Badge>*/}
             </li>
             <li>
               {appStore.isLogin ? login : notLogin}
