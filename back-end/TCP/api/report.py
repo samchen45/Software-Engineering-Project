@@ -196,7 +196,7 @@ def get_report_list():
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
 
-    cursor.execute('SELECT * FROM reports WHERE sid=%s', (sid, labname))
+    cursor.execute('SELECT * FROM reports WHERE sid=%s', (sid,))
     data_reports = cursor.fetchall()
     report_list = []
     for report in data_reports:
@@ -253,28 +253,26 @@ def get_report_list():
 #     return json.dumps(msg)
 
 
-# @TCP.app.route('/api/add_comment', methods=['POST'])
-# def add_comment():
-#     # get parameters from request
-#     _stucomment = request.form.get('stucomment', type=str)
-#     _teacomment = request.form.get('teacomment', type=str)
-#     _labid = request.form.get('labid', type=str)
-#     _uid = request.form.get('uid', type=str)
-#     # connect to mysql
-#     conn = TCP.mysql.connect()
-#     cursor = conn.cursor()
+@TCP.app.route('/api/add_comment', methods=['POST'])
+def add_comment():
+    # get parameters from request
+    _stucomment = request.form.get('stucomment', type=str)
+    _teacomment = request.form.get('teacomment', type=str)
+    _reportid = request.form.get('reportid', type=str)
+    # connect to mysql
+    conn = TCP.mysql.connect()
+    cursor = conn.cursor()
 
-#     # add comment
-#     print(_stucomment)
-#     cursor.execute('UPDATE reports SET stucomment=%s, teacomment=%s WHERE labid=%s AND uid=%s',
-#                    (_stucomment, _teacomment, _labid, _uid),)
-#     conn.commit()
-#     msg = {}
-#     msg['info'] = 'Success!!'
+    # add comment
+    cursor.execute('UPDATE reports SET review=%s WHERE id=%s',
+                   (_teacomment, _reportid),)
+    conn.commit()
+    msg = {}
+    msg['info'] = 'Success!!'
 
-#     cursor.close()
-#     conn.close()
-#     return json.dumps(msg)
+    cursor.close()
+    conn.close()
+    return json.dumps(msg)
 
 
 # @TCP.app.route('/api/add_teachercomment', methods=['POST'])
