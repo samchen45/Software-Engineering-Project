@@ -26,24 +26,26 @@ def register():
             if len(cursor.fetchall()) != 0:
                 msg['info'] = 'error: user already exists!'
                 return json.dumps(msg)
-            # check if id and name match in the database, get user type
-            cursor.execute('SELECT * FROM people WHERE id=%s', (_id,))
-            data = cursor.fetchone()
-            if not data:
-                msg['info'] = 'error: id does not exist in school database!!'
-                return json.dumps(msg)
-            if _name != str(data[1]):
-                msg['info'] = 'error: id and name do not match in school database!!'
-                return json.dumps(msg)
-            _type = str(data[2])
-            # send email captcha
-            code = utils.send_email_captcha(_email)
+            # # check if id and name match in the database, get user type
+            # cursor.execute('SELECT * FROM people WHERE id=%s', (_id,))
+            # data = cursor.fetchone()
+            # if not data:
+            #     msg['info'] = 'error: id does not exist in school database!!'
+            #     return json.dumps(msg)
+            # if _name != str(data[1]):
+            #     msg['info'] = 'error: id and name do not match in school database!!'
+            #     return json.dumps(msg)
+            # _type = str(data[2])
+            # # send email captcha
+            # code = utils.send_email_captcha(_email)
             # verify email captcha
             #TODO
             # _code = request.form.get('code', type=int)
             # if code != _code:
             #     msg['info'] = 'ERROR: wrong verification code!! Please check again.'
             #     return json.dumps(msg)
+
+            _type = 'S' # 暂时先这样
 
             # create new user and store in TCPDB
             _hashed_password = generate_password_hash(_password)
