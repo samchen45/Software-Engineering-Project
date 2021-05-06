@@ -226,7 +226,7 @@ class RegisterForm extends React.Component {
                 addonBefore={<span className='iconfont icon-suo1' style={focusItem === 5 ? styles.focus : {}} />} />
             )}
           </Form.Item>
-          <Row>
+          {/*<Row>
             <Col span={17}>
               <Input
                 onFocus={() => this.setState({ focusItem: 6 })}
@@ -240,6 +240,7 @@ class RegisterForm extends React.Component {
               <Button >发送</Button>
             </div>
           </Row>
+          */}
           <div className='bottom'>
             <input className='loginBtn' type="submit" value='注册' />
             <span className='registerBtn' onClick={this.gobackLogin}>返回登录</span>

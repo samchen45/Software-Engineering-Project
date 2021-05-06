@@ -66,6 +66,7 @@ class ListDemo extends React.Component {
       is_loading: false,
       repo: {},
       loadingMore: false,
+      dl_url:'',
       experiments: [
         // '实验1',
         // '实验2',
@@ -124,7 +125,7 @@ class ListDemo extends React.Component {
         type: 'POST',
         url: "/get_report_list",
         data: {
-          uid: this.state.id,
+          sid: this.state.id,
         },
         success: function (data) {
           message.info("success");
@@ -138,7 +139,7 @@ class ListDemo extends React.Component {
         }.bind(this)
       })
     }
-    /*else {
+    else {
       $.ajax({
         type: 'POST',
         url: "/getalllist",
@@ -156,7 +157,7 @@ class ListDemo extends React.Component {
           });
         }.bind(this)
       })
-    }*/
+    }
   }
 
   componentDidMount() {
@@ -252,6 +253,10 @@ class ListDemo extends React.Component {
     })
   }
 
+  download = () => {
+    window.open(this.state.dl_url);
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
     console.log(e)
@@ -337,7 +342,8 @@ class ListDemo extends React.Component {
               }
             </p>
             { this.state.chosenExperiment != '' ?
-            <Form onSubmit={this.handleSubmit}>
+            <a href="javascript:void(0)" onclick={this.download}></a>
+            /*<Form onSubmit={this.handleSubmit}>
               <Card showHeader={false}>
                 <Card.Grid style={{ width: '15%', textAlign: 'left', fontSize: 24 }} hoverable={false}>实验名称</Card.Grid>
                 <Card.Grid style={{ width: '85%', textAlign: 'left', fontSize: 24 }} hoverable={false}>{repo.labname}</Card.Grid>
@@ -352,6 +358,7 @@ class ListDemo extends React.Component {
                 <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
                   评分:{repo.score_repo}
                 </Card.Grid>
+                
                 {
                   isAuthenticatedtype() === 'S' ?
                     <div>
@@ -433,13 +440,13 @@ class ListDemo extends React.Component {
                       </Card.Grid>
                       <Card.Grid style={{ width: '100%', textAlign: 'left', fontSize: 24, whiteSpace: 'pre-wrap' }} hoverable={false}>
                         电子签名：
-                    {/*this.state.repo.teacher_autograph*/}
                       </Card.Grid>
                     </div>
                 }
                 <Button htmlType = 'submit'>提交</Button><Button>生成PDF</Button>
               </Card>
-            </Form> :<div></div>}
+              </Form>*/ :<div></div>}
+          
           </Card>
         </div>
         /*
