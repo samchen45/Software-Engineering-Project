@@ -50,7 +50,7 @@ def register():
             # create new user and store in TCPDB
             _hashed_password = generate_password_hash(_password)
             # cursor.callproc('sp_createUser', (_name, _email, _hashed_password))
-            cursor.execute('INSERT INTO users(id, name, email, password, phonenum, type) \
+            cursor.execute('INSERT INTO users(id, uname, email, upassword, phonenum, utype) \
                 VALUES (%s, %s, %s, %s, %s, %s)', (_id, _name, _email, _hashed_password, _phonenum, _type))
             conn.commit()
             msg['info'] = _type
