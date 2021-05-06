@@ -214,43 +214,37 @@ def get_report_list():
     return json.dumps(msg)
 
 
-# @TCP.app.route('/api/read_report', methods=["GET", 'POST'])
-# def read_report():
-#     # get parameters from request
-#     _labid = request.form.get('labid', type=str)
-#     _uid = request.form.get('uid', type=str)
-#     print(_labid, _uid)
+@TCP.app.route('/api/read_report', methods=['POST'])
+def read_report():
+    # get parameters from request
+    reportid = request.form.get('reportid', type=int)
 
-#     # connect to mysql
-#     conn = TCP.mysql.connect()
-#     cursor = conn.cursor()
+    # connect to mysql
+    conn = TCP.mysql.connect()
+    cursor = conn.cursor()
 
-#     # get parameters from request
-#     cursor.execute(
-#         'SELECT * FROM reports WHERE labid=%s AND uid=%s', (_labid, _uid))
-#     reportData = cursor.fetchall()
+    cursor.execute(
+        'SELECT * FROM reports WHERE id=%s', (reportid,))
+    reportData = cursor.fetchone()
 
-#     # return to frontend
-#     msg = []
-#     if reportData:
-#         for record in reportData:
-#             tempDic = {}
-#             tempDic['labid'] = record[0]
-#             tempDic['labname'] = record[1]
-#             tempDic['labaim'] = record[2]
-#             tempDic['uid'] = record[3]
-#             tempDic['uname'] = record[4]
-#             tempDic['stu_comment'] = record[5]
-#             tempDic['teacher_comment'] = record[6]
-#             tempDic['attachment'] = record[7]
-#             tempDic['signature'] = record[8]
-#             tempDic['score_repo'] = record[9]
-#             msg.append(tempDic)
+    if reportData is None:
+        msg = ['Error: report id not found in read_report']
+        cursor.close()
+        conn.close()
+        return json.dumps(msg)
 
-#     cursor.close()
-#     conn.close()
-#     print(msg)
-#     return json.dumps(msg)
+    # return to frontend
+    sid = reportData[3]
+    url = '{}_sreport_{}.pdf'.format(reportid, sid)
+
+    msg = {}
+    msg['url']= url
+    
+        
+
+    cursor.close()
+    conn.close()
+    return json.dumps(msg)
 
 
 @TCP.app.route('/api/add_comment', methods=['POST'])
