@@ -61,8 +61,9 @@ def generate_pdf(report_id):
     if not os.path.exists(os.path.join(TCP_dir, 'files', 'reports')):
         os.makedirs(os.path.join(TCP_dir, 'files', 'reports'))
 
-    out_report_name = os.path.join(
-        TCP_dir, 'files', 'reports', '{}_sreport_{}.pdf'.format(report_id, sid))
+    # out_report_name = os.path.join(
+    #     TCP_dir, 'files', 'reports', '{}_sreport_{}.pdf'.format(report_id, sid))
+    out_report_name = os.path.join('/mnt/c/Caddy/web/mse/labreports', '{}_sreport_{}.pdf'.format(report_id, sid))
 
     doc = SimpleDocTemplate(out_report_name, showBoundary=1, pagesize=A4,
                             leftMargin=20 * mm, rightMargin=20 * mm, topMargin=20 * mm, bottomMargin=20 * mm)
