@@ -65,6 +65,10 @@ def generate_pdf(report_id):
     #     TCP_dir, 'files', 'reports', '{}_sreport_{}.pdf'.format(report_id, sid))
     out_report_name = os.path.join('/mnt/c/Caddy/web/mse/labreports', '{}_sreport_{}.pdf'.format(report_id, sid))
 
+    # remove current report if exists
+    if os.path.exists(out_report_name):
+        os.remove(out_report_name)
+
     doc = SimpleDocTemplate(out_report_name, showBoundary=1, pagesize=A4,
                             leftMargin=20 * mm, rightMargin=20 * mm, topMargin=20 * mm, bottomMargin=20 * mm)
 
@@ -143,17 +147,17 @@ def save_report_details():
     if data is not None:
         report_id = data[0]
         # update current report
-        cursor.execute('UPDATE reports SET score=%s, method=%s, review=%s WHERE sid=%s AND labname=%s',
-                       (score, method, review, sid, labname))
+        cursor.execute('UPDATE reports SET labgoal=%s, score=%s, method=%s, review=%s WHERE id=%s',
+                       (labgoal, score, method, review, report_id))
         conn.commit()
     else:
         # insert new report into database
         cursor.execute('INSERT INTO reports(labname, labgoal, sid, score, method, review) \
             VALUES (%s, %s, %s, %s, %s, %s)', (labname, labgoal, sid, score, method, review))
+        conn.commit()
         cursor.execute('SELECT LAST_INSERT_ID()')
         # get the inserted report id
         report_id = cursor.fetchone()[0]
-        conn.commit()
 
     # PICTURES
     TCP_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
