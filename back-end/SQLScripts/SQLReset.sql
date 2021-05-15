@@ -135,6 +135,7 @@ CREATE TABLE `TCPDB`.`pictures` (
   `reportid` INT NOT NULL,
   `filename` VARCHAR(100) NOT NULL,
   `des` VARCHAR(500) NULL,
+  FOREIGN KEY ('reportid') REFERENCES reports(`id`) ON DELETE CASCADE,
   PRIMARY KEY (`reportid`, `filename`)
 );
 

@@ -58,15 +58,12 @@ def generate_pdf(report_id):
             pics.append(pic)
 
     
-    project_folder_path = os.path.dirname(os.path.dirname(TCP_dir))
-    report_folder = os.path.join(project_folder_path, 'fore-end', 'build', 'labreports')
+    report_folder = os.path.join('/mnt/c/web/lesson9', 'labreports')
 
     # create report folder if not exists
     if not os.path.exists(report_folder):
         os.makedirs(report_folder)
 
-    # out_report_name = os.path.join(
-    #     TCP_dir, 'files', 'reports', '{}_sreport_{}.pdf'.format(report_id, sid))
     out_report_name = os.path.join(report_folder, '{}_sreport_{}.pdf'.format(report_id, sid))
 
     # remove current report if exists
