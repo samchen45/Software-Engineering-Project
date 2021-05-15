@@ -57,13 +57,17 @@ def generate_pdf(report_id):
         if pic.startswith('{}_'.format(report_id)):
             pics.append(pic)
 
-    # create reports folder if not exists
-    if not os.path.exists(os.path.join(TCP_dir, 'files', 'reports')):
-        os.makedirs(os.path.join(TCP_dir, 'files', 'reports'))
+    
+    project_folder_path = os.path.dirname(os.path.dirname(TCP_dir))
+    report_folder = os.path.join(project_folder_path, 'fore-end', 'build', 'labreports')
+
+    # create report folder if not exists
+    if not os.path.exists(report_folder):
+        os.makedirs(report_folder)
 
     # out_report_name = os.path.join(
     #     TCP_dir, 'files', 'reports', '{}_sreport_{}.pdf'.format(report_id, sid))
-    out_report_name = os.path.join('/mnt/c/Caddy/web/mse/labreports', '{}_sreport_{}.pdf'.format(report_id, sid))
+    out_report_name = os.path.join(report_folder, '{}_sreport_{}.pdf'.format(report_id, sid))
 
     # remove current report if exists
     if os.path.exists(out_report_name):
@@ -293,3 +297,8 @@ def add_comment():
 #     cursor.close()
 #     conn.close()
 #     return json.dumps(msg)
+
+@TCP.app.route('/api/hello', methods=['GET'])
+def hello():
+    
+    return 'hello'
