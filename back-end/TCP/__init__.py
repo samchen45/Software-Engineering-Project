@@ -4,6 +4,11 @@ TCP Package Initializer.
 
 from flaskext.mysql import MySQL
 import flask
+import logging
+
+# logging config
+logging.basicConfig(filename='TCP_logs.log',
+                    format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 # app is a single object used by all the code modules in this package
 app = flask.Flask(__name__)

@@ -34,3 +34,4 @@ yarn.lock
 back-end/TCP/homework/*
 # back-end/TCP/files/pictures/*
 # back-end/TCP/files/reports/*
+back-end/*.log

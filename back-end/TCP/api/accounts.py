@@ -1,5 +1,6 @@
 from flask import json, request
 from werkzeug.security import generate_password_hash, check_password_hash
+import datetime
 import TCP
 import TCP.utils as utils
 
@@ -45,7 +46,7 @@ def register():
             #     msg['info'] = 'ERROR: wrong verification code!! Please check again.'
             #     return json.dumps(msg)
 
-            _type = 'S' # 暂时先这样
+            _type = 'S'  # 暂时先这样
 
             # create new user and store in TCPDB
             _hashed_password = generate_password_hash(_password)
@@ -72,33 +73,60 @@ def login():
     # connect to mysql
     conn = TCP.mysql.connect()
     cursor = conn.cursor()
-    # cursor.callproc('sp_validateLogin', (_username,))
     cursor.execute('SELECT * FROM users WHERE id=%s', (_id,))
-    data = cursor.fetchall()
+    data = cursor.fetchone()
 
     # return to frontend
-    msg = {}
-    if data:
-        if check_password_hash(str(data[0][4]), _password):
-            # session['user'] = data[0][0]
-            msg['info'] = data[0][6]
-            msg['name'] = data[0][2]
-            # return redirect('/userhome')
-        else:
-            msg['info'] = 'WRONGPWD'
-            # return render_template('error.html', error='Wrong Email address or Password.')
-    else:
-        msg['info'] = 'NULL'
-        # return render_template('error.html', error='Wrong Email address or Password.')
+    try:
+        msg = {}
+        curr_time = datetime.datetime.now()
+        # check if user exists
+        if data is None:
+            # user not found
+            msg['info'] = 'NULL'
+            return json.dumps(msg)
 
-    # except Exception as e:
-    #     print(e)
-    #     ret['info'] = 'validateLogin error!! check python code or call PSY'
-    #     return render_template('error.html', error=str(e))
-    # finally:
-    cursor.close()
-    conn.close()
-    return json.dumps(msg)
+        # check login attempts
+        failed_attempts_count = data[7]
+        if failed_attempts_count >= 5:
+            last_failed_time = data[8]
+            delta_time = curr_time - last_failed_time
+            if delta_time.seconds <= 600:
+                # update last_failed_time in database
+                cursor.execute('UPDATE users SET last_failed_time=%s WHERE id=%s',
+                               (curr_time.strftime('%Y-%m-%d %H:%M:%S'), _id,))
+                conn.commit()            
+                msg['info'] = 'LOCKED'
+                return json.dumps(msg)
+
+        # wrong password?
+        if not check_password_hash(str(data[4]), _password):
+            # wrong password
+            msg['info'] = 'WRONGPWD'
+            # update failed attempts and time in database
+            cursor.execute('UPDATE users SET last_failed_time=%s, failed_attempts=%s WHERE id=%s',
+                           (curr_time.strftime('%Y-%m-%d %H:%M:%S'), failed_attempts_count+1, _id,))
+            conn.commit()
+            return json.dumps(msg)
+
+        # successful login
+        # clear failed_attempts
+        cursor.execute('UPDATE users SET failed_attempts=%s WHERE id=%s', (0, _id))
+        conn.commit()
+        # session['user'] = data[0]
+        msg['info'] = data[6]
+        msg['name'] = data[2]
+        TCP.app.logger.info('user id {} logged in!'.format(_id))
+        # return redirect('/userhome')
+        return json.dumps(msg)
+    except Exception as e:
+        e = str(e)
+        print(e)
+        msg['info'] = e
+        return json.dumps(e)
+    finally:
+        cursor.close()
+        conn.close()
 
 
 @TCP.app.route('/api/updateinfo', methods=['POST'])

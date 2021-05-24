@@ -19,6 +19,8 @@ CREATE TABLE `TCPDB`.`users` (
   `upassword` VARCHAR(100) NULL,
   `phonenum` VARCHAR(11) NULL,
   `utype` VARCHAR(1) NULL,
+  `failed_attempts` INT DEFAULT 0,
+  `last_failed_time` TIMESTAMP,
   PRIMARY KEY (`uid`),
   UNIQUE (`id`)
 );
@@ -135,7 +137,7 @@ CREATE TABLE `TCPDB`.`pictures` (
   `reportid` INT NOT NULL,
   `filename` VARCHAR(100) NOT NULL,
   `des` VARCHAR(500) NULL,
-  FOREIGN KEY ('reportid') REFERENCES reports(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`reportid`) REFERENCES reports(`id`) ON DELETE CASCADE,
   PRIMARY KEY (`reportid`, `filename`)
 );
 
