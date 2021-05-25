@@ -43,7 +43,7 @@ class QuestionsDemo extends React.Component {
         var that = this
         $.ajax({
             type: 'POST',
-            url: "/viewposts",
+            url: "/lesson9/api/viewposts",
             data: {
                 uid: this.state.id,
             },

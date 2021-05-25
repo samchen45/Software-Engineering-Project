@@ -47,7 +47,7 @@ class AnswerAdd extends React.Component{
     	// this.props.dispatch(addQuestionSonCount(pid));
 		$.ajax({
 			type: 'POST',
-			url: "/postreply",
+			url: "/lesson9/api/postreply",
 			data: {
 				uid: this.props.uid,
 				content: answer,

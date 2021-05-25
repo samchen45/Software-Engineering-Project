@@ -71,7 +71,7 @@ class QuestionAdd extends React.Component {
         }
         $.ajax({
             type: 'POST',
-            url: "/createpost",
+            url: "/lesson9/api/createpost",
             data: {
                 uid: isAuthenticatedid(),
                 title: title,

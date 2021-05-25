@@ -11,9 +11,8 @@ class TabsDemo extends React.Component {
     super(props);
     this.state = {
       experiments: [
-        '实验1',
-        '实验2',
-        '实验3',
+        '物理仿真算法',
+        '化学实验场景体验',
       ],
       chosenExperiment: '',
     }

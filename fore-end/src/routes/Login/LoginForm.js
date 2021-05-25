@@ -77,12 +77,9 @@ class LoginForm extends React.Component {
           })
           return
         }
-        console.log('Received values of form: ', values);
-        console.log('id: ', values.id)
-        console.log('密码: ', values.password)
         $.ajax({
           type: 'POST',
-          url: "/login",
+          url: "/lesson9/api/login",        
           data: {
             id: values.id,
             password: values.password,
@@ -108,6 +105,11 @@ class LoginForm extends React.Component {
               console.log('pwd error!! info is ')
               console.log(ret.info)
               message.info("密码错误，请检查你的用户名和密码！！！");
+            }
+            if (ret.info === 'LOCKED') {
+              console.log('pwd error!! info is ')
+              console.log(ret.info)
+              message.info("密码错误，账户已锁定，请等待五分钟！！！");
             }
 
 
@@ -147,7 +149,7 @@ class LoginForm extends React.Component {
 
   register = () => {
     this.props.switchShowBox('register')
-    setTimeout(() => this.props.form.resetFields(), 500)
+    setTimeout(() => this.props.form.resetFields(), 500)  
   }
 
   render() {
@@ -222,7 +224,7 @@ class LoginForm extends React.Component {
           </div>
         </Form>
         <div className='footer'>
-          <div>欢迎登陆云作业平台系统</div>
+          <div>欢迎登陆平台系统</div>
         </div>
       </div>
     )

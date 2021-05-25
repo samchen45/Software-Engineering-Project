@@ -28,7 +28,7 @@ class RegisterForm extends React.Component {
       if (!err) {
         $.ajax({
           type: 'POST',
-          url: "/register",
+          url: "/lesson9/api/register",
           data: {
             name: values.name,
             id: values.id,
@@ -41,6 +41,8 @@ class RegisterForm extends React.Component {
             let ret = JSON.parse(data);
             if (ret.info === 'S' || ret.info === 'T' || ret.info === 'A') {
               message.info("注册成功！！！");
+              this.props.switchShowBox('login')
+              setTimeout(() => this.props.form.resetFields(), 500)
               //console.log(ret.name);
               //this.setCookie("username",values.username,15)
               //this.props.appStore.toggleLogin(true, { username: values.name })
@@ -99,7 +101,24 @@ class RegisterForm extends React.Component {
               validateFirst: true,
               rules: [
                 { required: true, message: '姓名不能为空' },
-                { pattern: '^[^ ]+$', message: '不能输入空格' },
+                {
+                  validator: (rule, value, callback) => {
+                    console.log(value)
+                    
+                    if(value != ''){
+                      var reg = /^[0-9a-z_]+$/
+                      console.log(reg.test(value))
+                      reg.test(value) ? callback():callback("请输入小写字母数字及下划线的组合")
+                    }
+                    //if (/^[0-9a-z_]+$/.test(value) == false) {
+                      //if (/^[a-zA-Z0-9_-] +@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]{2,5}){1,2}$/.test(value) == false){
+                      //callback('请输入小写字母数字及下划线的组合')
+                    //}
+                    else{
+                      callback("不能为空")
+                    }
+                  }
+                },
               ]
             })(
               <Input
@@ -117,7 +136,7 @@ class RegisterForm extends React.Component {
               rules: [
                 { required: true, message: '学工号不能为空' },
                 {
-                  pattern: new RegExp(/^[1-9]\d*$/, "g"),
+                  pattern: new RegExp(/^[0-9]\d*$/, "g"),
                   message: '请输入正确的ID'
                 }],
               getValueFromEvent: (event) => {
@@ -139,7 +158,28 @@ class RegisterForm extends React.Component {
               validateFirst: true,
               rules: [
                 { required: true, message: '密码不能为空' },
-                { pattern: '^[^ ]+$', message: '密码不能有空格' }
+                {
+                  validator: (rule, value, callback) => {
+                    console.log(value)
+
+                    if (value != '' && value.length >= 6) {
+                      var testPassword = /^(?![a-zA-Z]+$)(?![A-Z0-9]+$)(?![A-Z\W_!@#$%^&*`~()-+=]+$)(?![a-z0-9]+$)(?![a-z\W_!@#$%^&*`~()-+=]+$)(?![0-9\W_!@#$%^&*`~()-+=]+$)[a-zA-Z0-9\W_!@#$%^&*`~()-+=]{8,15}$/
+
+                      console.log(testPassword.test(value))
+                      testPassword.test(value) ? callback() : callback("请输入大小写字母数字及符号的任意三种组合")
+                    }
+                    //if (/^[0-9a-z_]+$/.test(value) == false) {
+                    //if (/^[a-zA-Z0-9_-] +@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]{2,5}){1,2}$/.test(value) == false){
+                    //callback('请输入小写字母数字及下划线的组合')
+                    //}
+                    else if (value != '' && value.length < 6){
+                      callback("密码长度应不小于六位")
+                    }
+                    else{
+                      callback("密码不能为空")
+                    }
+                  }
+                },
               ]
             })(
               <Input
@@ -171,12 +211,12 @@ class RegisterForm extends React.Component {
                 onFocus={() => this.setState({ focusItem: 3 })}
                 onBlur={() => this.setState({ focusItem: -1 })}
                 type='password'
-                maxLength={16}
+                maxLength={30}
                 placeholder='确认密码'
                 addonBefore={<span className='iconfont icon-suo1' style={focusItem === 3 ? styles.focus : {}} />} />
             )}
           </Form.Item>
-          <Form.Item help={getFieldError('email') && <PromptBox info={getFieldError('email')}
+          {/*<Form.Item help={getFieldError('email') && <PromptBox info={getFieldError('email')}
             width={calculateWidth(getFieldError('email'))} />}>
             {getFieldDecorator('email', {
               validateFirst: true,
@@ -184,7 +224,7 @@ class RegisterForm extends React.Component {
                 { required: true, message: '请输入邮箱' },
                 {
                   validator: (rule, value, callback) => {
-                    if (/^\w{3,}(\.\w+)*@[A-z0-9]+(\.[A-z]{2,5}){1,2}$/.test(value) == false) {
+                    if (/^[\w-]{3,}(\.\w+)*@[A-z0-9]+(\.[A-z]{2,5}){1,2}$/.test(value) == false) {
                       callback('请输入正确的email')
                     }
                     callback()
@@ -209,7 +249,8 @@ class RegisterForm extends React.Component {
                 { required: true, message: '请输入手机号' },
                 {
                   validator: (rule, value, callback) => {
-                    if (/^((\+)?86|((\+)?86)?)0?1[3458]\d{9}$/.test(value) == false) {
+                    //if (/^((\+)?86|((\+)?86)?)0?1[34758]\d{9}$/.test(value) == false) {
+                      if (/^((\+)?86|((\+)?86)?)0?1\d{10}$/.test(value) == false) {
                       callback('请输入正确的手机号')
                     }
                     callback()
@@ -226,7 +267,7 @@ class RegisterForm extends React.Component {
                 addonBefore={<span className='iconfont icon-suo1' style={focusItem === 5 ? styles.focus : {}} />} />
             )}
           </Form.Item>
-          {/*<Row>
+          <Row>
             <Col span={17}>
               <Input
                 onFocus={() => this.setState({ focusItem: 6 })}
@@ -247,7 +288,7 @@ class RegisterForm extends React.Component {
           </div>
         </Form>
         <div className='footer'>
-          <div>欢迎登陆后台管理系统</div>
+          <div>欢迎登陆平台系统</div>
         </div>
       </div>
     )

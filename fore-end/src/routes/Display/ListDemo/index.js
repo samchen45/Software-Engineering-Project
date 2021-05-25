@@ -101,6 +101,7 @@ class ListDemo extends React.Component {
       teacher_autograph: ``,
     }
     this.loadlist = this.loadlist.bind(this)
+    this.download = this.download.bind(this)
   }
 
   componentWillMount() {
@@ -123,7 +124,7 @@ class ListDemo extends React.Component {
     if (isAuthenticatedtype() === 'S') {
       $.ajax({
         type: 'POST',
-        url: "/get_report_list",
+        url: "/lesson9/api/get_report_list",
         data: {
           sid: this.state.id,
         },
@@ -215,17 +216,17 @@ class ListDemo extends React.Component {
     // request all report data
     $.ajax({
       type: 'POST',
-      url: "/read_report",
+      url: "/lesson9/api/read_report",
       data: {
-        labid: value,
+        reportid: value,
         uid: this.state.id
       },
       success: function (data) {
         message.info("success");
         ret = JSON.parse(data)
-        console.log("ret_post11 ", ret)
+        console.log("ret_post11 ", 'https://ilabs.sjtu.edu.cn/lesson9/labreports/' + ret.url)
         this.setState({
-          repo: ret[0],
+          dl_url: 'https://ilabs.sjtu.edu.cn/lesson9/labreports/' + ret.url,
           chosenExperiment: value 
         });
       }.bind(this)
@@ -254,7 +255,8 @@ class ListDemo extends React.Component {
   }
 
   download = () => {
-    window.open(this.state.dl_url);
+    console.log(this.state.dl_url)
+    window.open(this.state.dl_url)
   }
 
   handleSubmit = (e) => {
@@ -342,7 +344,7 @@ class ListDemo extends React.Component {
               }
             </p>
             { this.state.chosenExperiment != '' ?
-            <a href="javascript:void(0)" onclick={this.download}></a>
+            <a href= {this.state.dl_url} target="_blank">实验报告</a>
             /*<Form onSubmit={this.handleSubmit}>
               <Card showHeader={false}>
                 <Card.Grid style={{ width: '15%', textAlign: 'left', fontSize: 24 }} hoverable={false}>实验名称</Card.Grid>

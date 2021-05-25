@@ -36,7 +36,7 @@ class Index extends React.Component{
             <Content>
               <ContentMain/>
             </Content>
-            <Footer style={{ textAlign: 'center' }}>React-Admin ©2021 Created by DALAB <a target='_blank' href='https://github.com/samchen45/Software-Engineering-Project'>github地址</a></Footer>
+            <Footer style={{ textAlign: 'center' }}>React-Admin ©2021 Created by DALAB {/*<a target='_blank' href='https://github.com/samchen45/Software-Engineering-Project'>github地址</a>*/}</Footer>
           </Layout>
         </Layout>
       </div>

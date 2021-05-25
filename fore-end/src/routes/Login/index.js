@@ -110,7 +110,7 @@ class Login extends React.Component {
                 left: '10%',
                 fontWeight: 500,
                 fontSize: 48,
-              }}>DALAB实验管理系统</div>
+              }}>交互媒体应用设计与开发VR实验</div>
               <div id='sub-header' style={{
                 position: 'fixed',
                 textAlign: 'center',
@@ -119,7 +119,7 @@ class Login extends React.Component {
                 left: '10%',
                 fontWeight: 500,
                 fontSize: 24,
-              }}>DALAB实验管理系统简介</div>
+              }}></div>
               <div className='container' style={{
                 position: 'fixed',
                 textAlign: 'center',

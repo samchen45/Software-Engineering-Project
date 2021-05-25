@@ -123,6 +123,6 @@
     "babel-plugin-transform-decorators-legacy": "^1.3.5",
     "html-loader": "^2.1.2"
   },
-  "homepage": ".",
+  "homepage": "https://ilabs.sjtu.edu.cn/lesson9/",
   "proxy": "http://localhost:5002/api/"
 }

@@ -76,7 +76,7 @@ class QuestionsDetail extends React.Component {
         }
         $.ajax({
             type: 'POST',
-            url: "/viewreplies",
+            url: "/lesson9/api/viewreplies",
             data: {
                 uid: this.state.id,
                 postid:id,

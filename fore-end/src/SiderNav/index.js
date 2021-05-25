@@ -5,7 +5,7 @@ const menus = [
   {
     title: '首页',
     icon: 'home',
-    key: '/home'
+    key: '/#home'
   },
   // {
   //   title: '导航组件',

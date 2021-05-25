@@ -269,20 +269,6 @@ class FormDemo1 extends React.Component {
                 )
               }
             </FormItem>
-            <FormItem {...formItemLayout} label="验证码">
-              <Row gutter={8}>
-                <Col span={12}>
-                  {getFieldDecorator('captcha', {
-                    rules: [{required: true, message: '请输入验证码！'}],
-                  })(
-                    <Input/>
-                  )}
-                </Col>
-                <Col span={12}>
-                  <Button disabled={this.state.disabled} onClick={(e) => this.countdown(e)}>{this.state.text}</Button>
-                </Col>
-              </Row>
-            </FormItem>
             <FormItem {...tailFormItemLayout}>
               {getFieldDecorator('agreement', {
                 valuePropName: 'checked',

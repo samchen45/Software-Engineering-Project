@@ -17,7 +17,7 @@ class Home extends React.Component {
           {/*交互媒体应用设计与开发VR实验项目*/}
         </div>
         <div >
-          <iframe src='http://10.119.7.114/mse/' height={window.screen.height * window.devicePixelRatio * 0.70} width="100%" scrolling="auto"/>
+          <iframe src='https://ilabs.sjtu.edu.cn/lesson9/mse/' height={window.screen.height * window.devicePixelRatio * 0.75} width="100%" scrolling="auto"/>
            
           {/*<iframe src="http://10.119.7.114/mse_frontend/index.html" height={window.screen.height * window.devicePixelRatio * 0.70} width="100%" scrolling="auto"/>
            */}
